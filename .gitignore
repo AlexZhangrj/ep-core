@@ -36,3 +36,6 @@ target/classes/META-INF/maven/com.zhrenjie04.alex.web/ep-core/pom.properties
 target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst
 target/surefire-reports/com.zhrenjie04.alex.core.AppTest.txt
 target/surefire-reports/TEST-com.zhrenjie04.alex.core.AppTest.xml
+target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst
+target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/inputFiles.lst
+target/surefire-reports/TEST-com.zhrenjie04.alex.core.AppTest.xml

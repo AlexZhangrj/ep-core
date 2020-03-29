@@ -18,7 +18,6 @@
 /Users/zhangrenjie/developing/gitee/ep-core/src/main/java/com/zhrenjie04/alex/core/AbstractGenericExceptionControllerAdvice.java
 /Users/zhangrenjie/developing/gitee/ep-core/src/main/java/com/zhrenjie04/alex/util/Md5Util.java
 /Users/zhangrenjie/developing/gitee/ep-core/src/main/java/com/zhrenjie04/alex/core/ResultFilter.java
-/Users/zhangrenjie/developing/gitee/ep-core/src/main/java/com/zhrenjie04/alex/util/RedisMap.java
 /Users/zhangrenjie/developing/gitee/ep-core/src/main/java/com/zhrenjie04/alex/core/TreeViewNode.java
 /Users/zhangrenjie/developing/gitee/ep-core/src/main/java/com/zhrenjie04/alex/core/AlexJsonReturnHandler.java
 /Users/zhangrenjie/developing/gitee/ep-core/src/main/java/com/zhrenjie04/alex/core/AbstractGenericController.java
@@ -64,3 +63,4 @@
 /Users/zhangrenjie/developing/gitee/ep-core/src/main/java/com/zhrenjie04/alex/util/IdGenerator.java
 /Users/zhangrenjie/developing/gitee/ep-core/src/main/java/com/zhrenjie04/alex/core/AbstractGenericEntity.java
 /Users/zhangrenjie/developing/gitee/ep-core/src/main/java/com/zhrenjie04/alex/util/FileUploadUtil.java
+/Users/zhangrenjie/developing/gitee/ep-core/src/main/java/com/zhrenjie04/alex/util/AbstractRedisMap.java
