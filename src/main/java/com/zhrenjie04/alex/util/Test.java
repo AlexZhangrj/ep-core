@@ -6,7 +6,7 @@ public class Test {
 
 	public static void main(String[] args) {
 		StringBuffer input=null;
-		StringBuffer output=new StringBuffer("aabbbcceeecffdddfkkk");
+		StringBuffer output=new StringBuffer("aabbbcceddddddddaabbccddeecffdddfkkk");
 		do{
 		    input=output;
 		    output=new StringBuffer();
@@ -39,8 +39,13 @@ public class Test {
 			System.out.println(output.equals(input));
 		}while(!output.toString().equals(input.toString()));
 		System.out.println(output);
-		//方法二
-		input=new StringBuffer("aabbbcceeecffdddfkkk");
+		//消消乐解答方法二
+		//下标i一直往前计算currentChar的个数，当s[i]!=currentChar时，进行判断，
+		//		如果currentChar的个数大于等于3个，那就继续取下一组相同字符，
+		//		                再判断这一组的字符数与栈尾的字符是否相同，如果相同且总数大于等于3，则出栈
+		//		                如果不相同，则下一组字符入栈，继续总循环
+		//		如果x的个数小于3个，则入栈
+		input=new StringBuffer("aabbbcceddddddddaabbccddeecffdddfkkk");
 		Stack<String>charStack=new Stack<>();
 		Stack<Integer>countStack=new Stack<>();
 		char currentChar='\n';
