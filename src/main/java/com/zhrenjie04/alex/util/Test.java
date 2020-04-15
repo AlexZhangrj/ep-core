@@ -45,6 +45,26 @@ public class Test {
 		//		                再判断这一组的字符数与栈尾的字符是否相同，如果相同且总数大于等于3，则出栈
 		//		                如果不相同，则下一组字符入栈，继续总循环
 		//		如果x的个数小于3个，则入栈
+		//efffee步骤是这样的：
+		//1、
+		//堆栈 空
+		//扫到e
+		//2、
+		//堆栈 空
+		//扫到f，因为f！=currentChar（e），所以e入栈
+		//堆栈 1e
+		//3、
+		//堆栈 1e
+		//扫到f，因为f==currentChar(f),所以++currentCount变为2
+		//4、
+		//堆栈没变
+		//又扫到f，因为f==currentChar(f),所以++currentCount变为3
+		//4、
+		//堆栈没变
+		//扫到e，因为e！=currentChar(f),又因为currentCount>=3所以忽略f的入栈
+		//             此时继续取下一组连续字符：2e，取完后，判断堆栈的最后一个字符，发现与2e字符相同而且累加后总数>=3，所以出栈
+		//             循环继续取下一组连续字符直到堆栈的最后一个字符与新这一组的字符不同
+		//5、继续扫描
 		input=new StringBuffer("aabbbcceddddddddaabbccddeecffdddfkkk");
 		Stack<String>charStack=new Stack<>();
 		Stack<Integer>countStack=new Stack<>();
