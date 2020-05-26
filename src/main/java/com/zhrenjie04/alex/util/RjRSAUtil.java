@@ -24,11 +24,11 @@ import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 /**
-* Rj-RSA双钥加解密工具
-* 本工具包经过加密前241个byte后的密文循环加密后续数据，具有密文长度与Base64密文长度接近，没有私钥无法解密、无法破解密文的特性。
-* @author 张人杰
-*
-*/
+ * Rj-RSA双钥加解密工具
+ * 本工具包经过加密前241个byte后的密文循环加密后续数据，具有密文长度与Base64密文长度接近，没有私钥无法解密、无法破解密文的特性。
+ * @author 张人杰
+ *
+ */
 public class RjRSAUtil {
 	public static final String KEY_ALGORITHM = "RSA";
 	/** 貌似默认是RSA/NONE/PKCS1Padding，未验证 */
@@ -51,15 +51,15 @@ public class RjRSAUtil {
 	 * 通过base64的公钥数据设置公钥，加密数据必须设置公钥，可以不设置私钥
 	 * @param publicKeyBase64
 	 */
-	public void restorePublicKey(String publicKeyBase64) {
-		restorePublicKey(Base64Util.decode(publicKeyBase64));
+	public PublicKey restorePublicKey(String publicKeyBase64) {
+		return restorePublicKey(Base64Util.decode(publicKeyBase64));
 	}
 	/**
 	 * 通过base64的私钥数据设置私钥，解密数据必须设置私钥，可以不设置公钥
 	 * @param privateKeyBase64
 	 */
-	public void restorePrivateKey(String privateKeyBase64) {
-		restorePrivateKey(Base64Util.decode(privateKeyBase64));
+	public PrivateKey restorePrivateKey(String privateKeyBase64) {
+		return restorePrivateKey(Base64Util.decode(privateKeyBase64));
 	}
 	/**
 	 * 用公钥加密数据，加密数据必须设置公钥，可以不设置私钥，循环加密法加密
@@ -182,12 +182,15 @@ public class RjRSAUtil {
 		PrivateKey privateKey = rsaUtil.restorePrivateKey(keyMap.get(PRIVATE_KEY));
 		System.out.println("restorePrivateKey time:"+(System.currentTimeMillis()-t));
 		System.out.println("RSA decoded: " + new String(rsaUtil.RSADecode(privateKey, encodedText)));
-		String s="你好啊afjladfowureowrajgldjfwifjiwaoeifjawli你好啊afjladfowureowrajgldjfwifjiwaoeifjawli你好啊afjladfowureowrajgldjfwifjiwaoeifjawli你好啊afjladfowureowrajgldjfwifjiwaoeifjawli你好啊afjladfowureowrajgldjfwifjiwaoeifjawli你好啊afjladfowureowrajgldjfwifjiwaoeifjawli你好啊afjladfowureowrajgldjfwifjiwaoeifjawli你好啊afjladfowureowrajgldjfwifjiwaoeifjawli你好啊afjladfowureowrajgldjfwifjiwaoeifjawli你好啊afjladfowureowrajgldjfwifjiwaoeifjawli啊啊啊哈哈哈哈哈哈";
+		String s="{\"dataType\":\"storgeBusinessData\", \"Type\":\"I\", \"Body\":[{\"uuid\" : \"2020-04-14 10:47:30fa50f861ebf845cb95ee34e299522ba0\",  \"granaryNo\" : \"GN169544214521055232\", \"granaryName\" : \"郑州天香面业二库\",    \"busNo\" : \"YWBH-2019111111234\",    \"iOTypeCode\" : \"001\",    \"iOTypeName\" : \"入库\",    \"busDate\" : \"2020-04-09 08:55:31\",    \"customerName\" : \"恩尔美-企业方\",    \"carrier\" : \"王小国\",    \"cellPhone\" : \"13938182743\",    \"identityCard\" : \"410824197302086034\",    \"fullAddress\" : \"xiangxidizhi\",    \"vehicle\" : \"汽车\",    \"vehicleNo\" : \"豫AT085M\",    \"entryTime\" : \"2020-03-01 08:55:31\",    \"entryOperatorName\" : \"物业\",    \"qualityNo\" : \"ZJDH-20191115010\",     \"varietyCode\" : \"1110000\",    \"varietyName\" : \"小麦\",    \"gradeName\" : \"二等\",    \"grainYear\" : \"2019\",    \"storeHouseCode\" : \"WN169544465319462912\",    \"storeHouseName\" : \"郑州天香面业二库1仓\",    \"roomCode\" : \"AOJIANBM123456\",    \"roomName\" : \"廒间名称\",    \"locationCode\" : \"HWBM123456\",    \"locationName\" : \"货位名称\",    \"prodPlace\" : \"河南焦作\",    \"advise\" : \"1\",    \"qualityCutWeight\" : \"0\",    \"qYOperator\" : \"张利花\",    \"qYTime\" : \"2019-11-16 09:01:17\",    \"zJOperator\" : \"张利花\",    \"zJTime\" : \"2019-11-15 09:01:43\",    \"grossWeight\" : \"26080\",    \"grossTime\" : \"2019-11-15 09:06:09\",    \"grossOperatorName\" : \"朱静\",    \"storekeeperCutType\" : \"扣价\",    \"storekeeperCut\" : \"0\",    \"verifyOperatorName\" : \"\",    \"verifyTime\" : \"\",    \"tareWeight\" : \"7280\",    \"tareTime\" : \"2019-11-16 10:44:38\",    \"tareOperatorName\" : \"朱静\",    \"cutWeight\" : \"0\",    \"netWeight\" : \"18800\",    \"jSWeight\" : \"200\",    \"jSPrice\" : \"1.0\",    \"jSMoney\" : \"55.00\",    \"jSTime\" : \"2019-11-15 10:44:59\",    \"jSOperatorName\" : \"朱静\",    \"outTime\" : \"2019-11-15 10:47:33\",    \"outOperatorName\" : \"物业\",    \"orgCode\" : \"GN169544214521055232\",    \"orgName\" : \"郑州天香面业二库\",    \"memo\" : \"无\",    \"payeeName\" : \"李永联\",    \"payeeCardNum\" : \"6228482378587812478\",    \"payeeBankName\" : \"农业银行\",    \"payeeIdCardNum\" : \"410825196711143011\",    \"payeeAmount\" : \"46248\",    \"settlemen\" : \"01\",    \"payStatus\" : 1,    \"bankCode\" : \"103100000026\",    \"bankCityCode\" : \"410800\",    \"bankCity\" : \"焦作市\",    \"payType\" : \"网银转账\",       \"type\" : 0,           \"granaryCity\" : \"焦作市\",    \"sysPayNo\" : \"S00000110\"}]}";
+//		String s="你好啊afjladfowureowrajgldjfwifjiwaoeifjawli你好啊afjladfowureowrajgldjfwifjiwaoeifjawli你好啊afjladfowureowrajgldjfwifjiwaoeifjawli你好啊afjladfowureowrajgldjfwifjiwaoeifjawli你好啊afjladfowureowrajgldjfwifjiwaoeifjawli你好啊afjladfowureowrajgldjfwifjiwaoeifjawli你好啊afjladfowureowrajgldjfwifjiwaoeifjawli你好啊afjladfowureowrajgldjfwifjiwaoeifjawli你好啊afjladfowureowrajgldjfwifjiwaoeifjawli你好啊afjladfowureowrajgldjfwifjiwaoeifjawli啊啊啊哈哈哈哈哈哈";
 		t=System.currentTimeMillis();
 		
 		RjRSAUtil rsaUtil2=RjRSAUtil.getInstance();
-		rsaUtil2.restorePublicKey(keyMap.get(PUBLIC_KEY));
-		rsaUtil2.restorePrivateKey(keyMap.get(PRIVATE_KEY));
+//		rsaUtil2.restorePublicKey(keyMap.get(PUBLIC_KEY));
+//		rsaUtil2.restorePrivateKey(keyMap.get(PRIVATE_KEY));
+		rsaUtil2.restorePrivateKey("MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDcWCwZLPFT8OmfixlQNaI0fV0+QWUBZGMDk1qaJrjJlMLBiHzCOAhO7UWkLHqcHDkiHTlIaQwwaZaMj5s+idg616skPJ7pTpLpKvDnvodPdw9mkvjsNVnameWqlPjMq8V2urMzwpTidv07On8RJMZbt7dP+GbSZ+X59UN2A0mfEwhbcspTCbC3ZD05tcUd1Gub6z7oum+1knIpV8fD75qDg611R/XaUB+8KL/aEjNPqWNff4dYzhTre1ouM/nHmvjyCBFBYuXpb6Ga2rBq/okfp5oiSSFGokFM1Pkf8svp46Es7049XcSWd8akTi0VknRLRgATFWiFwJl6o6TF/kgDAgMBAAECggEBAKbpz/X+Oo14yLDH4RQGnOogMTsQtJ/aWLsDq7VsMbzaCLIsXz2MzpZjXMbhvrt1Eb6K3rLAiLA/vACcZGB6cScZ6pXXqhVYJSemFLmodb23lh4ApbnhLEDRJc4TbWk1ka6//THva3Ml6ewtAsaM0gn2YFGe/NzUQb0YktLZ6LIrg+cSScK98MPaVl2TDcS0ud7fpB00zcTd6aIbK6DG1CY9Io5EiLHggiOF66auCMy+1/0mb9Nah27SM4nyGguNe/62+seZSBltINz36aRKdsZeot5vpEkxn+zY0WJZpUgS7s1AdL74Fi302qbUUAo54q7EIPoiwF5UWPr3afL2OrECgYEA7+96PS8jq6uXq7UxGgQqAw7seeTRubsah0MfnTn2XcLY1W7+RYiuIx+RnxLJ331QhqSWYSqOdvTSkPHsTuBC98rvGNnDkSvA41IvPLbtYFqTCliLQ2hqX0zEA07WmFYTLtb/3VhSFU0Zc8WmHfVgEDr9rWq+zc9ikyAprBoywhkCgYEA6xjm7Uj8hULbEAKB8FGWKRsahxceKhdt+musbGD8ibWkHEE46MlsyoPZPsbKA4TVszQ2cmbQkLrW37+cQwksbveHJiwAVrj71ptrRlhDaPxp7u1bEpRsJ59VrmL2+6J/yZxChjsHIXLXyNl5ab15UL0I/vBI5T2PRNRN9cqv9nsCgYBczA9ICKpQJA6GH479E+03v5bgUgp3PhE1jVV11swdWVXJvqLjO8i11ujYUEj5ghsZ6CAtNmthQLEL1DVkEEJ2Wet9fgOwau6wPMH+RnWqlX1XPAWorYKulx8cdGp1Ap1quUa+UgF1MZuNdj0YSyW7QUWJw8ZGDVZ/tqnHYV6OSQKBgAVMYV/1piNGt3Mr60vEOvMgNj/XKIngT002ggNLSEW+Pz2XxrWQXJBP2mSMzF657qsEQTng0VCBtXgDdH0aRtMVZwlYMoXB04Mpq4hBUvuZvLVyyfuoNqvJ7n9ooZJYPjMH/4PQ7r81PGG9bPwSFhrYt8wvFCV+dq0hb8RbVg3jAoGAZBUvsHuwj8nt5UAzIcELW2prUHDVqva1CEjM6KelwfYM7tcY7g3zPLaNjRWASPIYKJKmiW9/96XJu6ECJfa1StQQIv707eG6hbIqqvfX2MUzPhfYF1lF2VQPxAUidWjNQdnbP+aepiLdYTQRAhkytny1gZHGV0c/fDRvWTfYBDw=");
+		rsaUtil2.restorePublicKey("MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA3FgsGSzxU/Dpn4sZUDWiNH1dPkFlAWRjA5Namia4yZTCwYh8wjgITu1FpCx6nBw5Ih05SGkMMGmWjI+bPonYOterJDye6U6S6Srw576HT3cPZpL47DVZ2pnlqpT4zKvFdrqzM8KU4nb9Ozp/ESTGW7e3T/hm0mfl+fVDdgNJnxMIW3LKUwmwt2Q9ObXFHdRrm+s+6LpvtZJyKVfHw++ag4OtdUf12lAfvCi/2hIzT6ljX3+HWM4U63taLjP5x5r48ggRQWLl6W+hmtqwav6JH6eaIkkhRqJBTNT5H/LL6eOhLO9OPV3ElnfGpE4tFZJ0S0YAExVohcCZeqOkxf5IAwIDAQAB");
 		String encodedString=rsaUtil.encode(s, "UTF-8");
 		System.out.println("RSAUtil.encode time:::"+(System.currentTimeMillis()-t));
 		System.out.println("encoded(密文):::::"+encodedString);
