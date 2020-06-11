@@ -532,9 +532,13 @@ public final class RedisUtil {
 				return true;
 			}
 			jedis = getJedis();
-			String result = jedis.set(key, "1", SET_IF_NOT_EXIST, SET_WITH_EXPIRE_TIME, keepTime * 1000);
-			System.out.println(result);
-			if (LOCK_SUCCESS.equals(result)) {
+//			String result = jedis.set(key, "1", SET_IF_NOT_EXIST, SET_WITH_EXPIRE_TIME, keepTime * 1000);
+//			System.out.println(result);
+//			if (LOCK_SUCCESS.equals(result)) {
+//				return true;
+//			}
+			Long result = jedis.setnx(key, "1");
+			if(result == 1) {
 				return true;
 			}
 			return false;
