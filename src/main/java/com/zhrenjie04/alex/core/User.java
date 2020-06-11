@@ -6,11 +6,10 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
 
-import org.hibernate.validator.constraints.Email;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -39,7 +38,7 @@ public class User extends AbstractGenericEntity {
 	@ApiModelProperty("原密码")
 	private String oldPassword;
 	@ApiModelProperty("密码")
-	@Length(min = 1, message = "密码不能为空")
+	@NotEmpty(message = "密码不能为空")
 	private String password;
 	@ApiModelProperty("密码加密盐值")
 	private String salt;

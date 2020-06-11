@@ -89,6 +89,10 @@
 			<groupId>redis.clients</groupId>
 			<artifactId>jedis</artifactId>
 		</dependency>
+		<dependency>
+		    <groupId>javax.validation</groupId>
+		    <artifactId>validation-api</artifactId>
+		    </dependency>
 		<!-- 
 		<dependency>
 			<groupId>com.googlecode.log4jdbc</groupId>
