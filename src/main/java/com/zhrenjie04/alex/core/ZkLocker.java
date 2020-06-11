@@ -44,6 +44,8 @@ public class ZkLocker {
 				public void process(WatchedEvent event) {
 					if(KeeperState.SyncConnected==event.getState()) {
 						log.info("ZkLocker connected to server");
+					}else if(KeeperState.Disconnected==event.getState()) {
+						throw new RuntimeException("ZkLocker disconnected to server");
 					}
 				}
 			});
