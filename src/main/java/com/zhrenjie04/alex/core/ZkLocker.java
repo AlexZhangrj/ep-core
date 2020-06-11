@@ -86,7 +86,10 @@ public class ZkLocker {
 	                    if(EventType.NodeDeleted==watchedEvent.getType()) {
 		                    log.info("[WatchedEvent]节点删除");
 		                    latch.countDown();
-	                    }
+						}else if(KeeperState.Disconnected==watchedEvent.getState()) {
+							log.info("ZkLocker disconnected to server");
+							ZkLocker.this.hasNetworkErrors=true;
+						}
 	                }
 	            };
 	            Stat stat=new Stat();
