@@ -84,11 +84,16 @@ public class ZkLocker {
 	            };
 	            Stat stat=new Stat();
 	            try {
+	            	//A KeeperException with error code KeeperException.NoNode will be thrown if no node with the given path exists.
 	                zookeeper.getData("/locker"+lockerKey, w, stat);
 	                latch.await(waitTime, TimeUnit.MICROSECONDS);
 	            }catch(KeeperException ex) {
 	            	log.error("lock getData error",ex);
-	            	throw new RuntimeException(ex);
+	            	if(ex instanceof KeeperException.NoNodeException) {
+	            		//再次tryLock
+	            	}else {
+		            	throw new RuntimeException(ex);
+	            	}
 	            }catch(InterruptedException ex){
 	            	log.error("lock await time over, or getData error",ex);
 	            	throw new RuntimeException(ex);
