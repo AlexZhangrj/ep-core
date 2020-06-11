@@ -8,6 +8,7 @@ import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
+import org.apache.zookeeper.Watcher.Event.EventType;
 import org.apache.zookeeper.Watcher.Event.KeeperState;
 import org.apache.zookeeper.ZooDefs;
 import org.apache.zookeeper.ZooKeeper;
@@ -24,6 +25,7 @@ public class ZkLocker {
 	private ZooKeeper zookeeper;
 	private String lockerKey;
 	private Long waitTime=1000L;
+	private Boolean hasNetworkErrors=false;
 	private ZkLocker() {}
 	/**
 	 * 获取Zookeeper分布式锁
@@ -38,12 +40,16 @@ public class ZkLocker {
 		ZkLocker locker=new ZkLocker();
 		locker.lockerKey=lockerKey;
 		locker.waitTime=waitTime;
+		locker.hasNetworkErrors=false;
 		try {
 			locker.zookeeper=new ZooKeeper(connectString, sessionTimeout, new Watcher() {
 				@Override
 				public void process(WatchedEvent event) {
 					if(KeeperState.SyncConnected==event.getState()) {
 						log.info("ZkLocker connected to server");
+					}else if(KeeperState.Disconnected==event.getState()) {
+						log.info("ZkLocker disconnected to server");
+						locker.hasNetworkErrors=true;
 					}
 				}
 			});
@@ -77,8 +83,10 @@ public class ZkLocker {
 	                @Override
 	                public void process(WatchedEvent watchedEvent) {
 	                    System.out.println("监听到的变化 watchedEvent = " + watchedEvent);
-	                    log.info("[WatchedEvent]节点删除");
-	                    latch.countDown();
+	                    if(EventType.NodeDeleted==watchedEvent.getType()) {
+		                    log.info("[WatchedEvent]节点删除");
+		                    latch.countDown();
+	                    }
 	                }
 	            };
 	            Stat stat=new Stat();
@@ -112,5 +120,8 @@ public class ZkLocker {
 		} catch (KeeperException e) {
         	log.error("unlock delete error",e);
 		}
+	}
+	public boolean hasNetworkErrors() {
+		return hasNetworkErrors;
 	}
 }
