@@ -23,7 +23,6 @@ public class ZkLocker {
 	
 	private ZooKeeper zookeeper;
 	private String lockerKey;
-	private CountDownLatch latch;
 	private Long waitTime=1000L;
 	private ZkLocker() {}
 	/**
@@ -59,7 +58,7 @@ public class ZkLocker {
 	 * 注：已将所有异常转为RuntimeException，如果需要对异常做特殊处理，请使用try{}catch(){}本方法
 	 */
 	public void lock() {
-		latch = new CountDownLatch(1);
+		CountDownLatch latch = new CountDownLatch(1);
 		while(true) {
 			try {
 				//同步创建zookeeper节点
