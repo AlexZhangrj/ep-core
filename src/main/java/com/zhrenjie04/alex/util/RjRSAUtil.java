@@ -24,12 +24,12 @@ import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 /**
- * RSA双钥加解密工具
+ * Rj-RSA双钥加解密工具
  * 本工具包经过加密前241个byte后的密文循环加密后续数据，具有密文长度与Base64密文长度接近，没有私钥无法解密、无法破解密文的特性。
  * @author 张人杰
  *
  */
-public class RSAUtil {
+public class RjRSAUtil {
 	public static final String KEY_ALGORITHM = "RSA";
 	/** 貌似默认是RSA/NONE/PKCS1Padding，未验证 */
 	public static final String CIPHER_ALGORITHM = "RSA/ECB/PKCS1Padding";
@@ -41,28 +41,32 @@ public class RSAUtil {
 
 	public static final String PLAIN_TEXT = "Up Task is the greatest comminicating tool in the world";
 
-	private static PublicKey publicKey;
-	private static PrivateKey privateKey;
+	private PublicKey publicKey;
+	private PrivateKey privateKey;
+	
+	public static RjRSAUtil getInstance() {
+		return new RjRSAUtil();
+	}
 	/**
 	 * 通过base64的公钥数据设置公钥，加密数据必须设置公钥，可以不设置私钥
 	 * @param publicKeyBase64
 	 */
-	public static void restorePublicKey(String publicKeyBase64) {
-		restorePublicKey(Base64Util.decode(publicKeyBase64));
+	public PublicKey restorePublicKey(String publicKeyBase64) {
+		return restorePublicKey(Base64Util.decode(publicKeyBase64));
 	}
 	/**
 	 * 通过base64的私钥数据设置私钥，解密数据必须设置私钥，可以不设置公钥
 	 * @param privateKeyBase64
 	 */
-	public static void restorePrivateKey(String privateKeyBase64) {
-		restorePrivateKey(Base64Util.decode(privateKeyBase64));
+	public PrivateKey restorePrivateKey(String privateKeyBase64) {
+		return restorePrivateKey(Base64Util.decode(privateKeyBase64));
 	}
 	/**
 	 * 用公钥加密数据，加密数据必须设置公钥，可以不设置私钥，循环加密法加密
 	 * @param s 数据内容
 	 * @return
 	 */
-	public static String encode(String s,String charSetName) {
+	public String encode(String s,String charSetName) {
 		byte[] bytes=null;
 		try {
 			bytes=s.getBytes(charSetName);
@@ -117,7 +121,7 @@ public class RSAUtil {
 	 * @param s 密文内容
 	 * @return
 	 */
-	public static String decode(String s,String charSetName) {
+	public String decode(String s,String charSetName) {
 		byte[] encodedText=Base64Util.decode(s);
 		if(encodedText.length<=256) {
 			try {
@@ -164,27 +168,30 @@ public class RSAUtil {
 	 */
 	public static void main(String[] args) {
 		long t=System.currentTimeMillis();
-		Map<String, byte[]> keyMap = generateKeyBytes();
+		RjRSAUtil rsaUtil=RjRSAUtil.getInstance();
+		Map<String, byte[]> keyMap = rsaUtil.generateKeyBytes();
 		System.out.println("generateKeyBytes time:"+(System.currentTimeMillis()-t));
 		t=System.currentTimeMillis();
 		// 加密
-		PublicKey publicKey = restorePublicKey(keyMap.get(PUBLIC_KEY));
-		byte[] encodedText = RSAEncode(publicKey, PLAIN_TEXT.getBytes());
+		PublicKey publicKey = rsaUtil.restorePublicKey(keyMap.get(PUBLIC_KEY));
+		byte[] encodedText = rsaUtil.RSAEncode(publicKey, PLAIN_TEXT.getBytes());
 		System.out.println("restorePublicKey time:"+(System.currentTimeMillis()-t));
 		System.out.println("RSA encoded: " + Base64Util.encode(encodedText));
 		// 解密
 		t=System.currentTimeMillis();
-		PrivateKey privateKey = restorePrivateKey(keyMap.get(PRIVATE_KEY));
+		PrivateKey privateKey = rsaUtil.restorePrivateKey(keyMap.get(PRIVATE_KEY));
 		System.out.println("restorePrivateKey time:"+(System.currentTimeMillis()-t));
-		System.out.println("RSA decoded: " + new String(RSADecode(privateKey, encodedText)));
+		System.out.println("RSA decoded: " + new String(rsaUtil.RSADecode(privateKey, encodedText)));
 		String s="你好啊afjladfowureowrajgldjfwifjiwaoeifjawli你好啊afjladfowureowrajgldjfwifjiwaoeifjawli你好啊afjladfowureowrajgldjfwifjiwaoeifjawli你好啊afjladfowureowrajgldjfwifjiwaoeifjawli你好啊afjladfowureowrajgldjfwifjiwaoeifjawli你好啊afjladfowureowrajgldjfwifjiwaoeifjawli你好啊afjladfowureowrajgldjfwifjiwaoeifjawli你好啊afjladfowureowrajgldjfwifjiwaoeifjawli你好啊afjladfowureowrajgldjfwifjiwaoeifjawli你好啊afjladfowureowrajgldjfwifjiwaoeifjawli啊啊啊哈哈哈哈哈哈";
 		t=System.currentTimeMillis();
-		String encodedString=RSAUtil.encode(s, "UTF-8");
+		RjRSAUtil rsaUtil2=RjRSAUtil.getInstance();
+		rsaUtil2.generateKeyBytes();
+		String encodedString=rsaUtil2.encode(s, "UTF-8");
 		System.out.println("RSAUtil.encode time:::"+(System.currentTimeMillis()-t));
-		System.out.println("encoded:::::"+encodedString);
-		System.out.println("base64:::::"+Base64Util.encode(s.getBytes()));
+		System.out.println("encoded(密文):::::"+encodedString);
+		System.out.println("base64（对比base64字符串长度）:::::"+Base64Util.encode(s.getBytes()));
 		t=System.currentTimeMillis();
-		System.out.println("decoded:::::"+RSAUtil.decode(encodedString, "UTF-8"));
+		System.out.println("decoded（解密后明文）:::::"+rsaUtil2.decode(encodedString, "UTF-8"));
 		System.out.println("RSAUtil.decode time:::"+(System.currentTimeMillis()-t));
 	}
 
@@ -193,7 +200,7 @@ public class RSAUtil {
 	 * 
 	 * @return
 	 */
-	public static Map<String, byte[]> generateKeyBytes() {
+	public Map<String, byte[]> generateKeyBytes() {
 		try {
 			KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance(KEY_ALGORITHM);
 			keyPairGenerator.initialize(KEY_SIZE, SecureRandom.getInstanceStrong());
@@ -203,6 +210,8 @@ public class RSAUtil {
 			Map<String, byte[]> keyMap = new HashMap<String, byte[]>();
 			keyMap.put(PUBLIC_KEY, publicKey.getEncoded());
 			keyMap.put(PRIVATE_KEY, privateKey.getEncoded());
+			this.privateKey=privateKey;
+			this.publicKey=publicKey;
 			System.out.println("public key: "+Base64Util.encode(publicKey.getEncoded()));
 			System.out.println("private key: "+Base64Util.encode(privateKey.getEncoded()));
 			return keyMap;
@@ -218,12 +227,12 @@ public class RSAUtil {
 	 * @param keyBytes
 	 * @return
 	 */
-	private static PublicKey restorePublicKey(byte[] keyBytes) {
+	private PublicKey restorePublicKey(byte[] keyBytes) {
 		X509EncodedKeySpec x509EncodedKeySpec = new X509EncodedKeySpec(keyBytes);
 		try {
 			KeyFactory factory = KeyFactory.getInstance(KEY_ALGORITHM);
 			PublicKey publicKey = factory.generatePublic(x509EncodedKeySpec);
-			RSAUtil.publicKey=publicKey;
+			this.publicKey=publicKey;
 			return publicKey;
 		} catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
 			e.printStackTrace();
@@ -237,12 +246,12 @@ public class RSAUtil {
 	 * @param keyBytes
 	 * @return
 	 */
-	private static PrivateKey restorePrivateKey(byte[] keyBytes) {
+	private PrivateKey restorePrivateKey(byte[] keyBytes) {
 		PKCS8EncodedKeySpec pkcs8EncodedKeySpec = new PKCS8EncodedKeySpec(keyBytes);
 		try {
 			KeyFactory factory = KeyFactory.getInstance(KEY_ALGORITHM);
 			PrivateKey privateKey = factory.generatePrivate(pkcs8EncodedKeySpec);
-			RSAUtil.privateKey=privateKey;
+			this.privateKey=privateKey;
 			return privateKey;
 		} catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
 			e.printStackTrace();
@@ -257,7 +266,7 @@ public class RSAUtil {
 	 * @param plainText
 	 * @return
 	 */
-	private static byte[] RSAEncode(PublicKey key, byte[] plainText) {
+	private byte[] RSAEncode(PublicKey key, byte[] plainText) {
 		try {
 			Cipher cipher = Cipher.getInstance(CIPHER_ALGORITHM);
 			cipher.init(Cipher.ENCRYPT_MODE, key);
@@ -276,7 +285,7 @@ public class RSAUtil {
 	 * @param encodedText
 	 * @return
 	 */
-	private static byte[] RSADecode(PrivateKey key, byte[] encodedText) {
+	private byte[] RSADecode(PrivateKey key, byte[] encodedText) {
 		try {
 			Cipher cipher = Cipher.getInstance(CIPHER_ALGORITHM);
 			cipher.init(Cipher.DECRYPT_MODE, key);

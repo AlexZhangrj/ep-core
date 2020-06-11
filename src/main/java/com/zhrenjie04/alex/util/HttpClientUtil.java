@@ -113,6 +113,10 @@ public class HttpClientUtil {
 		try {
 			response = closeableHttpClient.execute(method);
 			String result = EntityUtils.toString(response.getEntity(), returnCharSet);
+			if(response.getStatusLine()!=null&&response.getStatusLine().getStatusCode()!=HttpStatus.SC_OK) {
+				logger.error(response.getStatusLine().getStatusCode()+":::"+result);
+				throw new CrisisError(response.getStatusLine().getStatusCode()+":::"+result);
+			}
 			logger.debug("request:doPostJson:" + url + ":response:" + result);
 			return result;
 		} catch (IOException e) {
@@ -159,8 +163,9 @@ public class HttpClientUtil {
 			response = closeableHttpClient.execute(method);
 			String result = EntityUtils.toString(response.getEntity(), returnCharSet);
 			logger.debug("request:doPostJson:" + url + ":response:" + result);
-			if(response.getStatusLine().getStatusCode()!=HttpStatus.SC_OK) {
-				throw new CrisisError(result);
+			if(response.getStatusLine()!=null&&response.getStatusLine().getStatusCode()!=HttpStatus.SC_OK) {
+				logger.error(response.getStatusLine().getStatusCode()+":::"+result);
+				throw new CrisisError(response.getStatusLine().getStatusCode()+":::"+result);
 			}
 			return result;
 		} catch (IOException e) {
@@ -335,8 +340,9 @@ public class HttpClientUtil {
 			response = closeableHttpClient.execute(method);
 			String result = EntityUtils.toString(response.getEntity(), returnCharSet);
 			logger.debug("request:doPutJson:" + url + ":response:" + result);
-			if(response.getStatusLine().getStatusCode()!=HttpStatus.SC_OK) {
-				throw new CrisisError(result);
+			if(response.getStatusLine()!=null&&response.getStatusLine().getStatusCode()!=HttpStatus.SC_OK) {
+				logger.error(response.getStatusLine().getStatusCode()+":::"+result);
+				throw new CrisisError(response.getStatusLine().getStatusCode()+":::"+result);
 			}
 			return result;
 		} catch (IOException e) {
@@ -451,8 +457,9 @@ public class HttpClientUtil {
 			response = closeableHttpClient.execute(method);
 			String result = EntityUtils.toString(response.getEntity(), returnCharSet);
 			logger.debug("request:doGet:" + url + ":response:" + result);
-			if(response.getStatusLine().getStatusCode()!=HttpStatus.SC_OK) {
-				throw new CrisisError(result);
+			if(response.getStatusLine()!=null&&response.getStatusLine().getStatusCode()!=HttpStatus.SC_OK) {
+				logger.error(response.getStatusLine().getStatusCode()+":::"+result);
+				throw new CrisisError(response.getStatusLine().getStatusCode()+":::"+result);
 			}
 			return result;
 		} catch (IOException e) {
@@ -552,8 +559,9 @@ public class HttpClientUtil {
 			response = closeableHttpClient.execute(method);
 			String result = EntityUtils.toString(response.getEntity(), returnCharSet);
 			logger.debug("request:doDelete:" + url + ":response:" + result);
-			if(response.getStatusLine().getStatusCode()!=HttpStatus.SC_OK) {
-				throw new CrisisError(result);
+			if(response.getStatusLine()!=null&&response.getStatusLine().getStatusCode()!=HttpStatus.SC_OK) {
+				logger.error(response.getStatusLine().getStatusCode()+":::"+result);
+				throw new CrisisError(response.getStatusLine().getStatusCode()+":::"+result);
 			}
 			return result;
 		} catch (IOException e) {
