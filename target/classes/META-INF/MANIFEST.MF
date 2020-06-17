@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
-Build-Jdk-Spec: 11
+Build-Jdk-Spec: 14
 Implementation-Title: ep-core
-Implementation-Version: 0.0.2
+Implementation-Version: 0.0.3
 Implementation-Vendor: Pivotal Software, Inc.
 Created-By: Maven Integration for Eclipse
 

@@ -8,6 +8,7 @@
 /Users/zhangrenjie/developing/gitee/ep-core/src/main/java/com/zhrenjie04/alex/core/PageResult.java
 /Users/zhangrenjie/developing/gitee/ep-core/src/main/java/com/zhrenjie04/alex/core/GenericService.java
 /Users/zhangrenjie/developing/gitee/ep-core/src/main/java/com/zhrenjie04/alex/util/PropertyTypeUtil.java
+/Users/zhangrenjie/developing/gitee/ep-core/src/main/java/com/zhrenjie04/alex/core/DynamicDataSource.java
 /Users/zhangrenjie/developing/gitee/ep-core/src/main/java/com/zhrenjie04/alex/util/RjRSAUtil.java
 /Users/zhangrenjie/developing/gitee/ep-core/src/main/java/com/zhrenjie04/alex/core/GenericServiceMongoDb.java
 /Users/zhangrenjie/developing/gitee/ep-core/src/main/java/com/zhrenjie04/alex/util/RedisUtil.java
@@ -32,12 +33,14 @@
 /Users/zhangrenjie/developing/gitee/ep-core/src/main/java/com/zhrenjie04/alex/util/Test.java
 /Users/zhangrenjie/developing/gitee/ep-core/src/main/java/com/zhrenjie04/alex/core/JsonTreeNode.java
 /Users/zhangrenjie/developing/gitee/ep-core/src/main/java/com/zhrenjie04/alex/core/AlexTimestampSerializer.java
+/Users/zhangrenjie/developing/gitee/ep-core/src/main/java/com/zhrenjie04/alex/core/DataSourceHandler.java
 /Users/zhangrenjie/developing/gitee/ep-core/src/main/java/com/zhrenjie04/alex/core/AuditLog.java
 /Users/zhangrenjie/developing/gitee/ep-core/src/main/java/com/zhrenjie04/alex/util/JwtUtil.java
 /Users/zhangrenjie/developing/gitee/ep-core/src/main/java/com/zhrenjie04/alex/converter/Decimal128ToBigDecimalConverter.java
 /Users/zhangrenjie/developing/gitee/ep-core/src/main/java/com/zhrenjie04/alex/util/Base64ImageUtil.java
 /Users/zhangrenjie/developing/gitee/ep-core/src/main/java/com/zhrenjie04/alex/util/PropertyNameUtil.java
 /Users/zhangrenjie/developing/gitee/ep-core/src/main/java/com/zhrenjie04/alex/util/JsonUtil.java
+/Users/zhangrenjie/developing/gitee/ep-core/src/main/java/com/zhrenjie04/alex/common/service/RedisService.java
 /Users/zhangrenjie/developing/gitee/ep-core/src/main/java/com/zhrenjie04/alex/core/MenuItem.java
 /Users/zhangrenjie/developing/gitee/ep-core/src/main/java/com/zhrenjie04/alex/util/SessionUtil.java
 /Users/zhangrenjie/developing/gitee/ep-core/src/main/java/com/zhrenjie04/alex/util/PingYinUtil.java
