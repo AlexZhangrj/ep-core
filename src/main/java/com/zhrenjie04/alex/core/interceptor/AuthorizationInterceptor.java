@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -34,25 +35,29 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
 	public static final String AUTHORIZATION_HEADER_KEY = "sid";
 
 	@Value("${auth.open-swagger}")
-	private Boolean openSwagger;
+	private Boolean openSwaggerBoolean;
+	private static Boolean openSwagger;
 	@Value("${auth.system-code}")
-	private String systemCode;
+	private String systemCodeString;
+	private static String systemCode;
 	@Value("${auth.unfiltered-codes}")
 	private String unfilteredCodesString;
-	private ArrayList<String> unfilteredCodes;
+	private static ArrayList<String> unfilteredCodes;
 
 	@Value("${auth.default-authorized-codes}")
 	private String defaultAuthorizedCodesString;
-	private ArrayList<String> defaultAuthorizedCodes;
+	private static ArrayList<String> defaultAuthorizedCodes;
 
 	@Value("${auth.unfilteredPathStartWith}")
 	private String unfilteredPathStartWithString;
-	private ArrayList<String> unfilteredPathStartWith;
+	private static ArrayList<String> unfilteredPathStartWith;
 
 	Logger logger = LoggerFactory.getLogger(AuthorizationInterceptor.class);
 
 	@PostConstruct
 	protected void init() {
+		openSwagger=openSwaggerBoolean;
+		systemCode=systemCodeString;
 		unfilteredCodes = new ArrayList<>();
 		String[] codes = unfilteredCodesString.split("\\,");
 		if (codes != null) {
