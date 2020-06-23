@@ -152,7 +152,7 @@ public class RSASignatureUtil {
 	 */
 	private byte[] RSAEncode(PublicKey key, byte[] plainText) {
 		try {
-			Cipher cipher = Cipher.getInstance(CIPHER_ALGORITHM);
+			Cipher cipher = Cipher.getInstance("RSA");
 			cipher.init(Cipher.ENCRYPT_MODE, key);
 			return cipher.doFinal(plainText);
 		} catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IllegalBlockSizeException
@@ -171,7 +171,7 @@ public class RSASignatureUtil {
 	 */
 	private byte[] RSADecode(PrivateKey key, byte[] encodedText) {
 		try {
-			Cipher cipher = Cipher.getInstance(CIPHER_ALGORITHM);
+			Cipher cipher = Cipher.getInstance("RSA");
 			cipher.init(Cipher.DECRYPT_MODE, key);
 			return cipher.doFinal(encodedText);
 		} catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IllegalBlockSizeException
