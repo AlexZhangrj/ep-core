@@ -116,6 +116,7 @@ public class RSASignatureUtil {
 	public byte[] decodeFromBase64String(String in) {
 		return RSADecode(privateKey, Base64.getDecoder().decode(in));
 	}
+
 	/**
 	 * 生成密钥对。注意这里是生成密钥对KeyPair，再由密钥对获取公私钥
 	 * 
@@ -133,10 +134,12 @@ public class RSASignatureUtil {
 			keyMap.put(PRIVATE_KEY, privateKey.getEncoded());
 			this.privateKey = privateKey;
 			this.publicKey = publicKey;
-			System.out.println("public key: " + Base64.getEncoder().encode(publicKey.getEncoded()));
-			System.out.println("modules（模）: " + Base64.getEncoder().encodeToString(publicKey.getModulus().toByteArray()));
-			System.out.println("PublicExponent（质数）: " + Base64.getEncoder().encodeToString(publicKey.getPublicExponent().toByteArray()));
-			System.out.println("private key: " + Base64.getEncoder().encode(privateKey.getEncoded()));
+			System.out.println("public key: " + Base64.getEncoder().encodeToString(publicKey.getEncoded()));
+			System.out.println("private key: " + Base64.getEncoder().encodeToString(privateKey.getEncoded()));
+			System.out
+					.println("modules（模）: " + Base64.getEncoder().encodeToString(publicKey.getModulus().toByteArray()));
+			System.out.println("PublicExponent（质数）: "
+					+ Base64.getEncoder().encodeToString(publicKey.getPublicExponent().toByteArray()));
 			return keyMap;
 		} catch (NoSuchAlgorithmException e) {
 			e.printStackTrace();
@@ -253,14 +256,12 @@ public class RSASignatureUtil {
 					primeQ, primeExponentP, primeExponentQ, crtCoefficient);
 			keyFactory = KeyFactory.getInstance("RSA");
 			this.privateKey = keyFactory.generatePrivate(rsaPriKey);
-			byte[] bytes = Base64.getEncoder().encode(privateKey.getEncoded());
-			return new String(bytes, Charset.forName("utf-8"));
+			return Base64.getEncoder().encodeToString(privateKey.getEncoded());
 		} catch (Exception e) {
 			System.err.println(e.toString());
 		}
 		return null;
 	}
-
 	/**
 	 * C#公钥转换成java公钥
 	 */
@@ -278,8 +279,7 @@ public class RSASignatureUtil {
 			RSAPublicKeySpec rsaPubKey = new RSAPublicKeySpec(modulus, publicExponent);
 			keyFactory = KeyFactory.getInstance("RSA");
 			this.publicKey = keyFactory.generatePublic(rsaPubKey);
-			byte[] bytes = Base64.getEncoder().encode(publicKey.getEncoded());
-			return new String(bytes, Charset.forName("utf-8"));
+			return Base64.getEncoder().encodeToString(publicKey.getEncoded());
 		} catch (Exception e) {
 			System.err.println(e.toString());
 			return null;
@@ -290,39 +290,31 @@ public class RSASignatureUtil {
 	 * 生成公钥、私钥部分及测试加密、解密过程
 	 * 
 	 * @param args
+	 * @throws UnsupportedEncodingException 
 	 */
-	public static void main(String[] args) {
-		long t = System.currentTimeMillis();
+	public static void main(String[] args) throws UnsupportedEncodingException {
 		RSASignatureUtil rsaUtil = RSASignatureUtil.getInstance();
-//		Map<String, byte[]> keyMap = rsaUtil.generateKeyBytes();
-//		System.out.println("generateKeyBytes time:" + (System.currentTimeMillis() - t));
-//		t = System.currentTimeMillis();
-//		// 加密密钥
-//		PublicKey publicKey = rsaUtil.restorePublicKey(keyMap.get(PUBLIC_KEY));
-//		System.out.println("restorePublicKey time:" + (System.currentTimeMillis() - t));
-//		// 解密密钥
-//		t = System.currentTimeMillis();
-//		PrivateKey privateKey = rsaUtil.restorePrivateKey(keyMap.get(PRIVATE_KEY));
-//		System.out.println("Public key:" + Base64Util.encode(keyMap.get(PUBLIC_KEY)));
-//		System.out.println("Private key:" + Base64Util.encode(keyMap.get(PRIVATE_KEY)));
-//		String s = "你好啊afjladfowureowrajgldjfwifjiwaoeifjawli你好啊afjladfowureowrajgldjfwifjiwaoeifjawli你好啊afjladfowureowrajgldjfwifjiwaoeifjawli你好啊afjladfowureowrajgldjfwifjiwaoeifjawli你好啊afjladfowureowrajgldjfwifjiwaoeifjawli你好啊afjladfowureowrajgldjfwifjiwaoeifjawli你好啊afjladfowureowrajgldjfwifjiwaoeifjawli你好啊afjladfowureowrajgldjfwifjiwaoeifjawli你好啊afjladfowureowrajgldjfwifjiwaoeifjawli你好啊afjladfowureowrajgldjfwifjiwaoeifjawli啊啊啊哈哈哈哈哈哈";
-//		byte[] md5 = Md5Util.encrypt(s.getBytes());
-//		System.out.println("md5::::" + Base64Util.encode(md5));
-//		System.out.println("md5 length::::" + md5.length);// 16字节，128位
-//		byte[] signature = rsaUtil.encode(md5);
-//		System.out.println("signature::::" + Base64Util.encode(signature));
-//		System.out.println("signature length::::" + signature.length);// 256字节
-//		byte[] decodedMd5 = rsaUtil.decode(signature);
-//		System.out.println("decodedMd5::::" + Base64Util.encode(decodedMd5));
-//		
-		//C#加密解密
-		String privateKeyXml="<RSAKeyValue><Modulus>5n+9l/hssVjCyhKAhXBkAjuPlvWTE4GMlBxfKmBtTRqezBq2jepV/2byAJ5U56v5OAeY8Kari0QdgO1M1cPBzQTaGj2W80qLg8FhhSbBZBh8CxhrcABtl2o12ekctDmFBjXpXSoKJBDrq9d4gDy20OjZWfzTHbQcWhKdbJtnw7Zedvk/CvI+3R3ndXkDZbNLva47Aydirh6ZpgIf8Ia391t7BNoxgRtPcv6jjUGc+jlfSUYvOMag4KsTBacIu5YmrChmWJSNWOZjLETnimnA6O9s8navyQT6LPs6quaC0RPL6oQ6hMohkUQy/bzS9c0yi7+n6kM5aHnklAZIoM6TSw==</Modulus><Exponent>AQAB</Exponent><P>/RM0LpyZ4JNofXDAqq+pn3OqHYUK5Yt1tU/3QLm4Bnp3FHkPSgFq55Kc0imemk5hfU1iYidwpY9Fo68UaMSldjshRUsBMXfCMWZsSeP6+oyzM3CIHmpt+l46Y0c5F4CMWwniYx19yscWL3y/fiQtWWGjZ3ge5ornA+YJu6ci5nE=</P><Q>6Sm9L43/6e7fjVCjTWFb/Y4RU6NXZU+7rnqK/06oI/or8qyK7W0RNEeH2v1pvEViLWa8AyFbfJShDrs1EYHt0/qKU0G59Fre0FU++qbGI+N7v9Z1P0jcIG8meFYxOB9nSqUEsLkddhR7CkOUN+lhCZcJACasERcQfLPvlSTTC3s=</Q><DP>YuAO4isy/4f4KhJUZBuPlQm2rCPftwE+suEURAiLepR8U9Zcf9h/8QvaE05JdhYrhq4mQx0PqM+KMMJloe06jC/b9tuwEqisiWpv4oqc8yjnlrBfrip833XTMBiSmLkTnToGZh0OmZwg8dq2Yk02HpbEJdfLkt0wFtjYcqWBQDE=</DP><DQ>AeHNXiHmS+war9hTyR8dD/nil+s8nFu9ZxYkIxVudAPj8OyFno7/0Y02QoVDIjrpJPasU9YkF+hXOHg4YHDNC6X9Edj4+Ej3fXUCsiFAfi+q4wyHG8CpzjU3eUcw1IQkYEzesdJ8s2RM7fNHsf/XQa2PbAnj36tw/aCyMWD/txs=</DQ><InverseQ>S2yGwHP8u0fHiYPmL//6DkdV24P6+Pv1yoHmGLzEHHABpJ3s9ViAn7YWj2nmpM7FtQZwkJRRLb/Lm1hVO4prLgxkIQSUhSc0Sdj9u8Hf4PqDHjlF9aZD4/YqVohjdTzoEauZYtw87qhaYlVvtQ596qwcf6/rQSqYxy3qdhw2xLw=</InverseQ><D>SkJ5WI6mpfRMvUF8uoDdF4MM3bu8aJpiKg2B82shi6e55VPt4IbQsfn+mYhpHkJfhlecRFvOBI4rWzAYgv4QX/biNXYGPdeUXxxcSMOVpqPkwsZZRro8lH2ZX90kbEPjwX548pTqs3foFXLT1ay50VBTRhSYB4fRYouAwE7I/VoVKc0D/ANDaUhhVHs7LUrPcqnjsmGxLTlTEqZ+ApL5IFZArno0HO/BdcszAPgO4E+noC4zducjEbnKzgM0NCp50Iqg2r3uBmov3FEDHI692V1ZVY8+jNWpxWk8mmGbNIaBCs+0eIWNy7wfZFOLBp/FzEJ1glr6BfRYNWUcKyynwQ==</D></RSAKeyValue>";
-		rsaUtil.privateKeyFromXml(privateKeyXml);
-		byte[] bytes=rsaUtil.decodeFromBase64String("VCG9com6gImf5EjTDfKDJtUJXOeuuhX3tKPzpPkmOReZ//CGHhUKX0e5i46a0SBAJHP/8JI6szHKA4/IOIvjF7l0s09rtXpopMVYQNBi3g3etA4ckuF6VYqIT3x13FwbqXWY5HQqwTkSUfDSy2vHfQi9+Et7w1PjdM1uHfoUS0m1UN+yDZx+O835qkO4qfnh1roZzsTDWG69WAMVvNNnq4UlbQij3yQi9hstZoXlW5drcTCzWq4p1svjkDV7HSu+REALWD2alXwoVBnjD/LFiRnK3dNTfCBbS7YpvEnfWpyCASdQJr5wM4JhrFrgwhIq8PqezVh5MGy70VE79UsQkQ==");
-		try {
-			System.out.println(new String(bytes,"UTF-8"));
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
+		Map<String, byte[]> keyMap = rsaUtil.generateKeyBytes();
+		// 加密密钥
+		// 解密密钥
+		System.out.println("Public key:" + Base64.getEncoder().encodeToString(keyMap.get(PUBLIC_KEY)));
+		System.out.println("Private key:" + Base64.getEncoder().encodeToString(keyMap.get(PRIVATE_KEY)));
+		String md5="12312312312";
+		byte[] signature = rsaUtil.encode(md5.getBytes("UTF-8"));
+		System.out.println("signature::::" + Base64.getEncoder().encodeToString(signature));
+		System.out.println("signature length::::" + signature.length);// 256字节
+		byte[] decodedMd5 = rsaUtil.decode(signature);
+		System.out.println("decodedMd5::::" + new String(decodedMd5));
+
+//		// C#加密,java解密
+//		String privateKeyXml = "<RSAKeyValue><Modulus>5n+9l/hssVjCyhKAhXBkAjuPlvWTE4GMlBxfKmBtTRqezBq2jepV/2byAJ5U56v5OAeY8Kari0QdgO1M1cPBzQTaGj2W80qLg8FhhSbBZBh8CxhrcABtl2o12ekctDmFBjXpXSoKJBDrq9d4gDy20OjZWfzTHbQcWhKdbJtnw7Zedvk/CvI+3R3ndXkDZbNLva47Aydirh6ZpgIf8Ia391t7BNoxgRtPcv6jjUGc+jlfSUYvOMag4KsTBacIu5YmrChmWJSNWOZjLETnimnA6O9s8navyQT6LPs6quaC0RPL6oQ6hMohkUQy/bzS9c0yi7+n6kM5aHnklAZIoM6TSw==</Modulus><Exponent>AQAB</Exponent><P>/RM0LpyZ4JNofXDAqq+pn3OqHYUK5Yt1tU/3QLm4Bnp3FHkPSgFq55Kc0imemk5hfU1iYidwpY9Fo68UaMSldjshRUsBMXfCMWZsSeP6+oyzM3CIHmpt+l46Y0c5F4CMWwniYx19yscWL3y/fiQtWWGjZ3ge5ornA+YJu6ci5nE=</P><Q>6Sm9L43/6e7fjVCjTWFb/Y4RU6NXZU+7rnqK/06oI/or8qyK7W0RNEeH2v1pvEViLWa8AyFbfJShDrs1EYHt0/qKU0G59Fre0FU++qbGI+N7v9Z1P0jcIG8meFYxOB9nSqUEsLkddhR7CkOUN+lhCZcJACasERcQfLPvlSTTC3s=</Q><DP>YuAO4isy/4f4KhJUZBuPlQm2rCPftwE+suEURAiLepR8U9Zcf9h/8QvaE05JdhYrhq4mQx0PqM+KMMJloe06jC/b9tuwEqisiWpv4oqc8yjnlrBfrip833XTMBiSmLkTnToGZh0OmZwg8dq2Yk02HpbEJdfLkt0wFtjYcqWBQDE=</DP><DQ>AeHNXiHmS+war9hTyR8dD/nil+s8nFu9ZxYkIxVudAPj8OyFno7/0Y02QoVDIjrpJPasU9YkF+hXOHg4YHDNC6X9Edj4+Ej3fXUCsiFAfi+q4wyHG8CpzjU3eUcw1IQkYEzesdJ8s2RM7fNHsf/XQa2PbAnj36tw/aCyMWD/txs=</DQ><InverseQ>S2yGwHP8u0fHiYPmL//6DkdV24P6+Pv1yoHmGLzEHHABpJ3s9ViAn7YWj2nmpM7FtQZwkJRRLb/Lm1hVO4prLgxkIQSUhSc0Sdj9u8Hf4PqDHjlF9aZD4/YqVohjdTzoEauZYtw87qhaYlVvtQ596qwcf6/rQSqYxy3qdhw2xLw=</InverseQ><D>SkJ5WI6mpfRMvUF8uoDdF4MM3bu8aJpiKg2B82shi6e55VPt4IbQsfn+mYhpHkJfhlecRFvOBI4rWzAYgv4QX/biNXYGPdeUXxxcSMOVpqPkwsZZRro8lH2ZX90kbEPjwX548pTqs3foFXLT1ay50VBTRhSYB4fRYouAwE7I/VoVKc0D/ANDaUhhVHs7LUrPcqnjsmGxLTlTEqZ+ApL5IFZArno0HO/BdcszAPgO4E+noC4zducjEbnKzgM0NCp50Iqg2r3uBmov3FEDHI692V1ZVY8+jNWpxWk8mmGbNIaBCs+0eIWNy7wfZFOLBp/FzEJ1glr6BfRYNWUcKyynwQ==</D></RSAKeyValue>";
+//		rsaUtil.privateKeyFromXml(privateKeyXml);
+//		byte[] bytes = rsaUtil.decodeFromBase64String(
+//				"VCG9com6gImf5EjTDfKDJtUJXOeuuhX3tKPzpPkmOReZ//CGHhUKX0e5i46a0SBAJHP/8JI6szHKA4/IOIvjF7l0s09rtXpopMVYQNBi3g3etA4ckuF6VYqIT3x13FwbqXWY5HQqwTkSUfDSy2vHfQi9+Et7w1PjdM1uHfoUS0m1UN+yDZx+O835qkO4qfnh1roZzsTDWG69WAMVvNNnq4UlbQij3yQi9hstZoXlW5drcTCzWq4p1svjkDV7HSu+REALWD2alXwoVBnjD/LFiRnK3dNTfCBbS7YpvEnfWpyCASdQJr5wM4JhrFrgwhIq8PqezVh5MGy70VE79UsQkQ==");
+//		try {
+//			System.out.println(new String(bytes, "UTF-8"));
+//		} catch (UnsupportedEncodingException e) {
+//			e.printStackTrace();
+//		}
 	}
 }
