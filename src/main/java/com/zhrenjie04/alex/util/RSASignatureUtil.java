@@ -281,7 +281,7 @@ public class RSASignatureUtil {
 			BigInteger publicExponent = new BigInteger(1, Base64.getDecoder().decode(exponentXml));
 			RSAPublicKeySpec keySpec = new RSAPublicKeySpec(modulus, publicExponent);
 			keyFactory = KeyFactory.getInstance("RSA");
-			publicKey = keyFactory.generatePublic(keySpec);
+			this.publicKey = keyFactory.generatePublic(keySpec);
 			return Base64.getEncoder().encodeToString(publicKey.getEncoded());
 		} catch (Exception e) {
 			System.err.println(e.toString());
