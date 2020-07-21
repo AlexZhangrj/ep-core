@@ -1,7 +1,6 @@
 package com.zhrenjie04.alex.core;
 
 import java.lang.reflect.ParameterizedType;
-import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -18,7 +17,7 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.mongodb.client.result.UpdateResult;
-import com.zhrenjie04.alex.util.IdGenerator;
+import com.zhrenjie04.alex.util.IdGenerator2;
 
 /**
  * @author 张人杰
@@ -177,7 +176,7 @@ public abstract class AbstractGenericServiceMongoDb<T extends AbstractGenericEnt
 	@Override
 	@Transactional
 	public JsonResult insertObject(User sessionUser, T object) {
-		object.setPK(IdGenerator.nextIdString());
+		object.setPK(IdGenerator2.nextIdBase52String());
 		object.setIsDeleted(false);
 		template.insert(object);
 		JsonResult result = JsonResult.success("插入成功");
