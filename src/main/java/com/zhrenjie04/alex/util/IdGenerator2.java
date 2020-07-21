@@ -8,7 +8,7 @@ import com.zhrenjie04.alex.core.exception.CrisisError;
 /**
  * @author 张人杰 Twitter_Snowflake<br>
  * 		   2020-07-21改进：
- * 		   改为两个Long型数据（每个long64位，一共128位，高位long表示时间戳，低位long表示workid和sequence），并转化为base52表示
+ * 		   改为一个Long型整数+一个Integer型整数（long64位，integer32位，一共96位，高位long表示时间戳，低位int表示workid和sequence），并转化为base52表示
  */
 public class IdGenerator2 {
 
