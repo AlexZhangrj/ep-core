@@ -6,7 +6,7 @@
 
 	<groupId>com.zhrenjie04.alex.web</groupId>
 	<artifactId>ep-core</artifactId>
-	<version>0.0.3</version>
+	<version>0.0.4</version>
 	<packaging>jar</packaging>
 
 	<name>ep-core</name>

@@ -3,10 +3,10 @@ package com.zhrenjie04.alex.core;
 import java.util.HashMap;
 import java.util.List;
 
-import org.slf4j.Logger;import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.zhrenjie04.alex.util.IdGenerator;
+import com.zhrenjie04.alex.util.IdGenerator2;
 
 /**
  * @author 张人杰
@@ -123,7 +123,7 @@ public abstract class AbstractGenericService<T extends AbstractGenericEntity, D 
 	@Override
 	@Transactional
 	public JsonResult insertObject(T object, User sessionUser) {
-		object.setPK(IdGenerator.nextIdString());
+		object.setPK(IdGenerator2.nextIdBase52String());
 		object.setCreaterId(sessionUser.getUserId());
 		object.setCreaterName(sessionUser.getRealname());
 		getDao().insertObject(object);

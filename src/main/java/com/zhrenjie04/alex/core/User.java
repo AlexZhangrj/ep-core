@@ -18,6 +18,9 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 /**
  * 用户类
@@ -26,6 +29,9 @@ import io.swagger.annotations.ApiModelProperty;
  *
  */
 @ApiModel("用户对象")
+@Data
+@EqualsAndHashCode(of = {"userId"}, callSuper = false)
+@ToString
 public class User extends AbstractGenericEntity {
 	private static final long serialVersionUID = -3683386137654425948L;
 	public User() {
@@ -90,6 +96,8 @@ public class User extends AbstractGenericEntity {
 	private String friendMemo;
 	@ApiModelProperty("扩展字段，用于显示BigDecimal的处理过程")
 	private BigDecimal bigDecimalTag=new BigDecimal("2.9");
+	@ApiModelProperty("客户端类型")
+	private String clientType;
 
 	private HashMap<String, Job> idToJobMap = new HashMap<String, Job>();
 
@@ -108,54 +116,6 @@ public class User extends AbstractGenericEntity {
 		} else {
 			return idToJobMap.get(currentJobId);
 		}
-	}
-
-	public Boolean getNotChangePassword() {
-		return notChangePassword;
-	}
-
-	public void setNotChangePassword(Boolean notChangePassword) {
-		this.notChangePassword = notChangePassword;
-	}
-
-	public String getOldPassword() {
-		return oldPassword;
-	}
-
-	public void setOldPassword(String oldPassword) {
-		this.oldPassword = oldPassword;
-	}
-
-	public String getCaptcha() {
-		return captcha;
-	}
-
-	public void setCaptcha(String captcha) {
-		this.captcha = captcha;
-	}
-
-	public List<MenuItem> getMenuLinks() {
-		return menuLinks;
-	}
-
-	public void setMenuLinks(List<MenuItem> menuLinks) {
-		this.menuLinks = menuLinks;
-	}
-
-	public String getGroupId() {
-		return groupId;
-	}
-
-	public void setGroupId(String groupId) {
-		this.groupId = groupId;
-	}
-
-	public String getSalt() {
-		return salt;
-	}
-
-	public void setSalt(String salt) {
-		this.salt = salt;
 	}
 
 	public String getCurrentJobId() {
@@ -193,150 +153,6 @@ public class User extends AbstractGenericEntity {
 	@Override
 	public void setPK(String id) {
 		this.userId = id;
-	}
-
-	public String getUserId() {
-		return userId;
-	}
-
-	public void setUserId(String userId) {
-		this.userId = userId;
-	}
-
-	public String getUsername() {
-		return username;
-	}
-
-	public void setUsername(String username) {
-		this.username = username;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	public String getRealname() {
-		return realname;
-	}
-
-	public void setRealname(String realname) {
-		this.realname = realname;
-	}
-
-	public String getNickname() {
-		return nickname;
-	}
-
-	public void setNickname(String nickname) {
-		this.nickname = nickname;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
-	public String getCellphone() {
-		return cellphone;
-	}
-
-	public void setCellphone(String cellphone) {
-		this.cellphone = cellphone;
-	}
-
-	public Boolean getIsLocked() {
-		return isLocked;
-	}
-
-	public void setIsLocked(Boolean isLocked) {
-		this.isLocked = isLocked;
-	}
-
-	public String getLastLoginIp() {
-		return lastLoginIp;
-	}
-
-	public void setLastLoginIp(String lastLoginIp) {
-		this.lastLoginIp = lastLoginIp;
-	}
-
-	public Date getLastLoginTime() {
-		return lastLoginTime;
-	}
-
-	public void setLastLoginTime(Date lastLoginTime) {
-		this.lastLoginTime = lastLoginTime;
-	}
-
-	public String getPortraitUrl() {
-		return portraitUrl;
-	}
-
-	public void setPortraitUrl(String portraitUrl) {
-		this.portraitUrl = portraitUrl;
-	}
-
-	public String getWeixin() {
-		return weixin;
-	}
-
-	public void setWeixin(String weixin) {
-		this.weixin = weixin;
-	}
-
-	public Date getBirthday() {
-		return birthday;
-	}
-
-	public void setBirthday(Date birthday) {
-		this.birthday = birthday;
-	}
-
-	public String getGender() {
-		return gender;
-	}
-
-	public void setGender(String gender) {
-		this.gender = gender;
-	}
-
-	public List<String> getPrivilegeCodes() {
-		return privilegeCodes;
-	}
-
-	public void setPrivilegeCodes(List<String> privilegeCodes) {
-		this.privilegeCodes = privilegeCodes;
-	}
-
-	public List<String> getCurrentRoleIds() {
-		return currentRoleIds;
-	}
-
-	public void setCurrentRoleIds(List<String> currentRoleIds) {
-		this.currentRoleIds = currentRoleIds;
-	}
-
-	public String getFriendMemo() {
-		return friendMemo;
-	}
-
-	public void setFriendMemo(String friendMemo) {
-		this.friendMemo = friendMemo;
-	}
-
-	public BigDecimal getBigDecimalTag() {
-		return bigDecimalTag;
-	}
-
-	public void setBigDecimalTag(BigDecimal bigDecimalTag) {
-		this.bigDecimalTag = bigDecimalTag;
 	}
 	
 }
