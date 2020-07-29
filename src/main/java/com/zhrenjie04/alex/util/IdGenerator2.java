@@ -147,6 +147,65 @@ public class IdGenerator2 {
 		return firstString.append(lastString).toString();
 	}
 	/**
+	 * 获得下一个Id的byte数组表示
+	 * 建议博客文章Id、聊天记录采用字符Id
+	 * @return 雪花算法id
+	 */
+	public static synchronized byte[] nextIdBytes() {
+		long timestamp = timeGen();
+
+		// 如果当前时间小于上一次ID生成的时间戳，说明系统时钟回退过这个时候应当抛出异常
+		if (timestamp < lastTimestamp) {
+			throw new CrisisError(String.format("Clock moved backwards.  Refusing to generate id for %d milliseconds",
+					lastTimestamp - timestamp));
+		}
+
+		// 如果是同一时间生成的，则进行毫秒内序列
+		if (lastTimestamp == timestamp) {
+			sequence = (sequence + 1) & SEQUENCE_MASK;
+			// 毫秒内序列溢出
+			if (sequence == 0) {
+				// 阻塞到下一个毫秒,获得新的时间戳
+				timestamp = tillNextMillis(lastTimestamp);
+			}
+		} else {
+			// 时间戳改变，毫秒内序列重置
+			sequence = 0;
+		}
+
+		// 上次生成ID的时间截
+		lastTimestamp = timestamp;
+		// 移位并通过或运算拼到一起组成64位的ID
+		Long firstLong=(timestamp - START_TIME);
+		Integer lastInteger=(workerId << WORKER_ID_SHIFT) | sequence;
+		byte[] bytes=new byte[12];
+		bytes[0]=(byte)(lastInteger&0xff);
+		lastInteger=lastInteger>>8;
+		bytes[1]=(byte)(lastInteger&0xff);
+		lastInteger=lastInteger>>8;
+		bytes[2]=(byte)(lastInteger&0xff);
+		lastInteger=lastInteger>>8;
+		bytes[3]=(byte)(lastInteger&0xff);
+		
+		bytes[4]=(byte)(firstLong&0xff);
+		firstLong=firstLong>>8;
+		bytes[5]=(byte)(firstLong&0xff);
+		firstLong=firstLong>>8;
+		bytes[6]=(byte)(firstLong&0xff);
+		firstLong=firstLong>>8;
+		bytes[7]=(byte)(firstLong&0xff);
+		firstLong=firstLong>>8;
+		bytes[8]=(byte)(firstLong&0xff);
+		firstLong=firstLong>>8;
+		bytes[9]=(byte)(firstLong&0xff);
+		firstLong=firstLong>>8;
+		bytes[10]=(byte)(firstLong&0xff);
+		firstLong=firstLong>>8;
+		bytes[11]=(byte)(firstLong&0xff);
+		
+		return bytes;
+	}
+	/**
 	 * 阻塞到下一个毫秒，直到获得新的时间戳
 	 * 
 	 * @param lastTimestamp 上次生成ID的时间截
