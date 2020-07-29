@@ -96,6 +96,8 @@ public class User extends AbstractGenericEntity {
 	private String friendMemo;
 	@ApiModelProperty("扩展字段，用于显示BigDecimal的处理过程")
 	private BigDecimal bigDecimalTag=new BigDecimal("2.9");
+	@ApiModelProperty("客户端类型")
+	private String clientType;
 
 	private HashMap<String, Job> idToJobMap = new HashMap<String, Job>();
 
