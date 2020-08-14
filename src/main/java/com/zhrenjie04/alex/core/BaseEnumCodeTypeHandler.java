@@ -21,24 +21,31 @@ public class BaseEnumCodeTypeHandler<E extends Enum<E> & BaseEnum> extends BaseT
 
 	@Override
 	public void setNonNullParameter(PreparedStatement ps, int i, E parameter, JdbcType jdbcType) throws SQLException {
-		ps.setInt(i, parameter.getCode());
+//		ps.setInt(i, parameter.getCode());
+		ps.setObject(i, parameter.getDbCode());
 	}
 
 	@Override
 	public E getNullableResult(ResultSet rs, String columnName) throws SQLException {
-		int code = rs.getInt(columnName);
+//		int code = rs.getInt(columnName);
+//		return rs.wasNull() ? null : EnumUtils.codeOf(this.type, code);
+		Object code = rs.getObject(columnName);
 		return rs.wasNull() ? null : EnumUtils.codeOf(this.type, code);
 	}
 
 	@Override
 	public E getNullableResult(ResultSet rs, int columnIndex) throws SQLException {
-		int code = rs.getInt(columnIndex);
+//		int code = rs.getInt(columnIndex);
+//		return rs.wasNull() ? null : EnumUtils.codeOf(this.type, code);
+		Object code = rs.getObject(columnIndex);
 		return rs.wasNull() ? null : EnumUtils.codeOf(this.type, code);
 	}
 
 	@Override
 	public E getNullableResult(CallableStatement cs, int columnIndex) throws SQLException {
-		int code = cs.getInt(columnIndex);
+//		int code = cs.getInt(columnIndex);
+//		return cs.wasNull() ? null : EnumUtils.codeOf(this.type, code);
+		Object code = cs.getObject(columnIndex);
 		return cs.wasNull() ? null : EnumUtils.codeOf(this.type, code);
 	}
 }
