@@ -7,7 +7,11 @@ import java.sql.SQLException;
 
 import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
-
+/**
+ * 张人杰改进版
+ * @author zhangrenjie
+ * @param <E>
+ */
 public class BaseEnumCodeTypeHandler<E extends Enum<E> & BaseEnum> extends BaseTypeHandler<E> {
 
 	private final Class<E> type;
