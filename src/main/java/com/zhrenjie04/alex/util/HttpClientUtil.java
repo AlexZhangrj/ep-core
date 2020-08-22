@@ -12,12 +12,14 @@ import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpRequestRetryHandler;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.config.ConnectionConfig;
 import org.apache.http.config.SocketConfig;
 import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.http.entity.StringEntity;
@@ -40,25 +42,31 @@ public class HttpClientUtil {
 	private static final Logger logger = LoggerFactory.getLogger(HttpClientUtil.class);
 	private static PoolingHttpClientConnectionManager poolingHttpClientConnectionManager = new PoolingHttpClientConnectionManager();
 
-	private static Integer retryExecutionCount=1;
+	private static Integer waitIdleConnectionTimeout = 1000;
+	private static Integer connectTimeout = 1000;
+	private static Integer soTimeout = 1000;
+	private static Integer retryExecutionCount = 1;
 
-	public static void init(Integer maxTotal,Integer maxPerRoute,Integer soTimeout,Integer retryExecutionCountConfig) {
+	public static void init(Integer maxTotal, Integer maxPerRoute, Integer validateInactivityDuration,
+			Integer waitIdleConnectionTimeoutConfig, Integer connectTimeoutConfig, Integer soTimeoutConfig,
+			Integer retryExecutionCountConfig) {
 		poolingHttpClientConnectionManager.setMaxTotal(maxTotal);
 		poolingHttpClientConnectionManager.setDefaultMaxPerRoute(maxPerRoute);
-		SocketConfig socketConfig =
-		SocketConfig.custom().setSoTimeout(soTimeout).build();
+		poolingHttpClientConnectionManager.setValidateAfterInactivity(validateInactivityDuration);
+		SocketConfig socketConfig = SocketConfig.custom().setSoTimeout(soTimeout).build();
 		poolingHttpClientConnectionManager.setDefaultSocketConfig(socketConfig);
-		retryExecutionCount = retryExecutionCountConfig;
+		waitIdleConnectionTimeout = waitIdleConnectionTimeoutConfig;// 等待池中空闲
+		connectTimeout = connectTimeoutConfig;// 链接超时
+		soTimeout = soTimeoutConfig;// 数据传输超时
+		retryExecutionCount = retryExecutionCountConfig;// 重试次数
 	}
 
 	/**
 	 * POST请求
 	 * 
 	 * @param url
-	 * @param paramObject
-	 *            比如:传入hashMap
-	 * @param returnCharSet
-	 *            对方服务器返回字符集，比如:传入GB2312
+	 * @param paramObject   比如:传入hashMap
+	 * @param returnCharSet 对方服务器返回字符集，比如:传入GB2312
 	 * @return
 	 */
 	public static String doPostJson(String url, Object paramObject) {
@@ -69,55 +77,58 @@ public class HttpClientUtil {
 	 * POST请求
 	 * 
 	 * @param url
-	 * @param paramObject
-	 *            比如:传入hashMap
-	 * @param returnCharSet
-	 *            对方服务器返回字符集，比如:传入GB2312
+	 * @param paramObject   比如:传入hashMap
+	 * @param returnCharSet 对方服务器返回字符集，比如:传入GB2312
 	 * @return
 	 */
-	public static String doPostJson(String url,HashMap<String,String>headers, Object paramObject) {
+	public static String doPostJson(String url, HashMap<String, String> headers, Object paramObject) {
 		return doPostJson(url, headers, paramObject, CHARSET_UTF8);
 	}
-	
+
 	/**
 	 * POST请求
 	 * 
 	 * @param url
-	 * @param paramObject
-	 *            比如:传入hashMap
-	 * @param returnCharSet
-	 *            对方服务器返回字符集，比如:传入GB2312
+	 * @param paramObject   比如:传入hashMap
+	 * @param returnCharSet 对方服务器返回字符集，比如:传入GB2312
 	 * @return
 	 */
-	public static String doPostJson(String url, HashMap<String,String>headers, Object paramObject, String returnCharSet) {
+	public static String doPostJson(String url, HashMap<String, String> headers, Object paramObject,
+			String returnCharSet) {
 		CloseableHttpClient closeableHttpClient = getCloseableHttpClient();
 		HttpPost method = new HttpPost(url);
-		logger.debug("request:doPostJson:" + url + "(post data is following)");
+		// 设置请求参数
+		RequestConfig config = RequestConfig.custom().setConnectTimeout(connectTimeout) // 连接超时时间
+				.setConnectionRequestTimeout(waitIdleConnectionTimeout) // 从等待线程池中空闲链接的超时时间
+				.setSocketTimeout(soTimeout) // 设置数据超时时间
+				.build();
+		method.setConfig(config);
+		logger.debug("request:doPostJson:{}(post data is following)",url);
 		if (null != headers) {
-			for(Entry<String,String> entry:headers.entrySet()) {
+			for (Entry<String, String> entry : headers.entrySet()) {
 				method.addHeader(entry.getKey(), entry.getValue());
 			}
 		}
 		if (null != paramObject) {
 			String json = JsonUtil.stringify(paramObject);
-			logger.debug("request:doPostJson:" + url + ":post data:" + json);
+			logger.debug("request:doPostJson:{}:post data:{}",url,json);
 			// 解决中文乱码问题
 			StringEntity entity = new StringEntity(json, CHARSET_UTF8);
 			entity.setContentEncoding(CHARSET_UTF8);
 			entity.setContentType("application/json");
 			method.setEntity(entity);
 		} else {
-			logger.debug("request:doPostJson:" + url + ":post data: null");
+			logger.debug("request:doPostJson:{}:post data: null",url);
 		}
 		CloseableHttpResponse response = null;
 		try {
 			response = closeableHttpClient.execute(method);
 			String result = EntityUtils.toString(response.getEntity(), returnCharSet);
-			if(response.getStatusLine()!=null&&response.getStatusLine().getStatusCode()!=HttpStatus.SC_OK) {
-				logger.error(response.getStatusLine().getStatusCode()+":::"+result);
-				throw new CrisisError(response.getStatusLine().getStatusCode()+":::"+result);
+			if (response.getStatusLine() != null && response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
+				logger.error("{}:::{}",response.getStatusLine().getStatusCode(),result);
+				throw new CrisisError(response.getStatusLine().getStatusCode() + ":::" + result);
 			}
-			logger.debug("request:doPostJson:" + url + ":response:" + result);
+			logger.debug("request:doPostJson:{}:response:{}",url,result);
 			return result;
 		} catch (IOException e) {
 			logger.error("connect error:" + url, e);
@@ -132,40 +143,44 @@ public class HttpClientUtil {
 			}
 		}
 	}
-	
+
 	/**
 	 * POST请求
 	 * 
 	 * @param url
-	 * @param paramObject
-	 *            比如:传入hashMap
-	 * @param returnCharSet
-	 *            对方服务器返回字符集，比如:传入GB2312
+	 * @param paramObject   比如:传入hashMap
+	 * @param returnCharSet 对方服务器返回字符集，比如:传入GB2312
 	 * @return
 	 */
 	public static String doPostJson(String url, Object paramObject, String returnCharSet) {
 		CloseableHttpClient closeableHttpClient = getCloseableHttpClient();
 		HttpPost method = new HttpPost(url);
-		logger.debug("request:doPostJson:" + url + "(post data is following)");
+		// 设置请求参数
+		RequestConfig config = RequestConfig.custom().setConnectTimeout(connectTimeout) // 连接超时时间
+				.setConnectionRequestTimeout(waitIdleConnectionTimeout) // 从等待线程池中空闲链接的超时时间
+				.setSocketTimeout(soTimeout) // 设置数据超时时间
+				.build();
+		method.setConfig(config);
+		logger.debug("request:doPostJson:{}(post data is following)",url);
 		if (null != paramObject) {
 			String json = JsonUtil.stringify(paramObject);
-			logger.debug("request:doPostJson:" + url + ":post data:" + json);
+			logger.debug("request:doPostJson:{} :post data:{} ",url,json);
 			// 解决中文乱码问题
 			StringEntity entity = new StringEntity(json, CHARSET_UTF8);
 			entity.setContentEncoding(CHARSET_UTF8);
 			entity.setContentType("application/json");
 			method.setEntity(entity);
 		} else {
-			logger.debug("request:doPostJson:" + url + ":post data: null");
+			logger.debug("request:doPostJson:{} post data: null",url);
 		}
 		CloseableHttpResponse response = null;
 		try {
 			response = closeableHttpClient.execute(method);
 			String result = EntityUtils.toString(response.getEntity(), returnCharSet);
-			logger.debug("request:doPostJson:" + url + ":response:" + result);
-			if(response.getStatusLine()!=null&&response.getStatusLine().getStatusCode()!=HttpStatus.SC_OK) {
-				logger.error(response.getStatusLine().getStatusCode()+":::"+result);
-				throw new CrisisError(response.getStatusLine().getStatusCode()+":::"+result);
+			logger.debug("request:doPostJson:{}:response:{}",url,result);
+			if (response.getStatusLine() != null && response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
+				logger.error("{}:::{}",response.getStatusLine().getStatusCode(),result);
+				throw new CrisisError(response.getStatusLine().getStatusCode() + ":::" + result);
 			}
 			return result;
 		} catch (IOException e) {
@@ -187,63 +202,55 @@ public class HttpClientUtil {
 	 * =doPostJson(url,paramObject,Jsonresponse.class);
 	 * 
 	 * @param url
-	 * @param paramObject
-	 *            比如:传入hashMap
-	 * @param clazz
-	 *            反序列化的类，比如:传入User.class
-	 * @param returnCharSet
-	 *            对方服务器返回字符集，比如:传入GB2312
+	 * @param paramObject   比如:传入hashMap
+	 * @param clazz         反序列化的类，比如:传入User.class
+	 * @param returnCharSet 对方服务器返回字符集，比如:传入GB2312
 	 * @return
 	 */
 	public static <T> T doPostJson(String url, Object paramObject, Class<T> clazz) {
 		return JsonUtil.parse(doPostJson(url, paramObject), clazz);
 	}
+
 	/**
 	 * POST请求,返回对象用法：Jsonresponse response
 	 * =doPostJson(url,paramObject,Jsonresponse.class);
 	 * 
 	 * @param url
-	 * @param paramObject
-	 *            比如:传入hashMap
-	 * @param clazz
-	 *            反序列化的类，比如:传入User.class
-	 * @param returnCharSet
-	 *            对方服务器返回字符集，比如:传入GB2312
+	 * @param paramObject   比如:传入hashMap
+	 * @param clazz         反序列化的类，比如:传入User.class
+	 * @param returnCharSet 对方服务器返回字符集，比如:传入GB2312
 	 * @return
 	 */
-	public static <T> T doPostJson(String url, HashMap<String,String>headers, Object paramObject, Class<T> clazz) {
+	public static <T> T doPostJson(String url, HashMap<String, String> headers, Object paramObject, Class<T> clazz) {
 		return JsonUtil.parse(doPostJson(url, headers, paramObject), clazz);
 	}
+
 	/**
 	 * POST请求,返回对象用法：Jsonresponse response
 	 * =doPostJson(url,paramObject,Jsonresponse.class);
 	 * 
 	 * @param url
-	 * @param paramObject
-	 *            比如:传入hashMap
-	 * @param clazz
-	 *            反序列化的类，比如:传入User.class
-	 * @param returnCharSet
-	 *            对方服务器返回字符集，比如:传入GB2312
+	 * @param paramObject   比如:传入hashMap
+	 * @param clazz         反序列化的类，比如:传入User.class
+	 * @param returnCharSet 对方服务器返回字符集，比如:传入GB2312
 	 * @return
 	 */
 	public static <T> T doPostJson(String url, Object paramObject, Class<T> clazz, String returnCharSet) {
 		return JsonUtil.parse(doPostJson(url, paramObject, returnCharSet), clazz);
 	}
+
 	/**
 	 * POST请求,返回对象用法：Jsonresponse response
 	 * =doPostJson(url,paramObject,Jsonresponse.class);
 	 * 
 	 * @param url
-	 * @param paramObject
-	 *            比如:传入hashMap
-	 * @param clazz
-	 *            反序列化的类，比如:传入User.class
-	 * @param returnCharSet
-	 *            对方服务器返回字符集，比如:传入GB2312
+	 * @param paramObject   比如:传入hashMap
+	 * @param clazz         反序列化的类，比如:传入User.class
+	 * @param returnCharSet 对方服务器返回字符集，比如:传入GB2312
 	 * @return
 	 */
-	public static <T> T doPostJson(String url, HashMap<String,String> headers, Object paramObject, Class<T> clazz, String returnCharSet) {
+	public static <T> T doPostJson(String url, HashMap<String, String> headers, Object paramObject, Class<T> clazz,
+			String returnCharSet) {
 		return JsonUtil.parse(doPostJson(url, headers, paramObject, returnCharSet), clazz);
 	}
 
@@ -252,31 +259,29 @@ public class HttpClientUtil {
 	 * new TypeReference<LinkedList<Integer>>(){});
 	 * 
 	 * @param url
-	 * @param paramObject
-	 *            比如:传入hashMap
-	 * @param typeReference
-	 *            反序列化的模板化参数类，比如:传入new TypeReference<LinkedList<Integer>>(){}
-	 * @param returnCharSet
-	 *            对方服务器返回字符集，比如:传入GB2312
+	 * @param paramObject   比如:传入hashMap
+	 * @param typeReference 反序列化的模板化参数类，比如:传入new
+	 *                      TypeReference<LinkedList<Integer>>(){}
+	 * @param returnCharSet 对方服务器返回字符集，比如:传入GB2312
 	 * @return
 	 */
 	public static <T> T doPostJson(String url, Object paramObject, TypeReference<T> typeReference) {
 		return JsonUtil.parse(doPostJson(url, paramObject), typeReference);
 	}
+
 	/**
 	 * Post请求，返回List用法：LinkedList<Integer> response = doPostJson(url, paramObject,
 	 * new TypeReference<LinkedList<Integer>>(){});
 	 * 
 	 * @param url
-	 * @param paramObject
-	 *            比如:传入hashMap
-	 * @param typeReference
-	 *            反序列化的模板化参数类，比如:传入new TypeReference<LinkedList<Integer>>(){}
-	 * @param returnCharSet
-	 *            对方服务器返回字符集，比如:传入GB2312
+	 * @param paramObject   比如:传入hashMap
+	 * @param typeReference 反序列化的模板化参数类，比如:传入new
+	 *                      TypeReference<LinkedList<Integer>>(){}
+	 * @param returnCharSet 对方服务器返回字符集，比如:传入GB2312
 	 * @return
 	 */
-	public static <T> T doPostJson(String url, HashMap<String,String> headers,Object paramObject, TypeReference<T> typeReference) {
+	public static <T> T doPostJson(String url, HashMap<String, String> headers, Object paramObject,
+			TypeReference<T> typeReference) {
 		return JsonUtil.parse(doPostJson(url, headers, paramObject), typeReference);
 	}
 
@@ -285,12 +290,10 @@ public class HttpClientUtil {
 	 * new TypeReference<LinkedList<Integer>>(){});
 	 * 
 	 * @param url
-	 * @param paramObject
-	 *            比如:传入hashMap
-	 * @param typeReference
-	 *            反序列化的模板化参数类，比如:传入new TypeReference<LinkedList<Integer>>(){}
-	 * @param returnCharSet
-	 *            对方服务器返回字符集，比如:传入GB2312
+	 * @param paramObject   比如:传入hashMap
+	 * @param typeReference 反序列化的模板化参数类，比如:传入new
+	 *                      TypeReference<LinkedList<Integer>>(){}
+	 * @param returnCharSet 对方服务器返回字符集，比如:传入GB2312
 	 * @return
 	 */
 	public static <T> T doPostJson(String url, Object paramObject, TypeReference<T> typeReference,
@@ -303,8 +306,7 @@ public class HttpClientUtil {
 	 * 
 	 * @param url
 	 * @param paramObject
-	 * @param returnCharSet
-	 *            对方服务器返回字符集，比如:传入GB2312
+	 * @param returnCharSet 对方服务器返回字符集，比如:传入GB2312
 	 * @return
 	 */
 	public static String doPutJson(String url, Object paramObject) {
@@ -316,33 +318,38 @@ public class HttpClientUtil {
 	 * 
 	 * @param url
 	 * @param paramObject
-	 * @param returnCharSet
-	 *            对方服务器返回字符集，比如:传入GB2312
+	 * @param returnCharSet 对方服务器返回字符集，比如:传入GB2312
 	 * @return
 	 */
 	public static String doPutJson(String url, Object paramObject, String returnCharSet) {
-		logger.debug("request:doPutJson:" + url + "(put data is following)");
+		logger.debug("request:doPutJson:{}(put data is following)",url);
 		CloseableHttpClient closeableHttpClient = getCloseableHttpClient();
 		HttpPut method = new HttpPut(url);
+		// 设置请求参数
+		RequestConfig config = RequestConfig.custom().setConnectTimeout(connectTimeout) // 连接超时时间
+				.setConnectionRequestTimeout(waitIdleConnectionTimeout) // 从等待线程池中空闲链接的超时时间
+				.setSocketTimeout(soTimeout) // 设置数据超时时间
+				.build();
+		method.setConfig(config);
 		if (null != paramObject) {
 			String json = JsonUtil.stringify(paramObject);
-			logger.debug("request:doPutJson:" + url + ":put data:" + json);
+			logger.debug("request:doPutJson:{}:put data:{}",url,json);
 			// 解决中文乱码问题
 			StringEntity entity = new StringEntity(json, CHARSET_UTF8);
 			entity.setContentEncoding(CHARSET_UTF8);
 			entity.setContentType("application/json");
 			method.setEntity(entity);
 		} else {
-			logger.debug("request:doPutJson:" + url + ":put data: null");
+			logger.debug("request:doPutJson:{}:put data: null",url);
 		}
 		CloseableHttpResponse response = null;
 		try {
 			response = closeableHttpClient.execute(method);
 			String result = EntityUtils.toString(response.getEntity(), returnCharSet);
-			logger.debug("request:doPutJson:" + url + ":response:" + result);
-			if(response.getStatusLine()!=null&&response.getStatusLine().getStatusCode()!=HttpStatus.SC_OK) {
-				logger.error(response.getStatusLine().getStatusCode()+":::"+result);
-				throw new CrisisError(response.getStatusLine().getStatusCode()+":::"+result);
+			logger.debug("request:doPutJson:{}:response:{}",url,result);
+			if (response.getStatusLine() != null && response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
+				logger.error("{}:::{}",response.getStatusLine().getStatusCode(),result);
+				throw new CrisisError(response.getStatusLine().getStatusCode() + ":::" + result);
 			}
 			return result;
 		} catch (IOException e) {
@@ -364,12 +371,9 @@ public class HttpClientUtil {
 	 * =doPutJson(url,paramObject,Jsonresponse.class);
 	 * 
 	 * @param url
-	 * @param paramObject
-	 *            比如:传入hashMap
-	 * @param clazz
-	 *            反序列化的类，比如:传入User.class
-	 * @param returnCharSet
-	 *            对方服务器返回字符集，比如:传入GB2312
+	 * @param paramObject   比如:传入hashMap
+	 * @param clazz         反序列化的类，比如:传入User.class
+	 * @param returnCharSet 对方服务器返回字符集，比如:传入GB2312
 	 * @return
 	 */
 	public static <T> T doPutJson(String url, Object paramObject, Class<T> clazz) {
@@ -381,12 +385,9 @@ public class HttpClientUtil {
 	 * =doPutJson(url,paramObject,Jsonresponse.class);
 	 * 
 	 * @param url
-	 * @param paramObject
-	 *            比如:传入hashMap
-	 * @param clazz
-	 *            反序列化的类，比如:传入User.class
-	 * @param returnCharSet
-	 *            对方服务器返回字符集，比如:传入GB2312
+	 * @param paramObject   比如:传入hashMap
+	 * @param clazz         反序列化的类，比如:传入User.class
+	 * @param returnCharSet 对方服务器返回字符集，比如:传入GB2312
 	 * @return
 	 */
 	public static <T> T doPutJson(String url, Object paramObject, Class<T> clazz, String returnCharSet) {
@@ -398,12 +399,10 @@ public class HttpClientUtil {
 	 * TypeReference<LinkedList<Integer>>(){});
 	 * 
 	 * @param url
-	 * @param paramObject
-	 *            比如:传入hashMap
-	 * @param typeReference
-	 *            反序列化的模板化参数类，比如:传入new TypeReference<LinkedList<Integer>>(){}
-	 * @param returnCharSet
-	 *            对方服务器返回字符集，比如:传入GB2312
+	 * @param paramObject   比如:传入hashMap
+	 * @param typeReference 反序列化的模板化参数类，比如:传入new
+	 *                      TypeReference<LinkedList<Integer>>(){}
+	 * @param returnCharSet 对方服务器返回字符集，比如:传入GB2312
 	 * @return
 	 */
 	public static <T> T doPutJson(String url, Object paramObject, TypeReference<T> typeReference) {
@@ -415,12 +414,10 @@ public class HttpClientUtil {
 	 * TypeReference<LinkedList<Integer>>(){});
 	 * 
 	 * @param url
-	 * @param paramObject
-	 *            比如:传入hashMap
-	 * @param typeReference
-	 *            反序列化的模板化参数类，比如:传入new TypeReference<LinkedList<Integer>>(){}
-	 * @param returnCharSet
-	 *            对方服务器返回字符集，比如:传入GB2312
+	 * @param paramObject   比如:传入hashMap
+	 * @param typeReference 反序列化的模板化参数类，比如:传入new
+	 *                      TypeReference<LinkedList<Integer>>(){}
+	 * @param returnCharSet 对方服务器返回字符集，比如:传入GB2312
 	 * @return
 	 */
 	public static <T> T doPutJson(String url, Object paramObject, TypeReference<T> typeReference,
@@ -432,8 +429,7 @@ public class HttpClientUtil {
 	 * GET请求
 	 * 
 	 * @param url
-	 * @param returnCharSet
-	 *            对方服务器返回字符集，比如:传入GB2312
+	 * @param returnCharSet 对方服务器返回字符集，比如:传入GB2312
 	 * @return
 	 */
 	public static String doGet(String url) {
@@ -444,22 +440,27 @@ public class HttpClientUtil {
 	 * GET请求
 	 * 
 	 * @param url
-	 * @param returnCharSet
-	 *            对方服务器返回字符集，比如:传入GB2312
+	 * @param returnCharSet 对方服务器返回字符集，比如:传入GB2312
 	 * @return
 	 */
 	public static String doGet(String url, String returnCharSet) {
 		logger.debug("request:doGet:" + url);
 		CloseableHttpClient closeableHttpClient = getCloseableHttpClient();
 		HttpGet method = new HttpGet(url);
+		// 设置请求参数
+		RequestConfig config = RequestConfig.custom().setConnectTimeout(connectTimeout) // 连接超时时间
+				.setConnectionRequestTimeout(waitIdleConnectionTimeout) // 从等待线程池中空闲链接的超时时间
+				.setSocketTimeout(soTimeout) // 设置数据超时时间
+				.build();
+		method.setConfig(config);
 		CloseableHttpResponse response = null;
 		try {
 			response = closeableHttpClient.execute(method);
 			String result = EntityUtils.toString(response.getEntity(), returnCharSet);
-			logger.debug("request:doGet:" + url + ":response:" + result);
-			if(response.getStatusLine()!=null&&response.getStatusLine().getStatusCode()!=HttpStatus.SC_OK) {
-				logger.error(response.getStatusLine().getStatusCode()+":::"+result);
-				throw new CrisisError(response.getStatusLine().getStatusCode()+":::"+result);
+			logger.debug("request:doGet:{}:response:{}",url,result);
+			if (response.getStatusLine() != null && response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
+				logger.error("{}:::{}",response.getStatusLine().getStatusCode(),result);
+				throw new CrisisError(response.getStatusLine().getStatusCode() + ":::" + result);
 			}
 			return result;
 		} catch (IOException e) {
@@ -481,8 +482,7 @@ public class HttpClientUtil {
 	 * 
 	 * @param url
 	 * @param clazz反序列化类型
-	 * @param returnCharSet
-	 *            对方服务器返回字符集，比如:传入GB2312
+	 * @param returnCharSet 对方服务器返回字符集，比如:传入GB2312
 	 * @return
 	 */
 	public static <T> T doGet(String url, Class<T> clazz, String returnCharSet) {
@@ -494,8 +494,7 @@ public class HttpClientUtil {
 	 * 
 	 * @param url
 	 * @param clazz反序列化类型
-	 * @param returnCharSet
-	 *            对方服务器返回字符集，比如:传入GB2312
+	 * @param returnCharSet 对方服务器返回字符集，比如:传入GB2312
 	 * @return
 	 */
 	public static <T> T doGet(String url, Class<T> clazz) {
@@ -508,8 +507,7 @@ public class HttpClientUtil {
 	 * 
 	 * @param url
 	 * @param clazz反序列化类型
-	 * @param returnCharSet
-	 *            对方服务器返回字符集，比如:传入GB2312
+	 * @param returnCharSet 对方服务器返回字符集，比如:传入GB2312
 	 * @return
 	 */
 	public static <T> T doGet(String url, TypeReference<T> typeReference, String returnCharSet) {
@@ -522,8 +520,7 @@ public class HttpClientUtil {
 	 * 
 	 * @param url
 	 * @param clazz反序列化类型
-	 * @param returnCharSet
-	 *            对方服务器返回字符集，比如:传入GB2312
+	 * @param returnCharSet 对方服务器返回字符集，比如:传入GB2312
 	 * @return
 	 */
 	public static <T> T doGet(String url, TypeReference<T> typeReference) {
@@ -534,8 +531,7 @@ public class HttpClientUtil {
 	 * DELETE请求
 	 * 
 	 * @param url
-	 * @param returnCharSet
-	 *            对方服务器返回字符集，比如:传入GB2312
+	 * @param returnCharSet 对方服务器返回字符集，比如:传入GB2312
 	 * @return
 	 */
 	public static String doDelete(String url) {
@@ -546,22 +542,27 @@ public class HttpClientUtil {
 	 * DELETE请求
 	 * 
 	 * @param url
-	 * @param returnCharSet
-	 *            对方服务器返回字符集，比如:传入GB2312
+	 * @param returnCharSet 对方服务器返回字符集，比如:传入GB2312
 	 * @return
 	 */
 	public static String doDelete(String url, String returnCharSet) {
 		logger.debug("request:doDelete:" + url);
 		CloseableHttpClient closeableHttpClient = getCloseableHttpClient();
 		HttpDelete method = new HttpDelete(url);
+		// 设置请求参数
+		RequestConfig config = RequestConfig.custom().setConnectTimeout(connectTimeout) // 连接超时时间
+				.setConnectionRequestTimeout(waitIdleConnectionTimeout) // 从等待线程池中空闲链接的超时时间
+				.setSocketTimeout(soTimeout) // 设置数据超时时间
+				.build();
+		method.setConfig(config);
 		CloseableHttpResponse response = null;
 		try {
 			response = closeableHttpClient.execute(method);
 			String result = EntityUtils.toString(response.getEntity(), returnCharSet);
-			logger.debug("request:doDelete:" + url + ":response:" + result);
-			if(response.getStatusLine()!=null&&response.getStatusLine().getStatusCode()!=HttpStatus.SC_OK) {
-				logger.error(response.getStatusLine().getStatusCode()+":::"+result);
-				throw new CrisisError(response.getStatusLine().getStatusCode()+":::"+result);
+			logger.debug("request:doDelete:{} :response:{}",url,result);
+			if (response.getStatusLine() != null && response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
+				logger.error("{}:::{}",response.getStatusLine().getStatusCode(),result);
+				throw new CrisisError(response.getStatusLine().getStatusCode() + ":::" + result);
 			}
 			return result;
 		} catch (IOException e) {
@@ -583,8 +584,7 @@ public class HttpClientUtil {
 	 * 
 	 * @param url
 	 * @param clazz反序列化类型
-	 * @param returnCharSet
-	 *            对方服务器返回字符集，比如:传入GB2312
+	 * @param returnCharSet 对方服务器返回字符集，比如:传入GB2312
 	 * @return
 	 */
 	public static <T> T doDelete(String url, Class<T> clazz) {
@@ -596,8 +596,7 @@ public class HttpClientUtil {
 	 * 
 	 * @param url
 	 * @param clazz反序列化类型
-	 * @param returnCharSet
-	 *            对方服务器返回字符集，比如:传入GB2312
+	 * @param returnCharSet 对方服务器返回字符集，比如:传入GB2312
 	 * @return
 	 */
 	public static <T> T doDelete(String url, Class<T> clazz, String returnCharSet) {
@@ -610,8 +609,7 @@ public class HttpClientUtil {
 	 * 
 	 * @param url
 	 * @param clazz反序列化类型
-	 * @param returnCharSet
-	 *            对方服务器返回字符集，比如:传入GB2312
+	 * @param returnCharSet 对方服务器返回字符集，比如:传入GB2312
 	 * @return
 	 */
 	public static <T> T doDelete(String url, TypeReference<T> typeReference) {
@@ -624,8 +622,7 @@ public class HttpClientUtil {
 	 * 
 	 * @param url
 	 * @param clazz反序列化类型
-	 * @param returnCharSet
-	 *            对方服务器返回字符集，比如:传入GB2312
+	 * @param returnCharSet 对方服务器返回字符集，比如:传入GB2312
 	 * @return
 	 */
 	public static <T> T doDelete(String url, TypeReference<T> typeReference, String returnCharSet) {
