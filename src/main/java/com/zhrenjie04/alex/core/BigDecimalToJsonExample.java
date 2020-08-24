@@ -16,7 +16,8 @@ public class BigDecimalToJsonExample {
 		this.value = value;
 	}
 	public static void main(String[] args) {
-		BigDecimal d=new BigDecimal("2.9");
+		BigDecimal d=new BigDecimal("2.90");
+		System.out.println(d);
 		BigDecimalToJsonExample example=new BigDecimalToJsonExample();
 		example.setValue(d);
 		String s=JsonUtil.stringify(example);
