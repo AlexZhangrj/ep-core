@@ -1,5 +1,7 @@
 package com.zhrenjie04.alex.util;
 
+import java.util.HashMap;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -8,7 +10,7 @@ import com.zhrenjie04.alex.core.exception.CrisisError;
 /**
  * @author 张人杰 Twitter_Snowflake<br>
  * 		   2020-07-21改进：
- * 		   改为一个Long型整数+一个Integer型整数（long64位，integer32位，一共96位，高位long表示时间戳，低位int表示workid和sequence），并转化为base52表示
+ * 		   改为一个Long型整数+一个Integer型整数（long64位，integer32位，一共96位，高位long表示时间戳，低位int表示workid和sequence），并转化为base50表示
  *
  * compareBase47Id(left,right)使用前提：
  * 1、id通过IdGenerator2产生；
@@ -48,7 +50,15 @@ public class IdGenerator {
 
 	/** 上次生成ID的时间截 */
 	private static long lastTimestamp = -1L;
+	
+	private static String base48Chars="abcdefghijkmnopqrstuvwxyzBCDEFGHJKLMNPQRSTUVWXYZ";
 
+	private static HashMap<String,Integer> charToIntegerMap=new HashMap<String,Integer>();
+	static {
+		for(int i=0;i<base48Chars.length();i++) {
+			charToIntegerMap.put(""+base48Chars.charAt(i),i);
+		}
+	}
 	/**
 	 * 默认构造方法，默认从配置文件id-generator.properties中读取datacenterId和workerId
 	 */
@@ -101,7 +111,7 @@ public class IdGenerator {
 	 * 建议博客文章Id、聊天记录采用字符Id
 	 * @return 雪花算法id
 	 */
-	public static synchronized String nextIdBase47String() {
+	public static synchronized String nextIdBase48String() {
 		long timestamp = timeGen();
 
 		// 如果当前时间小于上一次ID生成的时间戳，说明系统时钟回退过这个时候应当抛出异常
@@ -130,29 +140,17 @@ public class IdGenerator {
 //		System.out.println(firstLong);
 		StringBuffer firstString=new StringBuffer("");
 		while(firstLong>0) {
-			long c=firstLong%47;
-			if(c<23) {
-				char s=(char) ('A'+c+1);
-				firstString.insert(0, s);
-			}else{
-				char s=(char) ('a'+(c-23));
-				firstString.insert(0, s);
-			}
-			firstLong=firstLong/47;
+			int c=(int)(firstLong%base48Chars.length());
+			firstString.insert(0, ""+base48Chars.charAt(c));
+			firstLong=firstLong/base48Chars.length();
 		}
 		Integer lastInteger=(workerId << WORKER_ID_SHIFT) | sequence;
 //		System.out.println(lastInteger);
 		StringBuffer lastString=new StringBuffer("");
 		while(lastInteger>0) {
-			long c=lastInteger%47;
-			if(c<23) {
-				char s=(char) ('A'+c+1);
-				lastString.insert(0, s);
-			}else{
-				char s=(char) ('a'+(c-23));
-				lastString.insert(0, s);
-			}
-			lastInteger=lastInteger/47;
+			int c=(int)(lastInteger%base48Chars.length());
+			lastString.insert(0, ""+base48Chars.charAt(c));
+			lastInteger=lastInteger/base48Chars.length();
 		}
 		return firstString.append("A").append(lastString).toString();
 	}
@@ -238,16 +236,12 @@ public class IdGenerator {
 		return System.currentTimeMillis();
 	}
 
-	public static Long convertToLong(String base47String) {
+	public static Long convertToLong(String base48String) {
 		Long data=0L;
 		int i=0;
-		while(i<base47String.length()) {
-			char c = base47String.charAt(i);
-			if(c>='a') {
-				data = data * 47 + c - 'a' + 23;
-			}else {
-				data = data * 47 + c - 'A' - 1;
-			}
+		while(i<base48String.length()) {
+			char c = base48String.charAt(i);
+			data = data * base48Chars.length() + charToIntegerMap.get(""+c);
 			++i;
 		}
 //		System.out.println(data);
@@ -276,13 +270,13 @@ public class IdGenerator {
 			logger.debug(IdGenerator.nextIdNumberString());
 			logger.debug(IdGenerator.nextIdNumberString());
 			logger.debug(IdGenerator.nextIdNumberString());
-			logger.debug(IdGenerator.nextIdBase47String());
-			logger.debug(IdGenerator.nextIdBase47String());
-			logger.debug(IdGenerator.nextIdBase47String());
-			logger.debug(IdGenerator.nextIdBase47String());
-			logger.debug(IdGenerator.nextIdBase47String());
+			logger.debug(IdGenerator.nextIdBase48String());
+			logger.debug(IdGenerator.nextIdBase48String());
+			logger.debug(IdGenerator.nextIdBase48String());
+			logger.debug(IdGenerator.nextIdBase48String());
+			logger.debug(IdGenerator.nextIdBase48String());
 		}
-		System.out.println(IdGenerator.compareBase47Id("lvkdNmAItC", "lvkdNmAItD"));
+		System.out.println(IdGenerator.compareBase47Id("HxNoNPAhEc", "HxNoNPAhEd"));
 	}
 }
 

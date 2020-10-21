@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Build-Jdk-Spec: 14
 Implementation-Title: ep-core
-Implementation-Version: 0.0.4
+Implementation-Version: 2.0.4
 Created-By: Maven Integration for Eclipse
 
