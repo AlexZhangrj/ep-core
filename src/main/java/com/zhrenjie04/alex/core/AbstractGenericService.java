@@ -123,7 +123,7 @@ public abstract class AbstractGenericService<T extends AbstractGenericEntity, D 
 	@Override
 	@Transactional
 	public JsonResult insertObject(T object, User sessionUser) {
-		object.setPK(IdGenerator.nextIdBase52String());
+		object.setPK(IdGenerator.nextIdBase50String());
 		object.setCreaterId(sessionUser.getUserId());
 		object.setCreaterName(sessionUser.getRealname());
 		getDao().insertObject(object);
