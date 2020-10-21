@@ -9,6 +9,6 @@ import lombok.ToString;
  */
 @Data
 @ToString
-public class MoveToRoleIds {
-	private LinkedList<String> roleIds;
+public class MoveToGroupIds {
+	private LinkedList<String> groupIds;
 }

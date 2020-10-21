@@ -1,18 +1,14 @@
 package com.zhrenjie04.alex.manager.domain;
 
 import java.util.LinkedList;
+
+import lombok.Data;
+import lombok.ToString;
 /**
  * @author 张人杰
  */
+@Data
+@ToString
 public class MoveToPrivilegeIds {
 	private LinkedList<String> privilegeIds;
-
-	public LinkedList<String> getPrivilegeIds() {
-		return privilegeIds;
-	}
-
-	public void setPrivilegeIds(LinkedList<String> privilegeIds) {
-		this.privilegeIds = privilegeIds;
-	}
-	
 }
