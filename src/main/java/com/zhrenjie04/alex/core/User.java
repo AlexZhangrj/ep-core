@@ -33,6 +33,7 @@ import lombok.ToString;
 @EqualsAndHashCode(of = {"userId"}, callSuper = false)
 @ToString
 public class User extends AbstractGenericEntity {
+	
 	private static final long serialVersionUID = -3683386137654425948L;
 	public User() {
 	}

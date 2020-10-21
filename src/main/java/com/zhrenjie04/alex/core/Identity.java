@@ -10,9 +10,9 @@ import lombok.ToString;
  * @author 张人杰
  */
 @Data
-@EqualsAndHashCode(of = {"identityId"})
+@EqualsAndHashCode(of = {"identityId"}, callSuper = false)
 @ToString
-public class Identity implements Serializable{
+public class Identity extends AbstractGenericEntity{
 	
 	private static final long serialVersionUID = 6547730311451225436L;
 
@@ -22,4 +22,18 @@ public class Identity implements Serializable{
 	private String userId;
 	private String groupId;
 	private String positionId;
+	/** 只用于前端显示 */
+	private String groupName;
+	/** 只用于前端显示 */
+	private String positionName;
+	/** 该身份已锁定 */
+	private Boolean isLocked;
+	@Override
+	public String getPK() {
+		return identityId;
+	}
+	@Override
+	public void setPK(String id) {
+		this.identityId = id;
+	}
 }
