@@ -26,3 +26,4 @@ target/*
 .classpath
 .factorypath
 .project
+target/classes/META-INF/maven/com.zhrenjie04.alex.web/ep-core/pom.properties

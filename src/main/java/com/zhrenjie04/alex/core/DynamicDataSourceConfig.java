@@ -11,10 +11,6 @@ import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.zhrenjie04.alex.core.DynamicDataSource;
-import com.zhrenjie04.alex.core.EpDataSourceProps;
-import com.zhrenjie04.alex.core.EpMultiDataSourceProp;
-
 /**
  * @author 张人杰
  */
