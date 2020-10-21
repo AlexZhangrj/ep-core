@@ -77,9 +77,9 @@ public class User extends AbstractGenericEntity {
 	@JsonSerialize(using=AlexTimestampSerializer.class)
 	private Date lastLoginTime;
 	@ApiModelProperty("jobs")
-	private List<Job> jobs = new LinkedList<Job>();
-	@ApiModelProperty("当前职务jobId")
-	private String currentJobId;
+	private List<Identity> identities = new LinkedList<Identity>();
+	@ApiModelProperty("当前身份id")
+	private String currentIdentityId;
 	@ApiModelProperty("权限Codes")
 	private List<String> privilegeCodes = new LinkedList<String>();
 	@ApiModelProperty("角色ids，用于不能删除自己的角色的判断")
@@ -99,7 +99,7 @@ public class User extends AbstractGenericEntity {
 	@ApiModelProperty("客户端类型")
 	private String clientType;
 
-	private HashMap<String, Job> idToJobMap = new HashMap<String, Job>();
+	private HashMap<String, Identity> idToIdentityMap = new HashMap<String, Identity>();
 
 	public boolean hasPrivilege(String privilegeCode) {
 		if (privilegeCodes == null) {
@@ -110,37 +110,33 @@ public class User extends AbstractGenericEntity {
 	}
 
 	@JsonIgnore
-	public Job getCurrentJob() {
-		if (currentJobId == null || "".equals(currentJobId)) {
-			return new Job();
+	public Identity getCurrentIdentity() {
+		if (currentIdentityId == null || "".equals(currentIdentityId)) {
+			return new Identity();
 		} else {
-			return idToJobMap.get(currentJobId);
+			return idToIdentityMap.get(currentIdentityId);
 		}
 	}
 
-	public String getCurrentJobId() {
-		return currentJobId;
+	public String getCurrentIdentityId() {
+		return currentIdentityId;
 	}
 
-	public boolean setCurrentJobId(String currentJobId) {
-		this.currentJobId = currentJobId;
-		if(idToJobMap.get(currentJobId)!=null) {
+	public boolean setCurrentIdentityId(String currentIdentityId) {
+		if(idToIdentityMap.get(currentIdentityId)!=null) {
+			this.currentIdentityId = currentIdentityId;
 			return true;
 		}else {
 			return false;
 		}
 	}
 
-	public List<Job> getJobs() {
-		return jobs;
-	}
-
-	public void setJobs(List<Job> jobs) {
-		this.jobs = jobs;
-		idToJobMap.clear();
-		if(jobs!=null) {
-			for (Job job : jobs) {
-				idToJobMap.put(job.getJobId(), job);
+	public void setIdentites(List<Identity> identities) {
+		this.identities = identities;
+		idToIdentityMap.clear();
+		if(identities!=null) {
+			for (Identity identity : identities) {
+				idToIdentityMap.put(identity.getIdentityId(), identity);
 			}
 		}
 	}
