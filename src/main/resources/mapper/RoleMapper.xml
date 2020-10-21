@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhrenjie04.alex.manager.dao.RoleDao">
+	<!-- cache type="org.mybatis.caches.memcached.MemcachedCache" / -->
+	<resultMap type="com.zhrenjie04.alex.manager.domain.Role"
+		id="roleResult">
+		<result property="roleId" column="role_id" />
+		<result property="roleName" column="role_name" />
+		<result property="roleCode" column="role_code" />
+		<result property="isLocked" column="is_locked" />
+		<result property="parentId" column="parent_id" />
+        <result property="idPath" column="id_path" />
+        <result property="groupId" column="group_id" />
+        <result property="otherResults.groupName" column="group_name" />
+	</resultMap>
+	<select id="queryAll" resultMap="roleResult" parameterType="java.util.HashMap"> 
+        <![CDATA[
+            select * from t_role where 1=1
+        ]]>
+        <if test="treeChildren == true">
+        and id_path like CONCAT((select id_path from t_role where role_id=#{roleId}),'%')
+        </if>
+        <if test="ids != null">
+        		and role_id in(
+        		<foreach collection="ids" item="id" separator=",">#{id}</foreach>
+        		)
+        </if>
+        <if test="groupId != null">
+        	and group_id=#{groupId}
+        </if>
+		and is_deleted=0
+        <if test="orderByIdPathAsc == true">
+        order by id_path asc
+        </if>
+        <if test="ids == null">
+        order by convert(role_name using gbk) asc
+        </if>
+	</select>
+	<select id="queryObject" resultMap="roleResult" parameterType="java.util.HashMap"> 
+        <![CDATA[
+            select * from t_role where role_id=#{roleId}
+        ]]>
+		and is_deleted=0
+	</select>
+	<select id="pageQueryAll" resultMap="roleResult" parameterType="java.util.HashMap"> 
+        <![CDATA[
+            select r.*,o.org_name group_name from t_role r left join t_org o on r.group_id=o.org_id where 1=1
+        ]]>
+       	<if test="parentId != null and parentId != ''">and r.parent_id=#{parentId}</if>
+       	<if test="ids != null">
+       	and r.role_id in(
+       		<foreach collection="ids" item="id" separator=",">#{id}</foreach>
+       	)
+       	</if>
+        <if test="keyword != null and keyword !=''">and role_name like concat('%',#{keyword},'%')</if>
+		and r.is_deleted=0
+		<if test="orderBy != null and orderBy !=''">
+			order by ${orderBy}
+			<if test="orderType != null and orderType !=''">${orderType}</if>
+		</if>
+		limit #{start},#{length}
+	</select>
+	<select id="count" resultType="java.lang.Long" parameterType="java.util.HashMap"> 
+        <![CDATA[
+            select count(*) from t_role where 1=1
+        ]]>
+       	<if test="parentId != null and parentId != ''">and parent_id=#{parentId}</if>
+       	<if test="ids != null">
+       	and role_id in(
+       		<foreach collection="ids" item="id" separator=",">#{id}</foreach>
+       	)
+       	</if>
+        <if test="keyword != null and keyword !=''">and role_name like concat('%',#{keyword},'%')</if>
+		and is_deleted=0
+	</select>
+	<insert id="insertObject" parameterType="com.zhrenjie04.alex.manager.domain.Role">
+        insert into t_role(role_id,role_name,role_code,is_deleted,is_locked,parent_id,id_path,group_id,creater_id,creater_name)
+        values(#{roleId},#{roleName},#{roleCode},0,0,#{parentId},#{idPath},#{groupId},#{createrId},#{createrName})
+	</insert>
+    <update id="deleteAll" parameterType="java.util.HashMap">
+        update t_role set is_deleted=1
+        ,last_modified_time=now(),last_modifier_id=#{lastModifierId},last_modifier_name=#{lastModifierName}
+        where (
+        <foreach collection="idPaths" item="idPath" separator="or">id_path like concat(#{idPath},'%')</foreach>
+        )and is_deleted = 0 and id_path like concat(#{userRoleIdPath},'%')
+    </update>
+    <update id="updateObject" parameterType="com.zhrenjie04.alex.manager.domain.Role">
+        update t_role set role_name=#{roleName},role_code=#{roleCode}
+        ,last_modified_time=now(),last_modifier_id=#{lastModifierId},last_modifier_name=#{lastModifierName}
+        where
+        role_id=#{roleId}
+    </update>
+    <update id="updateMoving" parameterType="com.zhrenjie04.alex.manager.domain.Role">
+        update t_role set id_path=#{idPath},parent_id=#{parentId}
+        where
+        role_id=#{roleId}
+    </update>
+    <update id="updateMovingSubNodes" parameterType="java.util.HashMap">
+        update t_role set id_path=replace(id_path,#{oldIdPathStart},#{newIdPathStart})
+        where
+        id_path like concat(#{oldIdPathStart},'%');
+    </update>
+    <update id="updateLocked" parameterType="com.zhrenjie04.alex.manager.domain.Role">
+        update t_role set is_locked=#{isLocked}
+        where
+        role_id=#{roleId}
+    </update>
+</mapper>

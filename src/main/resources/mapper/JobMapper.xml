@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhrenjie04.alex.manager.dao.JobDao">
+	<!-- cache type="org.mybatis.caches.memcached.MemcachedCache" / -->
+    <resultMap type="com.zhrenjie04.alex.core.User"
+        id="jobResult">
+        <result property="userId" column="user_id" />
+        <result property="username" column="username" />
+        <result property="password" column="password" />
+        <result property="realname" column="realname" />
+        <result property="nickname" column="nickname" />
+        <result property="cellphone" column="cellphone" />
+        <result property="email" column="email" />
+        <result property="gender" column="gender" />
+        <result property="birthday" column="birthday" />
+        <result property="isDeleted" column="is_deleted" />
+        <result property="isLocked" column="is_locked" />
+        <result property="groupId" column="group_id" />
+        <result property="otherResults.groupName" column="group_name" />
+        <result property="otherResults.orgId" column="org_id" javaType="java.lang.String"/>
+        <result property="otherResults.orgName" column="org_name" javaType="java.lang.String"/>
+        <result property="otherResults.positionId" column="position_id" javaType="java.lang.String"/>
+        <result property="otherResults.positionName" column="position_name" javaType="java.lang.String"/>
+        <result property="otherResults.roleId" column="role_id" javaType="java.lang.String"/>
+        <result property="otherResults.roleName" column="role_name" javaType="java.lang.String"/>
+        <result property="otherResults.jobId" column="job_id" javaType="java.lang.String"/>
+        <result property="otherResults.id" column="id" javaType="java.lang.String"/>
+    </resultMap>
+    	<select id="count" resultType="java.lang.Long" parameterType="java.util.HashMap">
+    		select count(*)
+		from t_job_user_role jur left join t_user u on jur.user_id = u.user_id
+        left join t_job_user_org_position juop on jur.job_id = juop.job_id
+        left join t_org o on juop.org_id=o.org_id
+        left join t_org g on o.group_id=g.org_id
+        left join t_position p on juop.position_id=p.position_id
+        left join t_role r on jur.role_id = r.role_id
+		where
+		1=1
+		<if test="roleId != null">
+	        and jur.role_id=#{roleId}
+		</if>
+		<if test="positionId != null">
+	        and juop.position_id=#{positionId}
+		</if>
+		<if test="orgId != null">
+	        and juop.org_id=#{orgId}
+		</if>
+        <if test="userId != null">
+            and jur.user_id=#{userId}
+        </if>
+		<if test="groupId != null">AND o.group_id=#{groupId}</if>
+        <if test="keyword != null and keyword !=''">and full_text like concat('%',#{keyword},'%')</if>
+		and jur.is_deleted=0
+		and u.is_deleted=0
+		and juop.is_deleted=0
+    </select>
+	<select id="pageQueryAll" resultMap="jobResult" parameterType="java.util.HashMap">
+		select u.*,jur.id,juop.job_id,g.org_name group_name,o.org_id,o.org_name org_name,
+		p.position_id,p.position_name,
+		r.role_id,r.role_name
+		from t_job_user_role jur left join t_user u on jur.user_id = u.user_id
+		left join t_job_user_org_position juop on jur.job_id = juop.job_id
+		left join t_org o on juop.org_id=o.org_id
+        left join t_org g on o.group_id=g.org_id
+		left join t_position p on juop.position_id=p.position_id
+		left join t_role r on jur.role_id = r.role_id
+		where
+		1=1
+		<if test="roleId != null">
+	        and jur.role_id=#{roleId}
+		</if>
+		<if test="positionId != null">
+	        and juop.position_id=#{positionId}
+		</if>
+		<if test="orgId != null">
+	        and juop.org_id=#{orgId}
+		</if>
+        <if test="userId != null">
+            and jur.user_id=#{userId}
+        </if>
+		<if test="groupId != null">AND o.group_id=#{groupId}</if>
+        <if test="keyword != null and keyword !=''">and full_text like concat('%',#{keyword},'%')</if>
+		and jur.is_deleted=0
+		and u.is_deleted=0
+		and juop.is_deleted=0
+		order by 
+		<if test="orderBy != null and orderBy !=''">
+			${orderBy}
+			<if test="orderType != null and orderType !=''">${orderType}</if>
+			,
+		</if>
+		jur.id asc
+		limit #{start},#{length}
+	</select>
+    <select id="queryUserIdsByJobUserRoleIds" parameterType="java.util.HashMap" resultType="java.lang.String">
+       select jur.user_id
+       from
+       t_job_user_role jur
+       where
+       jur.is_deleted = 0
+       and jur.id in(
+       <foreach collection="ids" item="id" separator=",">#{id}</foreach>
+       )
+    </select>
+	<update id="deleteJobUserRoles" parameterType="java.util.HashMap">
+	   update t_job_user_role jur,t_job_user_org_position juop,t_org o set jur.is_deleted = 1,
+	   jur.last_modified_time=now(),
+	   jur.last_modifier_id=#{lastModifierId},
+	   jur.last_modifier_name=#{lastModifierName}
+	   where
+	   jur.job_id=juop.job_id
+	   and jur.is_deleted = 0
+	   and juop.org_id = o.org_id
+	   <if test="groupId != null">
+	   and o.group_id=#{groupId}
+	   </if>
+	   and jur.id in(
+	   <foreach collection="ids" item="id" separator=",">#{id}</foreach>
+	   )
+	   and juop.job_id != #{jobId}
+	</update>
+    <update id="deleteCleanJobUserOrgPosition" parameterType="java.util.HashMap">
+       update t_job_user_org_position juop,t_job_user_role jur set juop.is_deleted = 1,
+       juop.last_modified_time=now(),
+       juop.last_modifier_id=#{lastModifierId},
+       juop.last_modifier_name=#{lastModifierName}
+       where
+       juop.job_id in(select job_id from t_job_user_role where id in (
+       <foreach collection="ids" item="id" separator=",">#{id}</foreach>
+       ) group by user_id,job_id having sum(case when is_deleted = 0 then 1 else 0 end)=0)
+       and juop.is_deleted = 0
+    </update>
+</mapper> 

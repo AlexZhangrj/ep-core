@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhrenjie04.alex.manager.dao.JobUserOrgPositionDao">
+	<!-- cache type="org.mybatis.caches.memcached.MemcachedCache" / -->
+	<resultMap type="com.zhrenjie04.alex.manager.domain.JobUserOrgPosition"
+		id="jobResult">
+		<result property="jobId" column="job_id" />
+		<result property="orgId" column="org_id" />
+		<result property="groupId" column="group_id" />
+		<result property="positionId" column="position_id" />
+		<result property="otherResults.jobName" column="position_name" />
+		<result property="otherResults.comName" column="com_name" />
+		<result property="otherResults.deptName" column="dept_name" />
+		<result property="otherResults.comId" column="com_id" javaType="java.lang.String" />
+	</resultMap>
+	<select id="queryAllJobIds" resultType="java.lang.String" parameterType="java.util.HashMap">
+		select
+		job_id from t_job_user_org_position
+		where
+		user_id in (
+			<foreach collection="userIds" item="id" separator=",">#{id}</foreach>
+		)
+		and org_id=#{orgId}
+		and position_id=#{positionId}
+		and is_deleted = 0
+	</select>
+	<select id="queryAll" resultMap="jobResult" parameterType="java.util.HashMap">
+		select
+		o.group_id,j.job_id,j.position_id,j.org_id,p.position_name,o.org_name
+		dept_name,oc.org_name com_name,oc.org_id com_id from
+		t_job_user_org_position j left join t_position p on
+		j.position_id=p.position_id
+		left join t_org o on j.org_id=o.org_id left
+		join t_org oc on o.com_id=oc.org_id
+		where user_id=#{userId}
+		and j.is_deleted=0 and j.is_locked=0
+		and p.is_deleted=0 and p.is_locked=0
+	</select>
+	<select id="queryObject" resultMap="jobResult" parameterType="java.util.HashMap">
+		select
+		o.group_id,j.job_id,j.position_id,j.org_id,p.position_name,o.org_name
+		dept_name,oc.org_name com_name,oc.org_id com_id from
+		t_job_user_org_position j left join t_position p on
+		j.position_id=p.position_id
+		left join t_org o on j.org_id=o.org_id left
+		join t_org oc on o.com_id=oc.org_id
+		where user_id=#{userId} and
+		j.org_id=#{orgId} and j.position_id=#{positionId}
+		and j.is_deleted=0
+		and j.is_locked=0
+		and p.is_deleted=0 and p.is_locked=0
+	</select>
+	<update id="deleteAll" parameterType="java.util.HashMap">
+		update t_job_user_org_position juop,t_org o set juop.is_deleted=1
+		,juop.last_modified_time=now(),juop.last_modifier_id=#{lastModifierId},juop.last_modifier_name=#{lastModifierName}
+		where 
+			juop.org_id=o.org_id
+			<if test="ids != null">
+				and juop.user_id in(
+		        <foreach collection="ids" item="id" separator=",">#{id}</foreach>
+		        )
+		        <if test="groupId != null">and o.group_id=#{groupId}</if>
+				and juop.is_deleted = 0
+			</if>
+			<if test="ids == null">
+				and juop.user_id=#{userId} and juop.org_id=#{orgId} and
+				juop.position_id=#{positionId}
+				and juop.is_deleted = 0
+			</if>
+	</update>
+	<insert id="insertObject" parameterType="com.zhrenjie04.alex.manager.domain.JobUserOrgPosition">
+		insert into t_job_user_org_position(job_id,user_id,org_id,position_id,creater_id,creater_name,created_time,is_deleted)
+		values(#{jobId},#{userId},#{orgId},#{positionId},#{createrId},#{createrName},now(),0)
+	</insert>
+</mapper> 

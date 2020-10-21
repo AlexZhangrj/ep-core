@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhrenjie04.alex.manager.dao.JobUserRoleDao">
+	<!-- cache type="org.mybatis.caches.memcached.MemcachedCache" / -->
+	<resultMap type="com.zhrenjie04.alex.manager.domain.JobUserRole"
+		id="jobUserRoleResult">
+		<result property="id" column="id" />
+		<result property="jobId" column="job_id" />
+		<result property="userId" column="user_id" />
+		<result property="roleId" column="role_id" />
+	</resultMap>
+	<update id="deleteAll" parameterType="java.util.HashMap">
+		update t_job_user_role set is_deleted=1
+		,last_modified_time=now(),last_modifier_id=#{lastModifierId},last_modifier_name=#{lastModifierName}
+		where user_id=#{userId} and job_id=#{jobId} and is_deleted = 0
+	</update>
+	<insert id="insertObject" parameterType="com.zhrenjie04.alex.manager.domain.JobUserRole">
+		insert into t_job_user_role(id,job_id,user_id,role_id,creater_id,creater_name,created_time,is_deleted)
+		values(#{id},#{jobId},#{userId},#{roleId},#{createrId},#{createrName},now(),0)
+	</insert>
+	<resultMap type="com.zhrenjie04.alex.manager.domain.Role"
+		id="roleResult">
+		<result property="roleId" column="role_id" />
+		<result property="roleName" column="role_name" />
+		<result property="roleCode" column="role_code" />
+		<result property="isLocked" column="is_locked" />
+		<result property="parentId" column="parent_id" />
+        <result property="idPath" column="id_path" />
+        <result property="groupId" column="group_id" />
+        <result property="otherResults.groupName" column="group_name" />
+	</resultMap>
+	<select id="queryAllRolesByJobIds" resultMap="roleResult" parameterType="java.util.HashMap">
+		select r.*,o.org_name group_name from t_role r left join t_org o on r.group_id=o.org_id where role_id in(
+		select role_id from t_job_user_role where job_id in(
+			<foreach collection="jobIds" item="id" separator=",">#{id}</foreach>
+		)
+		)
+	</select>
+</mapper> 

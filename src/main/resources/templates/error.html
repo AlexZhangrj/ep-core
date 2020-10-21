@@ -1,0 +1,13 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Error Pages</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+    <p th:text="'Path:' + ${path}" />
+    <p th:text="'Error:' + ${error}" />
+    <p th:text="'Status:' + ${status}" />
+    <p th:text="'Timestamp:' + ${timestamp}" />
+</body>
+</html>

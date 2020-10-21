@@ -1,0 +1,9 @@
+首先下载jar包
+
+下载地址：http://code.google.com/p/kaptcha/downloads/list 
+
+然后添加到本地Maven库中：
+
+在下载的文件目录下打开命令行，执行命令
+
+mvn install:install-file -DgroupId=com.google.code -DartifactId=kaptcha -Dversion=2.3.2 -Dfile=kaptcha-2.3.jar -Dpackaging=jar -DgeneratePom=true

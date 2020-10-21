@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhrenjie04.alex.manager.dao.UserDao">
+	<!-- cache type="org.mybatis.caches.memcached.MemcachedCache" / -->
+    <resultMap type="com.zhrenjie04.alex.core.User"
+        id="userResult">
+        <result property="userId" column="user_id" />
+        <result property="username" column="username" />
+        <result property="password" column="password" />
+        <result property="realname" column="realname" />
+        <result property="nickname" column="nickname" />
+        <result property="cellphone" column="cellphone" />
+        <result property="email" column="email" />
+        <result property="gender" column="gender" />
+        <result property="birthday" column="birthday" />
+        <result property="isDeleted" column="is_deleted" />
+        <result property="isLocked" column="is_locked" />
+        <result property="portraitUrl" column="portrait_url" />
+        <result property="groupId" column="group_id" />
+        <result property="createdTime" column="created_time" />
+        <result property="otherResults.groupName" column="group_name" />
+    </resultMap>
+    <resultMap type="com.zhrenjie04.alex.core.MenuItem"
+        id="menuItemResult">
+        <result property="menuId" column="privilege_id" />
+        <result property="parentId" column="parent_id" />
+        <result property="path" column="simple_url" />
+        <result property="title" column="privilege_name" />
+        <result property="menuName" column="menu_name" />
+        <result property="iconclass" column="icon_class" />
+        <result property="icontype" column="icon_type" />
+        <result property="collapse" column="collapse" />
+        <result property="ab" column="ab" />
+        <result property="menuCode" column="privilege_code" />
+        <result property="frontEndSystem" column="front_end_system" />
+    </resultMap>
+	<select id="queryUserMenuLinks" resultMap="menuItemResult"
+        parameterType="com.zhrenjie04.alex.core.Job">
+        select * from(select distinct p.sort_value,p.privilege_id,p.parent_id,p.simple_url,p.menu_name,p.privilege_name,p.privilege_code,p.front_end_system,p.icon_class,p.icon_type,p.collapse,p.ab from (select ur.role_id from
+        t_job_user_role ur left join t_role r on ur.role_id=r.role_id where job_id=#{jobId} and user_id=#{userId} and r.is_locked=0 and r.is_deleted=0) as r left join t_role_privilege rp on
+        r.role_id=rp.role_id and rp.is_deleted=0 left join t_privilege p on
+        rp.privilege_id=p.privilege_id
+        where p.is_locked=0 and p.is_deleted=0 and p.is_menu=1
+        ) as tmp
+        order by sort_value asc
+    </select>
+	<select id="queryUserPrivilegeCodes" resultType="String"
+		parameterType="com.zhrenjie04.alex.core.Job">
+		select distinct privilege_code from (select ur.role_id from
+        t_job_user_role ur left join t_role r on ur.role_id=r.role_id where job_id=#{jobId} and user_id=#{userId} and r.is_locked=0 and r.is_deleted=0) as r left join t_role_privilege rp on
+        r.role_id=rp.role_id and rp.is_deleted=0 left join t_privilege p on
+        rp.privilege_id=p.privilege_id
+        where p.is_locked=0 and p.is_deleted=0
+	</select>
+	<select id="queryUserRoleIds" resultType="String"
+		parameterType="com.zhrenjie04.alex.core.Job">
+        select distinct jur.role_id from t_job_user_role jur left join t_role r on jur.role_id=r.role_id where user_id=#{userId} and job_id=#{jobId} and jur.is_deleted=0 and r.is_locked=0 and r.is_deleted=0
+	</select>
+	<insert id="insertUserGroupRL" parameterType="java.util.HashMap">
+		insert into t_user_group(id,user_id,group_id)values(#{id},#{userId},#{groupId})
+	</insert>
+	<delete id="deleteUserGroupRL" parameterType="java.util.HashMap">
+		delete from t_user_group where user_id=#{userId} and group_id=#{groupId}
+	</delete>
+    <select id="queryAll" resultMap="userResult" parameterType="java.util.HashMap">
+        select * from t_user where user_id in(
+        <foreach collection="ids" item="id" separator=",">#{id}</foreach>
+        )
+    </select>
+	<select id="queryObjectById" resultMap="userResult" parameterType="java.lang.String">
+		select * from t_user where user_id=#{id}
+    </select>
+	<select id="queryObject" resultMap="userResult" parameterType="java.util.HashMap">
+        <![CDATA[
+            select * from t_user where 1=1
+        ]]>
+		<if test="id != null">
+			and user_id=#{id}
+		</if>
+		<if test="username != null">
+			and username=#{username}
+		</if>
+        <if test="password != null">
+            and password=#{password}
+        </if>
+        <if test="cellphone != null">
+            and cellphone=#{cellphone}
+        </if>
+		and is_deleted=0
+	</select>
+	<select id="count" resultType="java.lang.Long" parameterType="java.util.HashMap">
+		select count(*) from(select distinct u.user_id from t_user u left join t_org o on u.group_id=o.org_id
+		<if test="groupId != null">left join t_user_group ug on u.user_id=ug.user_id</if>
+		<if test="roleId != null">
+		left join t_job_user_role jur on u.user_id=jur.user_id
+		</if>
+		where
+		1=1
+        <if test="roleId != null">
+        and jur.role_id=#{roleId}
+        </if>
+        <if test="notRoleId != null">
+        and u.user_id not in(select user_id from t_job_user_role where role_id=#{notRoleId})
+        </if>
+		<if test="groupId != null">AND ug.group_id=#{groupId}</if>
+        <if test="keyword != null and keyword !=''">and full_text like concat('%',#{keyword},'%')</if>
+		and u.is_deleted=0
+		<if test="username != null">AND u.username=#{username}</if>
+		<if test="nickname != null">AND u.nickname like concat('%',#{nickname},'%')</if>
+		<if test="realname != null">AND u.realname like concat('%',#{realname},'%')</if>
+		<if test="cellphone != null">AND u.cellphone=#{cellphone}</if>
+		<if test="email != null">AND u.email=#{email}</if>
+		<if test="birthday != null">AND u.birthday=#{birthday}</if>
+		) as tmp
+	</select>
+	<select id="pageQueryAll" resultMap="userResult" parameterType="java.util.HashMap">
+		select distinct u.*,o.org_name group_name from t_user u left join t_org o on u.group_id=o.org_id
+		<if test="groupId != null">left join t_user_group ug on u.user_id=ug.user_id</if>
+		<if test="roleId != null">
+		left join t_job_user_role jur on u.user_id=jur.user_id
+		</if>
+		where
+		1=1
+        <if test="roleId != null">
+        and jur.role_id=#{roleId}
+        </if>
+        <if test="notRoleId != null">
+        and u.user_id not in(select user_id from t_job_user_role where role_id=#{notRoleId})
+        </if>
+		<if test="groupId != null">AND ug.group_id=#{groupId}</if>
+        <if test="keyword != null and keyword !=''">and full_text like concat('%',#{keyword},'%')</if>
+		and u.is_deleted=0
+		<if test="username != null">AND u.username=#{username}</if>
+		<if test="nickname != null">AND u.nickname like concat('%',#{nickname},'%')</if>
+		<if test="realname != null">AND u.realname like concat('%',#{realname},'%')</if>
+		<if test="cellphone != null">AND u.cellphone=#{cellphone}</if>
+		<if test="email != null">AND u.email=#{email}</if>
+		<if test="birthday != null">AND u.birthday=#{birthday}</if>
+		<if test="orderBy != null and orderBy !=''">
+			order by ${orderBy}
+			<if test="orderType != null and orderType !=''">${orderType}</if>
+		</if>
+		limit #{start},#{length}
+	</select>
+	<select id="countSearch" resultType="java.lang.Long" parameterType="java.util.HashMap">
+		select count(*) from t_user u
+		<if test="groupId != null">left join t_user_group ug on u.user_id=ug.user_id</if>
+		<if test="roleId != null">
+		left join t_job_user_role jur on u.user_id=jur.user_id
+		</if>
+		where
+		1=1
+		and u.is_deleted=0
+        <if test="roleId != null">
+        and jur.role_id=#{roleId}
+        </if>
+        <if test="notRoleId != null">
+        and u.user_id not in(select user_id from t_job_user_role where role_id=#{notRoleId})
+        </if>
+		<if test="groupId != null">AND ug.group_id=#{groupId}</if>
+		<if test="keyword != null">AND (
+										u.username=#{keyword} or
+										u.nickname like concat('%',#{keyword},'%') or
+										u.realname like concat('%',#{keyword},'%') or
+										u.cellphone=#{keyword} or
+										u.email=#{keyword} or
+										u.birthday=#{keyword}
+									)</if>
+		<if test="username != null">AND u.username=#{username}</if>
+		<if test="nickname != null">AND u.nickname like concat('%',#{nickname},'%')</if>
+		<if test="realname != null">AND u.realname like concat('%',#{realname},'%')</if>
+		<if test="cellphone != null">AND u.cellphone=#{cellphone}</if>
+		<if test="email != null">AND u.email=#{email}</if>
+		<if test="birthday != null">AND u.birthday=#{birthday}</if>
+	</select>
+	<select id="pageSearchAll" resultMap="userResult" parameterType="java.util.HashMap">
+		select distinct u.* from t_user u
+		<if test="groupId != null">left join t_user_group ug on u.user_id=ug.user_id</if>
+		<if test="roleId != null">
+		left join t_job_user_role jur on u.user_id=jur.user_id
+		</if>
+		where
+		1=1
+		and u.is_deleted=0
+        <if test="roleId != null">
+        and jur.role_id=#{roleId}
+        </if>
+        <if test="notRoleId != null">
+        and u.user_id not in(select user_id from t_job_user_role where role_id=#{notRoleId})
+        </if>
+		<if test="groupId != null">AND ug.group_id=#{groupId}</if>
+		<if test="keyword != null">AND (
+										u.username=#{keyword} or
+										u.nickname like concat('%',#{keyword},'%') or
+										u.realname like concat('%',#{keyword},'%') or
+										u.cellphone=#{keyword} or
+										u.email=#{keyword} or
+										u.birthday=#{keyword}
+									)</if>
+		<if test="username != null">AND u.username=#{username}</if>
+		<if test="nickname != null">AND u.nickname like concat('%',#{nickname},'%')</if>
+		<if test="realname != null">AND u.realname like concat('%',#{realname},'%')</if>
+		<if test="cellphone != null">AND u.cellphone=#{cellphone}</if>
+		<if test="email != null">AND u.email=#{email}</if>
+		<if test="birthday != null">AND u.birthday=#{birthday}</if>
+		<if test="orderBy != null and orderBy !=''">
+			order by ${orderBy}
+			<if test="orderType != null and orderType !=''">${orderType}</if>
+		</if>
+		limit #{start},#{length}
+	</select>
+	<insert id="insertObject" parameterType="com.zhrenjie04.alex.core.User">
+        insert into t_user(
+              `user_id`,
+			  `username`,
+			  `password`,
+			  `salt`,
+			  `realname`,
+			  `nickname`,
+			  `email`,
+			  `cellphone`,
+			  `birthday`,
+			  `gender`,
+			  `portrait_url`,
+			  `is_locked`,
+			  `is_deleted`,
+			  `creater_id`,
+			  `creater_name`,
+			  `group_id`,
+			  `full_text`
+        )values(
+              #{userId},
+              #{username},
+              #{password},
+              #{salt},
+              #{realname},
+              #{nickname},
+              #{email},
+              #{cellphone},
+              #{birthday},
+              #{gender},
+              #{portraitUrl},
+              0,
+              0,
+              #{createrId},
+              #{createrName},
+              #{groupId},
+              concat(IFNULL(#{userId},''),':',IFNULL(#{username},''),':',IFNULL(#{realname},''),':',IFNULL(#{nickname},''),
+              ':',IFNULL(#{email},''),':',IFNULL(#{cellphone},''),':',IFNULL(#{birthday},''),':',IFNULL(#{gender},''))
+        )
+	</insert>
+    <update id="deleteAll" parameterType="java.util.HashMap">
+    	delete from t_user_group where user_id in(
+    		<foreach collection="ids" item="id" separator=",">#{id}</foreach>
+    	) and group_id=#{groupId}
+    </update>
+    <update id="updateObject" parameterType="com.zhrenjie04.alex.core.User">
+        update t_user set user_id=user_id
+        <if test="password != null and password != ''">,password=#{password}</if>
+        <if test="salt != null and salt != ''">,salt=#{salt}</if>
+        ,realname=#{realname}
+        ,nickname=#{nickname}
+        ,email=#{email}
+        ,cellphone=#{cellphone}
+        ,birthday=#{birthday}
+        ,gender=#{gender}
+        ,portrait_url=#{portraitUrl}
+        ,last_modified_time=now(),last_modifier_id=#{lastModifierId},last_modifier_name=#{lastModifierName}
+        ,full_text=concat(IFNULL(#{userId},''),':',IFNULL(username,''),':',IFNULL(#{realname},''),':',IFNULL(#{nickname},''),
+              ':',IFNULL(#{email},''),':',IFNULL(#{cellphone},''),':',IFNULL(#{birthday},''),':',IFNULL(#{gender},''))
+        where user_id=#{userId}
+     </update>
+    <update id="updateLocked" parameterType="com.zhrenjie04.alex.core.User">
+        update t_user set is_locked=#{isLocked}
+        where user_id=#{userId}
+     </update>
+</mapper> 
