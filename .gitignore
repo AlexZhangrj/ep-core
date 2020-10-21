@@ -21,23 +21,8 @@
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
-.settings/org.eclipse.core.resources.prefs
-.settings/org.eclipse.jdt.apt.core.prefs
-.settings/org.eclipse.jdt.core.prefs
-.settings/org.eclipse.m2e.core.prefs
-target/classes/META-INF/maven/com.zhrenjie04.alex.web/ep-core/pom.properties
-target/classes/META-INF/maven/com.zhrenjie04.alex.web/ep-core/pom.properties
-.project
-target/classes/META-INF/maven/com.zhrenjie04.alex.web/ep-core/pom.properties
-target/classes/META-INF/maven/com.zhrenjie04.alex.web/ep-core/pom.properties
+.settings/*
+target/*
 .classpath
 .factorypath
-target/classes/META-INF/maven/com.zhrenjie04.alex.web/ep-core/pom.properties
-target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst
-target/surefire-reports/com.zhrenjie04.alex.core.AppTest.txt
-target/surefire-reports/TEST-com.zhrenjie04.alex.core.AppTest.xml
-target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst
-target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/inputFiles.lst
-target/surefire-reports/TEST-com.zhrenjie04.alex.core.AppTest.xml
-target/classes/META-INF/maven/com.zhrenjie04.alex.web/ep-core/pom.properties
-target/*
+.project
