@@ -39,14 +39,6 @@ public class UserServiceImpl extends AbstractGenericService<User, UserDao> imple
 
 	@Autowired
 	UserDao userDao;
-	@Autowired
-	JobUserOrgPositionDao userOrgPositionDao;
-	@Autowired
-	JobUserProjectDeptPositionDao userProjectDeptPositionDao;
-	@Autowired
-	OrgDao orgDao;
-	@Autowired
-	ConfigService configService;
 
 	@Override
 	protected UserDao getDao() {
@@ -96,67 +88,27 @@ public class UserServiceImpl extends AbstractGenericService<User, UserDao> imple
 	public List<Identity> queryJobs(User user) {
 		HashMap<String, Object> params = new HashMap<String, Object>(16);
 		params.put("userId", user.getUserId());
-		List<JobUserOrgPosition> orgJobs = userOrgPositionDao.queryAll(params);// job的groupId取得是组织机构上的groupId
-		List<Identity> jobs = new LinkedList<Identity>();
-		if (orgJobs != null) {
-			for (JobUserOrgPosition job : orgJobs) {
-				Identity item = new Identity();
-				item.setJobId(job.getJobId());
-				if (job.getOtherResults().get("comName").equals(job.getOtherResults().get("deptName"))) {
-					item.setJobName((String) job.getOtherResults().get("comName") + "-"
-							+ (String) job.getOtherResults().get("jobName"));
-				} else {
-					item.setJobName((String) job.getOtherResults().get("comName") + "-"
-							+ (String) job.getOtherResults().get("deptName") + "-"
-							+ (String) job.getOtherResults().get("jobName"));
-				}
-				item.setJobType(Identity.JOB_TYPE_ORG_POSITION_JOB);
-				item.setOrgId(job.getOrgId());
-				item.setComId((String) job.getOtherResults().get("comId"));
-				item.setGroupId(job.getGroupId());
-				item.setUserId(user.getUserId());
-				item.setPositionId(job.getPositionId());
-				jobs.add(item);
-			}
-		}
-		List<JobUserProjectDeptPosition> projectDeptJobs = userProjectDeptPositionDao.queryAll(params);
-		if (projectDeptJobs != null) {
-			for (JobUserProjectDeptPosition job : projectDeptJobs) {
-				Identity item = new Identity();
-				item.setJobId(job.getJobId());
-				item.setJobName((String) job.getOtherResults().get("comName") + "-"
-						+ (String) job.getOtherResults().get("projectDeptName") + "-"
-						+ (String) job.getOtherResults().get("jobName"));
-				item.setJobType(Identity.JOB_TYPE_PROJECT_DEPT_POSITION_JOB);
-				item.setProjectDeptId(job.getProjectDeptId());
-				item.setUserId(user.getUserId());
-				item.setComId((String) job.getOtherResults().get("comId"));
-				item.setGroupId(job.getGroupId());
-				item.setPositionId(job.getPositionId());
-				jobs.add(item);
-			}
-		}
-		return jobs;
+		return null;
 	}
 
 	@Cacheable(value = "users", key = "#root.target.getCacheKeyPageSearchAll(#params,#sessionUser)", sync = true)
 	@Override
 	public JsonResult pageSearchAll(HashMap<String, Object> params, User sessionUser) {
 		//搜索不限制哪个集团
-//		if (sessionUser.getCurrentJob().getGroupId() == null) {
+//		if (sessionUser.getCurrentIdentity().getGroupId() == null) {
 //			return JsonResult.failure(JsonResult.CODE_PREREQUISITE_NOT_SATISFIED, "您的groupId为空，不能返回相应账号信息");
 //		}
 //		if (sessionUser.hasPrivilege("manager:user.back.page-query-all-groups")
 //				&& ROOT_GROUP_ID.equals(sessionUser.getGroupId())
-//				&& ROOT_GROUP_ID.equals(sessionUser.getCurrentJob().getGroupId())) {
+//				&& ROOT_GROUP_ID.equals(sessionUser.getCurrentIdentity().getGroupId())) {
 //			// 返回所有账号权限
 //		} else if (sessionUser.hasPrivilege("manager:user.back.page-query-all-coms")) {
 //			// 只返回本集团的账号的权限
-//			params.put("groupId", sessionUser.getCurrentJob().getGroupId());
+//			params.put("groupId", sessionUser.getCurrentIdentity().getGroupId());
 //		} else {
 //			// 不返回数据
 //			params.put("groupId", -1);
-////			params.put("groupId", sessionUser.getCurrentJob().getGroupId());
+////			params.put("groupId", sessionUser.getCurrentIdentity().getGroupId());
 //		}
 		Long total = userDao.countSearch(params);
 		Long pageNo = null;
@@ -185,20 +137,20 @@ public class UserServiceImpl extends AbstractGenericService<User, UserDao> imple
 	@Cacheable(value = "users", key = "#root.target.getCacheKeyPageQueryAll(#params,#sessionUser)", sync = true)
 	@Override
 	public JsonResult pageQueryAll(HashMap<String, Object> params, User sessionUser) {
-		if (sessionUser.getCurrentJob().getGroupId() == null) {
+		if (sessionUser.getCurrentIdentity().getGroupId() == null) {
 			return JsonResult.failure(JsonResult.CODE_PREREQUISITE_NOT_SATISFIED, "您的groupId为空，不能返回相应账号信息");
 		}
 		if (sessionUser.hasPrivilege("manager:user.back.page-query-all-groups")
 				&& ROOT_GROUP_ID.equals(sessionUser.getGroupId())
-				&& ROOT_GROUP_ID.equals(sessionUser.getCurrentJob().getGroupId())) {
+				&& ROOT_GROUP_ID.equals(sessionUser.getCurrentIdentity().getGroupId())) {
 			// 返回所有账号权限
 		} else if (sessionUser.hasPrivilege("manager:user.back.page-query-all-coms")) {
 			// 只返回本集团的账号的权限
-			params.put("groupId", sessionUser.getCurrentJob().getGroupId());
+			params.put("groupId", sessionUser.getCurrentIdentity().getGroupId());
 		} else {
 			// 不返回数据
 			params.put("groupId", -1);
-//			params.put("groupId", sessionUser.getCurrentJob().getGroupId());
+//			params.put("groupId", sessionUser.getCurrentIdentity().getGroupId());
 		}
 		return super.pageQueryAll(params, sessionUser);
 	}
@@ -207,9 +159,9 @@ public class UserServiceImpl extends AbstractGenericService<User, UserDao> imple
 		return "pq-" + JsonUtil.stringify(params) + "-"
 				+ (sessionUser.hasPrivilege("manager:user.back.page-query-all-groups")
 						&& ROOT_GROUP_ID.equals(sessionUser.getGroupId())
-						&& ROOT_GROUP_ID.equals(sessionUser.getCurrentJob().getGroupId()))
+						&& ROOT_GROUP_ID.equals(sessionUser.getCurrentIdentity().getGroupId()))
 				+ "-" + (sessionUser.hasPrivilege("manager:user.back.page-query-all-coms")) + "-"
-				+ (sessionUser.getCurrentJob().getGroupId());
+				+ (sessionUser.getCurrentIdentity().getGroupId());
 	}
 
 	public String getCacheKeyPageSearchAll(HashMap<String, Object> params, User sessionUser) {
@@ -222,9 +174,9 @@ public class UserServiceImpl extends AbstractGenericService<User, UserDao> imple
 	@Transactional
 	public JsonResult deleteAll(HashMap<String, Object> params, User sessionUser) {
 		// 删除用户账号改为删除该用户在本集团内的所有job，及用户集团关系数据
-		if (!ROOT_GROUP_ID.equals(sessionUser.getCurrentJob().getGroupId())) {
+		if (!ROOT_GROUP_ID.equals(sessionUser.getCurrentIdentity().getGroupId())) {
 			// 非根系统用户只能删除自己所在集团的用户的所有job
-			params.put("groupId", sessionUser.getCurrentJob().getGroupId());
+			params.put("groupId", sessionUser.getCurrentIdentity().getGroupId());
 		}
 		String[] ids = (String[]) params.get("ids");
 		for (String id : ids) {
@@ -234,7 +186,6 @@ public class UserServiceImpl extends AbstractGenericService<User, UserDao> imple
 		}
 		params.put("lastModifierId", sessionUser.getUserId());
 		params.put("lastModifierName", sessionUser.getUsername());
-		userOrgPositionDao.deleteAll(params);
 		userDao.deleteAll(params);
 		return JsonResult.success("删除成功");
 	}
@@ -251,7 +202,7 @@ public class UserServiceImpl extends AbstractGenericService<User, UserDao> imple
 		object.setPassword(Md5Util.encrypt(object.getPassword() + object.getSalt()));
 		object.setUserId(IdGenerator.nextIdBase48String());
 		// 只能添加当前职务所属集团的用户
-		object.setGroupId(sessionUser.getCurrentJob().getGroupId());
+		object.setGroupId(sessionUser.getCurrentIdentity().getGroupId());
 		HashMap<String, Object> params = new HashMap<String, Object>(16);
 		params.put("username", object.getUsername());
 		User user = userDao.queryObject(params);
@@ -260,7 +211,7 @@ public class UserServiceImpl extends AbstractGenericService<User, UserDao> imple
 		} else {
 			super.insertObject(object, sessionUser);
 		}
-		return result;
+		return JsonResult.success();
 	}
 
 	/**
@@ -273,7 +224,7 @@ public class UserServiceImpl extends AbstractGenericService<User, UserDao> imple
 		// 密码经过盐值加密
 		object.setSalt(SaltUtil.generatSalt());
 		object.setPassword(Md5Util.encrypt(object.getPassword() + object.getSalt()));
-		object.setUserId(IdGenerator.nextIdBase52String());
+		object.setUserId(IdGenerator.nextIdBase48String());
 		HashMap<String, Object> params = new HashMap<String, Object>(16);
 		params.put("username", object.getUsername());
 		if (userDao.count(params) > 0) {
