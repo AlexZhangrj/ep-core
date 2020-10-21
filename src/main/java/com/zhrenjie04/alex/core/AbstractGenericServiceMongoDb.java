@@ -176,7 +176,7 @@ public abstract class AbstractGenericServiceMongoDb<T extends AbstractGenericEnt
 	@Override
 	@Transactional
 	public JsonResult insertObject(User sessionUser, T object) {
-		object.setPK(IdGenerator.nextIdBase52String());
+		object.setPK(IdGenerator.nextIdBase48String());
 		object.setIsDeleted(false);
 		template.insert(object);
 		JsonResult result = JsonResult.success("插入成功");
