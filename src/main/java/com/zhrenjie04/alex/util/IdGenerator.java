@@ -1,59 +1,50 @@
 package com.zhrenjie04.alex.util;
 
-import javax.annotation.PostConstruct;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
 import com.zhrenjie04.alex.core.exception.CrisisError;
 
 /**
  * @author 张人杰 Twitter_Snowflake<br>
- *         SnowFlake的结构如下(每部分用-分开):<br>
- *         0 - 0000000000 0000000000 0000000000 0000000000 0 - 00000 - 00000 -
- *         000000000000 <br>
- *         1位标识，由于long基本类型在Java中是带符号的，最高位是符号位，正数是0，负数是1，所以id一般是正数，最高位是0<br>
- *         41位时间截(毫秒级)，注意，41位时间截不是存储当前时间的时间截，而是存储时间截的差值（当前时间截 - 开始时间截)
- *         得到的值），这里的的开始时间截，一般是我们的id生成器开始使用的时间，由我们程序来指定的（如下下面程序IdWorker类的startTime属性）。41位的时间截，可以使用69年，年T
- *         = (1L << 41) / (1000L * 60 * 60 * 24 * 365) = 69<br>
- *         10位的数据机器位，可以部署在1024个节点，包括5位datacenterId和5位workerId（后期改为10位workerId）<br>
- *         12位序列，毫秒内的计数，12位的计数顺序号支持每个节点每毫秒(同一机器，同一时间截)产生4096个ID序号<br>
- *         加起来刚好64位，为一个Long型。<br>
- *         SnowFlake的优点是，整体上按照时间自增排序，并且整个分布式系统内不会产生ID碰撞(由数据中心ID和机器ID作区分)，并且效率较高，经测试，SnowFlake每秒能够产生26万ID左右。
+ * 		   2020-07-21改进：
+ * 		   改为一个Long型整数+一个Integer型整数（long64位，integer32位，一共96位，高位long表示时间戳，低位int表示workid和sequence），并转化为base52表示
+ *
+ * compareBase47Id(left,right)使用前提：
+ * 1、id通过IdGenerator2产生；
+ * 2、具有时间优先机器码后置特点；
+ * 3、具有非1自增特性，具有字符串长短不确定特点
+ * 用途：用于数据库服务器扩容时使用（旧id分库原则方法中hash规则不变，新id按新的服务器数量进行hash）
+ * 使用说明：只比较头部时间
  */
 public class IdGenerator {
 
 	private static final Logger logger = LoggerFactory.getLogger(IdGenerator.class);
 
 	// ==============================Fields===========================================
-	/** 开始时间截 (2017-09-28) */
-	private static final long START_TIME = 1506528000000L;
+	/** 开始时间截 (2020-07-21 00:00:00) */
+	private static final long START_TIME = 1595260800000L;
 
 	/** 机器id所占的位数 */
-	private static final long WORKER_ID_BITS = 10L;
+	private static final int WORKER_ID_BITS = 20;//最大机器数量2^20 100万台
 
 	/** 支持的最大机器id，结果是1024 (这个移位算法可以很快的计算出几位二进制数所能表示的最大十进制数) */
-	private static final long MAX_WORK_ID = -1L ^ (-1L << WORKER_ID_BITS);
+	private static final int MAX_WORK_ID = -1 ^ (-1 << WORKER_ID_BITS);
 
-	/** 序列在id中占的位数，序列取11位（原本12位），则时间范围可以显示42位，可以记录138年 */
-	private static final long SEQUENCE_BITS = 11L;
+	/** 序列在id中占的位数，即时间戳相同时，同一个worker最多产生多少个不同的id，序列id10位，1024个，毫秒内一个微服务最多产生1024个id */
+	private static final int SEQUENCE_BITS = 10;
 
 	/** 机器ID向左移12位 */
-	private static final long WORKER_ID_SHIFT = SEQUENCE_BITS;
-
-	/** 时间截向左移22位(5+5+12) */
-	private static final long TIMESTAMP_LEFT_SHIFT = WORKER_ID_BITS + SEQUENCE_BITS;
+	private static final int WORKER_ID_SHIFT = SEQUENCE_BITS;
 
 	/** 生成序列的掩码，这里为4095 (0b111111111111=0xfff=4095) */
-	private static final long SEQUENCE_MASK = -1L ^ (-1L << SEQUENCE_BITS);
+	private static final int SEQUENCE_MASK = -1 ^ (-1 << SEQUENCE_BITS);
 
-	/** 工作机器ID(0~1024) */
-	private static long workerId;
+	/** 工作机器ID(0~2^20) */
+	private static int workerId = 2^19;
 
-	/** 毫秒内序列(0~4095) */
-	private static long sequence = 0L;
+	/** 毫秒内序列(0~2^10) */
+	private static int sequence = 0;
 
 	/** 上次生成ID的时间截 */
 	private static long lastTimestamp = -1L;
@@ -73,11 +64,12 @@ public class IdGenerator {
 
 	// ==============================Methods==========================================
 	/**
-	 * 获得下一个ID (该方法是线程安全的)
-	 * 
-	 * @return SnowflakeId
+	 * 获得下一个数字Id (该方法是线程安全的)，最大长度29字节
+	 * 建议订单编号采用数字Id
+	 * 数字位数已对齐
+	 * @return 雪花算法id
 	 */
-	public static synchronized long nextId() {
+	public static synchronized String nextIdNumberString() {
 		long timestamp = timeGen();
 
 		// 如果当前时间小于上一次ID生成的时间戳，说明系统时钟回退过这个时候应当抛出异常
@@ -92,32 +84,144 @@ public class IdGenerator {
 			// 毫秒内序列溢出
 			if (sequence == 0) {
 				// 阻塞到下一个毫秒,获得新的时间戳
-				timestamp = tilNextMillis(lastTimestamp);
+				timestamp = tillNextMillis(lastTimestamp);
 			}
-		}
-		// 时间戳改变，毫秒内序列重置
-		else {
-			sequence = 0L;
+		} else {
+			// 时间戳改变，毫秒内序列重置
+			sequence = 0;
 		}
 
 		// 上次生成ID的时间截
 		lastTimestamp = timestamp;
-
 		// 移位并通过或运算拼到一起组成64位的ID
-		return ((timestamp - START_TIME) << TIMESTAMP_LEFT_SHIFT) | (workerId << WORKER_ID_SHIFT) | sequence;
+		return  String.format("%019d", (timestamp - START_TIME)) + String.format("%010d", (workerId << WORKER_ID_SHIFT) | sequence);
 	}
+	/**
+	 * 获得下一个字符Id (该方法是线程安全的)，最长18个字符
+	 * 建议博客文章Id、聊天记录采用字符Id
+	 * @return 雪花算法id
+	 */
+	public static synchronized String nextIdBase47String() {
+		long timestamp = timeGen();
 
-	public static String nextIdString() {
-		return "" + nextId();
+		// 如果当前时间小于上一次ID生成的时间戳，说明系统时钟回退过这个时候应当抛出异常
+		if (timestamp < lastTimestamp) {
+			throw new CrisisError(String.format("Clock moved backwards.  Refusing to generate id for %d milliseconds",
+					lastTimestamp - timestamp));
+		}
+
+		// 如果是同一时间生成的，则进行毫秒内序列
+		if (lastTimestamp == timestamp) {
+			sequence = (sequence + 1) & SEQUENCE_MASK;
+			// 毫秒内序列溢出
+			if (sequence == 0) {
+				// 阻塞到下一个毫秒,获得新的时间戳
+				timestamp = tillNextMillis(lastTimestamp);
+			}
+		} else {
+			// 时间戳改变，毫秒内序列重置
+			sequence = 0;
+		}
+
+		// 上次生成ID的时间截
+		lastTimestamp = timestamp;
+		// 移位并通过或运算拼到一起组成64位的ID
+		Long firstLong=(timestamp - START_TIME);
+//		System.out.println(firstLong);
+		StringBuffer firstString=new StringBuffer("");
+		while(firstLong>0) {
+			long c=firstLong%47;
+			if(c<23) {
+				char s=(char) ('A'+c+1);
+				firstString.insert(0, s);
+			}else{
+				char s=(char) ('a'+(c-23));
+				firstString.insert(0, s);
+			}
+			firstLong=firstLong/47;
+		}
+		Integer lastInteger=(workerId << WORKER_ID_SHIFT) | sequence;
+//		System.out.println(lastInteger);
+		StringBuffer lastString=new StringBuffer("");
+		while(lastInteger>0) {
+			long c=lastInteger%47;
+			if(c<23) {
+				char s=(char) ('A'+c+1);
+				lastString.insert(0, s);
+			}else{
+				char s=(char) ('a'+(c-23));
+				lastString.insert(0, s);
+			}
+			lastInteger=lastInteger/47;
+		}
+		return firstString.append("A").append(lastString).toString();
 	}
+	/**
+	 * 获得下一个Id的byte数组表示
+	 * 建议博客文章Id、聊天记录采用字符Id
+	 * @return 雪花算法id
+	 */
+	public static synchronized byte[] nextIdBytes() {
+		long timestamp = timeGen();
 
+		// 如果当前时间小于上一次ID生成的时间戳，说明系统时钟回退过这个时候应当抛出异常
+		if (timestamp < lastTimestamp) {
+			throw new CrisisError(String.format("Clock moved backwards.  Refusing to generate id for %d milliseconds",
+					lastTimestamp - timestamp));
+		}
+
+		// 如果是同一时间生成的，则进行毫秒内序列
+		if (lastTimestamp == timestamp) {
+			sequence = (sequence + 1) & SEQUENCE_MASK;
+			// 毫秒内序列溢出
+			if (sequence == 0) {
+				// 阻塞到下一个毫秒,获得新的时间戳
+				timestamp = tillNextMillis(lastTimestamp);
+			}
+		} else {
+			// 时间戳改变，毫秒内序列重置
+			sequence = 0;
+		}
+
+		// 上次生成ID的时间截
+		lastTimestamp = timestamp;
+		// 移位并通过或运算拼到一起组成64位的ID
+		Long firstLong=(timestamp - START_TIME);
+		Integer lastInteger=(workerId << WORKER_ID_SHIFT) | sequence;
+		byte[] bytes=new byte[12];
+		bytes[0]=(byte)(lastInteger&0xff);
+		lastInteger=lastInteger>>8;
+		bytes[1]=(byte)(lastInteger&0xff);
+		lastInteger=lastInteger>>8;
+		bytes[2]=(byte)(lastInteger&0xff);
+		lastInteger=lastInteger>>8;
+		bytes[3]=(byte)(lastInteger&0xff);
+		
+		bytes[4]=(byte)(firstLong&0xff);
+		firstLong=firstLong>>8;
+		bytes[5]=(byte)(firstLong&0xff);
+		firstLong=firstLong>>8;
+		bytes[6]=(byte)(firstLong&0xff);
+		firstLong=firstLong>>8;
+		bytes[7]=(byte)(firstLong&0xff);
+		firstLong=firstLong>>8;
+		bytes[8]=(byte)(firstLong&0xff);
+		firstLong=firstLong>>8;
+		bytes[9]=(byte)(firstLong&0xff);
+		firstLong=firstLong>>8;
+		bytes[10]=(byte)(firstLong&0xff);
+		firstLong=firstLong>>8;
+		bytes[11]=(byte)(firstLong&0xff);
+		
+		return bytes;
+	}
 	/**
 	 * 阻塞到下一个毫秒，直到获得新的时间戳
 	 * 
 	 * @param lastTimestamp 上次生成ID的时间截
 	 * @return 当前时间戳
 	 */
-	protected static long tilNextMillis(long lastTimestamp) {
+	protected static long tillNextMillis(long lastTimestamp) {
 		long timestamp = timeGen();
 		while (timestamp <= lastTimestamp) {
 			timestamp = timeGen();
@@ -134,13 +238,61 @@ public class IdGenerator {
 		return System.currentTimeMillis();
 	}
 
+	public static Long convertToLong(String base47String) {
+		Long data=0L;
+		int i=0;
+		while(i<base47String.length()) {
+			char c = base47String.charAt(i);
+			if(c>='a') {
+				data = data * 47 + c - 'a' + 23;
+			}else {
+				data = data * 47 + c - 'A' - 1;
+			}
+			++i;
+		}
+//		System.out.println(data);
+		return data;
+	}
+	
+	public static IdComparorResult compareBase47Id(String left,String right) {
+		String leftTimeString=left.substring(0, left.indexOf("A"));
+		String rightTimeString=right.substring(0, right.indexOf("A"));
+		Long leftTime=convertToLong(leftTimeString);
+		Long rightTime=convertToLong(rightTimeString);
+		if(leftTime < rightTime) {
+			return IdComparorResult.Less;
+		}else if(leftTime > rightTime) {
+			return IdComparorResult.Great;
+		}else {
+			return IdComparorResult.Equals;//只比较头部时间
+		}
+	}
+	
 	/** 测试 */
 	public static void main(String[] args) {
 		for (int i = 0; i < 1000; i++) {
-			long id = IdGenerator.nextId();
-			logger.debug(Long.toBinaryString(id));
-			logger.debug("main", id);
-			logger.debug(IdGenerator.nextIdString());
+			logger.debug(IdGenerator.nextIdNumberString()+":::"+Long.MAX_VALUE);
+			logger.debug(IdGenerator.nextIdNumberString()+":::"+Integer.MAX_VALUE);
+			logger.debug(IdGenerator.nextIdNumberString());
+			logger.debug(IdGenerator.nextIdNumberString());
+			logger.debug(IdGenerator.nextIdNumberString());
+			logger.debug(IdGenerator.nextIdBase47String());
+			logger.debug(IdGenerator.nextIdBase47String());
+			logger.debug(IdGenerator.nextIdBase47String());
+			logger.debug(IdGenerator.nextIdBase47String());
+			logger.debug(IdGenerator.nextIdBase47String());
 		}
+		System.out.println(IdGenerator.compareBase47Id("lvkdNmAItC", "lvkdNmAItD"));
+	}
+}
+
+enum IdComparorResult{
+	Equals("Equals"),Less("Less"),Great("Great");
+	String value;
+	private IdComparorResult(String value) {
+		this.value=value;
+	}
+	public String toString() {
+		return this.value;
 	}
 }

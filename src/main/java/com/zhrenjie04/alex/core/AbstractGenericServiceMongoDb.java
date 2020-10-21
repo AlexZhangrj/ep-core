@@ -17,7 +17,7 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.mongodb.client.result.UpdateResult;
-import com.zhrenjie04.alex.util.IdGenerator2;
+import com.zhrenjie04.alex.util.IdGenerator;
 
 /**
  * @author 张人杰
@@ -176,7 +176,7 @@ public abstract class AbstractGenericServiceMongoDb<T extends AbstractGenericEnt
 	@Override
 	@Transactional
 	public JsonResult insertObject(User sessionUser, T object) {
-		object.setPK(IdGenerator2.nextIdBase52String());
+		object.setPK(IdGenerator.nextIdBase52String());
 		object.setIsDeleted(false);
 		template.insert(object);
 		JsonResult result = JsonResult.success("插入成功");
