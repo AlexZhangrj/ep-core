@@ -44,8 +44,6 @@ import com.zhrenjie04.alex.util.RedisUtil;
 import com.zhrenjie04.alex.util.SessionUtil;
 import com.zhrenjie04.alex.util.SpringUtil;
 
-import springfox.documentation.oas.annotations.EnableOpenApi;
-
 /**
  * @author 张人杰
  * Swagger-UI 3.0 访问地址：http://localhost:9920/swagger-ui/index.html
@@ -56,8 +54,7 @@ import springfox.documentation.oas.annotations.EnableOpenApi;
 @EnableDiscoveryClient
 //@EnableCaching
 @EnableWebMvc
-@EnableOpenApi
-@Import({ WebConfig.class, DynamicDataSourceConfig.class ,ContextConfig.class, 
+@Import({ WebConfig.class, DynamicDataSourceConfig.class ,ContextConfig.class, SwaggerConfig.class,
 	EpMultiDataSourceProp.class,EpRedisProp.class,EpHttpClientProp.class,
 	EpIdGeneratorProp.class, EpSessionUtilProp.class, EpImgProp.class, 
 	EpJwtProp.class, EpAuthProp.class })

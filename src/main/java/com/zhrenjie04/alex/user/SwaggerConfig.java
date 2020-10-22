@@ -1,5 +1,6 @@
 package com.zhrenjie04.alex.user;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -15,14 +16,17 @@ import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.oas.annotations.EnableOpenApi;
 import springfox.documentation.service.ApiInfo;
 import springfox.documentation.service.ApiKey;
+import springfox.documentation.service.AuthorizationScope;
 import springfox.documentation.service.Contact;
+import springfox.documentation.service.SecurityReference;
 import springfox.documentation.service.SecurityScheme;
 import springfox.documentation.spi.DocumentationType;
+import springfox.documentation.spi.service.contexts.SecurityContext;
 import springfox.documentation.spring.web.plugins.Docket;
 
 @EnableOpenApi
 @Configuration
-public class SwaggerConfiguration {
+public class SwaggerConfig {
 	@Bean
     public Docket createRestApi() {
 		List<SecurityScheme> securitySchemes=new LinkedList<>();
@@ -33,6 +37,16 @@ public class SwaggerConfiguration {
 		Set<String> protocols=new HashSet<>();
 		protocols.add("https");
 		protocols.add("http");
+		
+		List<SecurityReference> srs= new LinkedList<>();
+		srs.add(new SecurityReference("token", new AuthorizationScope[]{new AuthorizationScope("global", "")}));
+		srs.add(new SecurityReference("sid", new AuthorizationScope[]{new AuthorizationScope("global", "")}));
+		List<SecurityContext> securityContexts = Collections.singletonList(
+            SecurityContext.builder()
+            	.securityReferences(srs)
+            	.build()
+		);
+                        
         return new Docket(DocumentationType.OAS_30).pathMapping("/")
         		.apiInfo(apiInfo())
                 .select()
@@ -42,7 +56,8 @@ public class SwaggerConfiguration {
                 // 支持的通讯协议集合
                 .protocols(protocols)
                 // 授权信息设置，必要的header token等认证信息
-                .securitySchemes(securitySchemes);
+                .securitySchemes(securitySchemes)
+                .securityContexts(securityContexts);
     }
 
     /**
