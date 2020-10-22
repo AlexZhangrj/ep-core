@@ -27,6 +27,7 @@ import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 import com.zhrenjie04.alex.core.DynamicDataSourceConfig;
+import com.zhrenjie04.alex.core.EpMultiDataSourceProp;
 import com.zhrenjie04.alex.core.Permission;
 import com.zhrenjie04.alex.util.Base64ImageUtil;
 import com.zhrenjie04.alex.util.FileUploadUtil;
@@ -46,7 +47,7 @@ import com.zhrenjie04.alex.util.SpringUtil;
 @EnableDiscoveryClient
 //@EnableCaching
 @EnableWebMvc
-@Import({ WebConfig.class, DynamicDataSourceConfig.class ,ContextConfig.class, SwaggerConfig.class })
+@Import({ WebConfig.class, DynamicDataSourceConfig.class ,ContextConfig.class, SwaggerConfig.class, EpMultiDataSourceProp.class })
 public class EpUserApplication implements ApplicationContextAware{
 
 	private static final Logger logger = LoggerFactory.getLogger(EpUserApplication.class);

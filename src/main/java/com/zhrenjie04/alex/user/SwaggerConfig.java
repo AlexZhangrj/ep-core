@@ -32,8 +32,8 @@ public class SwaggerConfig {
   
     private ApiInfo apiInfo() {  
         return new ApiInfoBuilder()  
-                .title("RESTful APIs")  
-                .description("后台管理系统RESTful APIs")  
+                .title("user-service APIs")  
+                .description("user-service APIs")  
                 .termsOfServiceUrl("")
                 .version("1.0.0")  
                 .build();  

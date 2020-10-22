@@ -20,42 +20,6 @@
         <result property="createdTime" column="created_time" />
         <result property="otherResults.groupName" column="group_name" />
     </resultMap>
-    <resultMap type="com.zhrenjie04.alex.core.MenuItem"
-        id="menuItemResult">
-        <result property="menuId" column="privilege_id" />
-        <result property="parentId" column="parent_id" />
-        <result property="path" column="simple_url" />
-        <result property="title" column="privilege_name" />
-        <result property="menuName" column="menu_name" />
-        <result property="iconclass" column="icon_class" />
-        <result property="icontype" column="icon_type" />
-        <result property="collapse" column="collapse" />
-        <result property="ab" column="ab" />
-        <result property="menuCode" column="privilege_code" />
-        <result property="frontEndSystem" column="front_end_system" />
-    </resultMap>
-	<select id="queryUserMenuLinks" resultMap="menuItemResult"
-        parameterType="com.zhrenjie04.alex.core.Job">
-        select * from(select distinct p.sort_value,p.privilege_id,p.parent_id,p.simple_url,p.menu_name,p.privilege_name,p.privilege_code,p.front_end_system,p.icon_class,p.icon_type,p.collapse,p.ab from (select ur.role_id from
-        t_job_user_role ur left join t_role r on ur.role_id=r.role_id where job_id=#{jobId} and user_id=#{userId} and r.is_locked=0 and r.is_deleted=0) as r left join t_role_privilege rp on
-        r.role_id=rp.role_id and rp.is_deleted=0 left join t_privilege p on
-        rp.privilege_id=p.privilege_id
-        where p.is_locked=0 and p.is_deleted=0 and p.is_menu=1
-        ) as tmp
-        order by sort_value asc
-    </select>
-	<select id="queryUserPrivilegeCodes" resultType="String"
-		parameterType="com.zhrenjie04.alex.core.Job">
-		select distinct privilege_code from (select ur.role_id from
-        t_job_user_role ur left join t_role r on ur.role_id=r.role_id where job_id=#{jobId} and user_id=#{userId} and r.is_locked=0 and r.is_deleted=0) as r left join t_role_privilege rp on
-        r.role_id=rp.role_id and rp.is_deleted=0 left join t_privilege p on
-        rp.privilege_id=p.privilege_id
-        where p.is_locked=0 and p.is_deleted=0
-	</select>
-	<select id="queryUserRoleIds" resultType="String"
-		parameterType="com.zhrenjie04.alex.core.Job">
-        select distinct jur.role_id from t_job_user_role jur left join t_role r on jur.role_id=r.role_id where user_id=#{userId} and job_id=#{jobId} and jur.is_deleted=0 and r.is_locked=0 and r.is_deleted=0
-	</select>
 	<insert id="insertUserGroupRL" parameterType="java.util.HashMap">
 		insert into t_user_group(id,user_id,group_id)values(#{id},#{userId},#{groupId})
 	</insert>
