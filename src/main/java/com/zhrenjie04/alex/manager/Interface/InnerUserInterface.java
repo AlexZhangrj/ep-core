@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.zhrenjie04.alex.core.User;
 
-@FeignClient(name = "ep-manager-service", fallback = UserServiceInterfaceFallback.class)
-public interface UserServiceInterface {
+@FeignClient(name = "ep-manager-service", fallback = InnerUserInterfaceFallback.class)
+public interface InnerUserInterface {
 	@RequestMapping(value = "/inner/user/all-by-ids", method = RequestMethod.POST)
 	List<User> getUsersByIds(@RequestBody List<String> ids);
 

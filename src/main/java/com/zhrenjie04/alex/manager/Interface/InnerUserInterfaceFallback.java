@@ -11,10 +11,10 @@ import com.zhrenjie04.alex.core.User;
 import com.zhrenjie04.alex.core.exception.CrisisError;
 
 @Component
-public class UserServiceInterfaceFallback implements UserServiceInterface {
+public class InnerUserInterfaceFallback implements InnerUserInterface {
 
 	@Autowired
-	UserServiceInterface userInterface;
+	InnerUserInterface userInterface;
 
 	@Autowired
 	RedisTemplate<String, String> redisTemplate;
