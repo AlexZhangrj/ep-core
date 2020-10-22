@@ -132,7 +132,7 @@ public class User extends AbstractGenericEntity {
 		}
 	}
 
-	public void setIdentites(List<Identity> identities) {
+	public void setIdentities(List<Identity> identities) {
 		this.identities = identities;
 		idToIdentityMap.clear();
 		if(identities!=null) {
