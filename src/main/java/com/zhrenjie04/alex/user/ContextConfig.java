@@ -15,9 +15,9 @@ import com.zhrenjie04.alex.core.AlexOperationLogAspect;
 		@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = {
 				AlexOperationLogAspect.class }) }, useDefaultFilters = false)
 @ComponentScan(basePackages = { "com.zhrenjie04.alex.service", "com.zhrenjie04.alex.util",
-		"com.zhrenjie04.alex.manager.service", "com.zhrenjie04.alex.manager.controller",
-		"com.zhrenjie04.alex.manager.controller.inner", "com.zhrenjie04.alex.manager.controller.fore",
-		"com.zhrenjie04.alex.manager.controller.back", "com.zhrenjie04.alex.message.Interface" })
-@MapperScan("com.zhrenjie04.alex.manager.dao")
+		"com.zhrenjie04.alex.user.service",
+		"com.zhrenjie04.alex.user.controller.inner", "com.zhrenjie04.alex.user.controller.fore",
+		"com.zhrenjie04.alex.user.controller.back"})
+@MapperScan("com.zhrenjie04.alex.user.dao")
 public class ContextConfig {
 }

@@ -18,14 +18,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.google.code.kaptcha.Producer;
 import com.zhrenjie04.alex.core.DbUtil;
-import com.zhrenjie04.alex.core.Identity;
 import com.zhrenjie04.alex.core.JsonResult;
 import com.zhrenjie04.alex.core.Permission;
 import com.zhrenjie04.alex.core.ResponseJsonWithFilter;
 import com.zhrenjie04.alex.core.User;
 import com.zhrenjie04.alex.core.exception.PrerequisiteNotSatisfiedException;
 import com.zhrenjie04.alex.user.dao.UserDao;
-import com.zhrenjie04.alex.util.Md5Util;
 import com.zhrenjie04.alex.util.RedisUtil;
 import com.zhrenjie04.alex.util.SessionUtil;
 

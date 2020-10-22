@@ -32,7 +32,6 @@ import com.zhrenjie04.alex.util.Base64ImageUtil;
 import com.zhrenjie04.alex.util.FileUploadUtil;
 import com.zhrenjie04.alex.util.HttpClientUtil;
 import com.zhrenjie04.alex.util.IdGenerator;
-import com.zhrenjie04.alex.util.IdGenerator0;
 import com.zhrenjie04.alex.util.JwtUtil;
 import com.zhrenjie04.alex.util.RedisUtil;
 import com.zhrenjie04.alex.util.SessionUtil;
@@ -63,7 +62,7 @@ public class EpUserApplication implements ApplicationContextAware{
 	}
 	
 	@Value("${id.worker-id}")
-	private Long workerId = 0L;
+	private Integer workerId = 0;
 	@Value("${img.urlPrefix}")
 	private String urlPrefix = "";
 	@Value("${img.nfs-folder}")
@@ -163,7 +162,6 @@ public class EpUserApplication implements ApplicationContextAware{
 		SessionUtil.init(sessionKeepTimeSecondsConfig);
 		FileUploadUtil.init(urlPrefix, workerId, nfsFolder);
 		Base64ImageUtil.init(urlPrefix, workerId, nfsFolder);
-		IdGenerator0.init(workerId);
 		IdGenerator.init(workerId);
 		JwtUtil.init(jwtAutheKey);
 		return new Object();
@@ -184,6 +182,7 @@ public class EpUserApplication implements ApplicationContextAware{
 	}
 
 	@Bean
+	@SuppressWarnings("rawtypes")
 	public Object testBean2(RedisTemplate redisTemplate) {
 		logger.info(">>>>>>>>>>" + redisTemplate.getClass().getName());
 		return new Object();

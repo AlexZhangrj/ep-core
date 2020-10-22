@@ -26,7 +26,7 @@ import com.zhrenjie04.alex.core.interceptor.NoCachedInterceptor;
 public class WebConfig implements WebMvcConfigurer {
 
 	@Bean
-    public FilterRegistrationBean corsFilter() {
+    public FilterRegistrationBean<CorsFilter> corsFilter() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
@@ -34,7 +34,7 @@ public class WebConfig implements WebMvcConfigurer {
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
         source.registerCorsConfiguration("/**", config);
-        FilterRegistrationBean bean = new FilterRegistrationBean(new CorsFilter(source));
+        FilterRegistrationBean<CorsFilter> bean = new FilterRegistrationBean<CorsFilter>(new CorsFilter(source));
         bean.setOrder(0);
         return bean;
     }
