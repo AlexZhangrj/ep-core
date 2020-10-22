@@ -7,7 +7,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import lombok.Data;
 
 @Data
-@ConfigurationProperties(prefix = "ep.")
+@ConfigurationProperties(prefix = "ep")
 public class EpMultiDataSourceProp {
 	HashMap<String,EpDataSourceProps>datasource=new HashMap<>();
 }
