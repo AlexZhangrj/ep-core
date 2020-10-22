@@ -14,10 +14,10 @@ import com.zhrenjie04.alex.core.exception.CrisisError;
 public class Base64ImageUtil {
 
 	private static String urlPrefix = "http://img.up-task.com:8080/fs";
-	private static Long workerId = 0L;
+	private static Integer workerId = 0;
 	private static String nfsFolder = "/Users/apple/";
 
-	public static void init(String urlPrefix,Long workerId,String nfsFolder) {
+	public static void init(String urlPrefix,Integer workerId,String nfsFolder) {
 		Base64ImageUtil.urlPrefix = urlPrefix;
 		Base64ImageUtil.workerId = workerId;
 		Base64ImageUtil.nfsFolder = nfsFolder;

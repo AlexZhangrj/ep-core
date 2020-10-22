@@ -12,10 +12,10 @@ import com.zhrenjie04.alex.core.exception.CrisisError;
 public class FileUploadUtil {
 
 	private static String urlPrefix = "http://img.up-task.com:8080/fs";
-	private static Long workerId = 0L;
+	private static Integer workerId = 0;
 	private static String nfsFolder = "";
 	
-	public static void init(String urlPrefix,Long workerId,String nfsFolder) {
+	public static void init(String urlPrefix,Integer workerId,String nfsFolder) {
 		FileUploadUtil.urlPrefix = urlPrefix;
 		FileUploadUtil.workerId = workerId;
 		FileUploadUtil.nfsFolder = nfsFolder;
