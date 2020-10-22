@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
 
 import com.zhrenjie04.alex.core.exception.CrisisError;
 
-@Component
 public class FileUploadUtil {
 
 	private static String urlPrefix = "http://img.up-task.com:8080/fs";
@@ -24,14 +23,7 @@ public class FileUploadUtil {
 		FileUploadUtil.workerId = workerId;
 		FileUploadUtil.nfsFolder = nfsFolder;
 	}
-
-	@Value("${urlPrefix}")
-	private String urlPrefixSetting = "";
-	@Value("${id.worker-id}")
-	private String workerIdSetting = "";
-	@Value("${img.nfs-folder}")
-	private String nfsFolderSetting = "";
-
+	
 	public static String saveFileAndReturnFullUrl(String ext, InputStream is) {
 		return urlPrefix+saveFileAndReturnPath(ext, is);
 	}

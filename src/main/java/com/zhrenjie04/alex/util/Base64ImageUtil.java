@@ -13,7 +13,6 @@ import org.springframework.stereotype.Component;
 
 import com.zhrenjie04.alex.core.exception.CrisisError;
 
-@Component
 public class Base64ImageUtil {
 
 	private static String urlPrefix = "http://img.up-task.com:8080/fs";
