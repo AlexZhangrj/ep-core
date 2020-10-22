@@ -109,4 +109,8 @@ public class UserBackLoginController {
 			throw new PrerequisiteNotSatisfiedException("目前不支持此种登录方式");
 		}
 	}
+	public static void main(String[] args) {
+		System.out.println("admin".hashCode());
+		System.out.println("admin".hashCode()%2);
+	}
 }
