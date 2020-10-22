@@ -1,10 +1,8 @@
 package com.zhrenjie04.alex.user;
 
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import javax.annotation.PostConstruct;
-import javax.sql.DataSource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,8 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.jdbc.DataSourceBuilder;
-import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -30,14 +26,13 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
-import com.zhrenjie04.alex.core.DynamicDataSource;
 import com.zhrenjie04.alex.core.DynamicDataSourceConfig;
 import com.zhrenjie04.alex.core.Permission;
 import com.zhrenjie04.alex.util.Base64ImageUtil;
 import com.zhrenjie04.alex.util.FileUploadUtil;
 import com.zhrenjie04.alex.util.HttpClientUtil;
-import com.zhrenjie04.alex.util.IdGenerator0;
 import com.zhrenjie04.alex.util.IdGenerator;
+import com.zhrenjie04.alex.util.IdGenerator0;
 import com.zhrenjie04.alex.util.JwtUtil;
 import com.zhrenjie04.alex.util.RedisUtil;
 import com.zhrenjie04.alex.util.SessionUtil;
@@ -50,7 +45,7 @@ import com.zhrenjie04.alex.util.SpringUtil;
 @EnableTransactionManagement
 @SpringBootApplication
 @EnableDiscoveryClient
-@EnableCaching
+//@EnableCaching
 @EnableWebMvc
 @Import({ WebConfig.class, DynamicDataSourceConfig.class ,ContextConfig.class, SwaggerConfig.class })
 public class EpUserApplication implements ApplicationContextAware{
@@ -67,10 +62,10 @@ public class EpUserApplication implements ApplicationContextAware{
 		SpringApplication.run(EpUserApplication.class, args);
 	}
 	
-	@Value("${urlPrefix}")
-	private String urlPrefix = "";
 	@Value("${id.worker-id}")
 	private Long workerId = 0L;
+	@Value("${img.urlPrefix}")
+	private String urlPrefix = "";
 	@Value("${img.nfs-folder}")
 	private String nfsFolder = "";
 	@Value("${jwt.jwt-auth-key}")

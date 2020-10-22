@@ -19,7 +19,7 @@
 	<description>Alex E-Platform User Microservice</description>
 
 	<properties>
-		<start-class>com.zhrenjie04.alex.manager.EpManagerApplication</start-class>
+		<start-class>com.zhrenjie04.alex.user.EpUserApplication</start-class>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 	</properties>
