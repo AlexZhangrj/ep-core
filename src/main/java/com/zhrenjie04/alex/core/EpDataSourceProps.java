@@ -7,5 +7,6 @@ public class EpDataSourceProps {
 	private String url;
 	private String username;
 	private String password;
-	private String driver;
+	private String driverClassName;
+	private String groupName;
 }

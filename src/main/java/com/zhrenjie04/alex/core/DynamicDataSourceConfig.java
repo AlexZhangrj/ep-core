@@ -30,8 +30,12 @@ public class DynamicDataSourceConfig {
 				.url(dataSourceProps.get(key).getUrl())
 				.username(dataSourceProps.get(key).getUsername())
 				.password(dataSourceProps.get(key).getPassword())
-				.driverClassName(dataSourceProps.get(key).getDriver())
+				.driverClassName(dataSourceProps.get(key).getDriverClassName())
 				.build();
+			if(DbUtil.dbCountInGroupMap.get(key)==null) {
+				DbUtil.dbCountInGroupMap.put(key, 0);
+			}
+			DbUtil.dbCountInGroupMap.put(key, DbUtil.dbCountInGroupMap.get(key)+1);
 			if (dataSource != null) {
 	        	datasourceMap.put(key, dataSource);
 	        }
