@@ -32,14 +32,11 @@ public class DynamicDataSourceConfig {
 				.password(dataSourceProps.get(key).getPassword())
 				.driverClassName(dataSourceProps.get(key).getDriverClassName())
 				.build();
-			if(DbUtil.dbCountInGroupMap.get(key)==null) {
-				DbUtil.dbCountInGroupMap.put(key, 0);
-			}
-			DbUtil.dbCountInGroupMap.put(key, DbUtil.dbCountInGroupMap.get(key)+1);
 			if (dataSource != null) {
 	        	datasourceMap.put(key, dataSource);
 	        }
 		}
+		DbUtil.dbCountInGroupMap=epMutiDataSourceProp.getDsCount();
         dds.setTargetDataSources(datasourceMap);
         dds.afterPropertiesSet();
         return dds;
