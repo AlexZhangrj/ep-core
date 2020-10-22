@@ -9,8 +9,6 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.springframework.stereotype.Component;
-
 import com.zhrenjie04.alex.core.exception.CrisisError;
 
 public class Base64ImageUtil {

@@ -5,12 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
-import javax.annotation.PostConstruct;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
@@ -22,10 +18,10 @@ import redis.clients.jedis.JedisPoolConfig;
 public final class RedisUtil {
 
 	private static final Logger logger = LoggerFactory.getLogger(RedisUtil.class);
-	private static final String LOCK_SUCCESS = "OK";
-	private static final String SET_IF_NOT_EXIST = "NX";
-	private static final String SET_WITH_EXPIRE_TIME = "PX";
-	private static final Long RELEASE_SUCCESS = 1L;
+//	private static final String LOCK_SUCCESS = "OK";
+//	private static final String SET_IF_NOT_EXIST = "NX";
+//	private static final String SET_WITH_EXPIRE_TIME = "PX";
+//	private static final Long RELEASE_SUCCESS = 1L;
 
 	private static int globalKeeptime = 7200;
 	

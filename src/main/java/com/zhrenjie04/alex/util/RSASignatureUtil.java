@@ -26,8 +26,6 @@ import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
-import org.bouncycastle.jcajce.provider.asymmetric.rsa.BCRSAPublicKey;
-
 /**
  * Rj-RSA双钥加解密工具
  * 本工具包经过加密前241个byte后的密文循环加密后续数据，具有密文长度与Base64密文长度接近，没有私钥无法解密、无法破解密文的特性。
