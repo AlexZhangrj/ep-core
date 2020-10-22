@@ -7,6 +7,9 @@ import java.util.List;
  * @author 张人杰
  */
 public class MenuItem implements Serializable {
+
+	private static final long serialVersionUID = -2379799589136946069L;
+	
 	private String menuId;
 	private String parentId;
 	private String path;

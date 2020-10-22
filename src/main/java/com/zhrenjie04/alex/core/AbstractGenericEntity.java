@@ -1,7 +1,6 @@
 package com.zhrenjie04.alex.core;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;

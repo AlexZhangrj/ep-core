@@ -25,7 +25,7 @@ public class AbstractGenericExceptionControllerAdvice {
 		logger.error("UnauthorizedException", exception);
 		DbUtil.remove();
 		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+		headers.setContentType(MediaType.APPLICATION_JSON);
 		return new ResponseEntity<String>(
 				"{\"status\":401,\"message\":\""
 						+ exception.getMessage().replaceAll("\"","\\\\\"").replaceAll("\t"," ").replaceAll("(\r\n|\r|\n|\n\r)", "<br/>") + "\"}",
@@ -37,7 +37,7 @@ public class AbstractGenericExceptionControllerAdvice {
 		logger.error("PrerequisiteNotSatisfiedException", exception);
 		DbUtil.remove();
 		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+		headers.setContentType(MediaType.APPLICATION_JSON);
 		return new ResponseEntity<String>(
 				"{\"status\":412,\"message\":\""
 						+ exception.getMessage().replaceAll("\"","\\\\\"").replaceAll("\t"," ").replaceAll("(\r\n|\r|\n|\n\r)", "<br/>") + "\"}",
@@ -49,7 +49,7 @@ public class AbstractGenericExceptionControllerAdvice {
 		logger.error("CrisisError", error);
 		DbUtil.remove();
 		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+		headers.setContentType(MediaType.APPLICATION_JSON);
 		return new ResponseEntity<String>(
 				"{\"status\":500,\"message\":\""
 						+ error.getMessage().replaceAll("\"","\\\\\"").replaceAll("\t"," ").replaceAll("(\r\n|\r|\n|\n\r)", "<br/>") + "\"}",
@@ -62,7 +62,7 @@ public class AbstractGenericExceptionControllerAdvice {
 		logger.error("fallback:", exception.getFallbackException());
 		DbUtil.remove();
 		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+		headers.setContentType(MediaType.APPLICATION_JSON);
 		return new ResponseEntity<String>(
 				"{\"status\":500,\"message\":\"" + exception.getFallbackException().getCause().getCause().getMessage()
 						.replaceAll("\"","\\\\\"").replaceAll("\t"," ").replaceAll("(\r\n|\r|\n|\n\r)", "<br/>") + "\"}",
@@ -74,7 +74,7 @@ public class AbstractGenericExceptionControllerAdvice {
 		logger.error("NullPointerException", error);
 		DbUtil.remove();
 		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+		headers.setContentType(MediaType.APPLICATION_JSON);
 		return new ResponseEntity<String>("{\"status\":500,\"message\":\"Null\"}", headers,
 				HttpStatus.INTERNAL_SERVER_ERROR);
 	}
@@ -84,7 +84,7 @@ public class AbstractGenericExceptionControllerAdvice {
 		logger.error("Exception", exception);
 		DbUtil.remove();
 		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+		headers.setContentType(MediaType.APPLICATION_JSON);
 		return new ResponseEntity<String>(
 				"{\"status\":500,\"message\":\""
 						+ exception.getMessage().replaceAll("\"","\\\\\"").replaceAll("\t"," ").replaceAll("(\r\n|\r|\n|\n\r)", "<br/>") + "\"}",
@@ -96,7 +96,7 @@ public class AbstractGenericExceptionControllerAdvice {
 		logger.error("Error", error);
 		DbUtil.remove();
 		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+		headers.setContentType(MediaType.APPLICATION_JSON);
 		return new ResponseEntity<String>(
 				"{\"status\":500,\"message\":\""
 						+ error.getMessage().replaceAll("\"","\\\\\"").replaceAll("\t"," ").replaceAll("(\r\n|\r|\n|\n\r)", "<br/>") + "\"}",

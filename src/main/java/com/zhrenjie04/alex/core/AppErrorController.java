@@ -7,6 +7,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.error.ErrorAttributeOptions;
+import org.springframework.boot.web.error.ErrorAttributeOptions.Include;
 import org.springframework.boot.web.servlet.error.ErrorAttributes;
 import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.http.HttpStatus;
@@ -93,7 +95,7 @@ public class AppErrorController implements ErrorController {
 
 	private Map<String, Object> getErrorAttributes(HttpServletRequest request, boolean includeStackTrace) {
 		ServletWebRequest webRequest = new ServletWebRequest(request);
-		Map<String, Object> map = this.errorAttributes.getErrorAttributes(webRequest, includeStackTrace);
+		Map<String, Object> map = this.errorAttributes.getErrorAttributes(webRequest, ErrorAttributeOptions.defaults().including(Include.STACK_TRACE));
 		String url = request.getRequestURL().toString();
 		map.put("URL", url);
 		logger.debug("AppErrorController.method [error info]: status-" + map.get("status") + ", request url-" + url);

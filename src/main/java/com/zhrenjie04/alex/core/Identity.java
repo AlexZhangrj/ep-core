@@ -1,7 +1,5 @@
 package com.zhrenjie04.alex.core;
 
-import java.io.Serializable;
-
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;

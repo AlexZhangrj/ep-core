@@ -94,6 +94,7 @@ public class JsonUtil {
 	 * @param filteredProps 以英文,号隔开的所需多个或一个字段的字符串
 	 * @return
 	 */
+	@SuppressWarnings("rawtypes")
 	public JsonUtil without(Class tClazz, String filteredProps) {
 		++filterCount;
 		if (filterCount > MAX_FILTER_COUNT) {
@@ -116,6 +117,7 @@ public class JsonUtil {
 	 * @param filteredProps 以英文,号隔开的所需多个或一个字段的字符串
 	 * @return
 	 */
+	@SuppressWarnings("rawtypes")
 	public JsonUtil withOnly(Class tClazz, String filteredProps) {
 		++filterCount;
 		if (filterCount > MAX_FILTER_COUNT) {

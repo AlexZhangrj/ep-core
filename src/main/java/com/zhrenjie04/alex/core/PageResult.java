@@ -1,10 +1,11 @@
 package com.zhrenjie04.alex.core;
 
 import java.util.Collections;
-import java.util.List;
 
 public class PageResult extends JsonResult{
 	
+	private static final long serialVersionUID = 9022898791649300120L;
+
 	public PageResult(){
 		super();
 		put("total", 0);

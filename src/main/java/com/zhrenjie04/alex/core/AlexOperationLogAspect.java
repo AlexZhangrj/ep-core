@@ -1,7 +1,5 @@
 package com.zhrenjie04.alex.core;
 
-import java.util.HashMap;
-
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
