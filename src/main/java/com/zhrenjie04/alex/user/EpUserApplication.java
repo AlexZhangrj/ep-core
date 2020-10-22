@@ -38,8 +38,11 @@ import com.zhrenjie04.alex.util.RedisUtil;
 import com.zhrenjie04.alex.util.SessionUtil;
 import com.zhrenjie04.alex.util.SpringUtil;
 
+import springfox.documentation.oas.annotations.EnableOpenApi;
+
 /**
  * @author 张人杰
+ * Swagger-UI 3.0 访问地址：http://localhost:9920/swagger-ui/index.html
  */
 @ImportResource({ "classpath:captcha.xml" })
 @EnableTransactionManagement
@@ -47,7 +50,8 @@ import com.zhrenjie04.alex.util.SpringUtil;
 @EnableDiscoveryClient
 //@EnableCaching
 @EnableWebMvc
-@Import({ WebConfig.class, DynamicDataSourceConfig.class ,ContextConfig.class, SwaggerConfig.class, EpMultiDataSourceProp.class })
+@EnableOpenApi
+@Import({ WebConfig.class, DynamicDataSourceConfig.class ,ContextConfig.class, EpMultiDataSourceProp.class })
 public class EpUserApplication implements ApplicationContextAware{
 
 	private static final Logger logger = LoggerFactory.getLogger(EpUserApplication.class);

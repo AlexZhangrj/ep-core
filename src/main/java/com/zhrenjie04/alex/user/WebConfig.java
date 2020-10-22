@@ -75,14 +75,15 @@ public class WebConfig implements WebMvcConfigurer {
 //        registry.addInterceptor(corsInterceptor());
 //        registry.addInterceptor(noCachedInterceptor());
 //        registry.addInterceptor(authorizationInterceptor());
+    	
         registry.addInterceptor(new NoCachedInterceptor());
         registry.addInterceptor(new AuthorizationInterceptor());
     }
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-    	registry.addResourceHandler("swagger-ui.html")
-    	.addResourceLocations("classpath:/META-INF/resources/");
-    	registry.addResourceHandler("/webjars/**")
-        .addResourceLocations("classpath:/META-INF/resources/webjars/");
+//    	registry.addResourceHandler("swagger-ui.html")
+//    	.addResourceLocations("classpath:/META-INF/resources/");
+//    	registry.addResourceHandler("/webjars/**")
+//        .addResourceLocations("classpath:/META-INF/resources/webjars/");
     }
 }
