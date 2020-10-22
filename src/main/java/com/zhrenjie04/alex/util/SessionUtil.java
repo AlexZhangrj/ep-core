@@ -71,6 +71,7 @@ public class SessionUtil {
 	/**
 	 * 获取存储于redis中的session中变量的值 所有session中提取的对象，修改后需要调用set方法重新保存入session中
 	 */
+	@SuppressWarnings("unchecked")
 	public static <T> T getSessionValueByKey(HttpServletRequest request, String key, Class<T> clazz) {
 		String sid = (String) request.getAttribute("sid");
 		String json = RedisUtil.hget(sid, "key:"+key, sessionKeepTimeSeconds);

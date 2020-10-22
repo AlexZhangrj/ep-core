@@ -6,7 +6,8 @@ import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.LinkedList;
 
-import org.slf4j.Logger;import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.core.JsonGenerationException;
@@ -55,7 +56,8 @@ public class JsonUtil {
 			thisObjectMapper.configure(JsonParser.Feature.ALLOW_COMMENTS, true);
 			thisObjectMapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
 			thisObjectMapper.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true);
-			thisObjectMapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_CONTROL_CHARS, true);
+			thisObjectMapper.configure(JsonReadFeature.ALLOW_UNESCAPED_CONTROL_CHARS.mappedFeature(), true);
+			thisObjectMapper.configure(JsonReadFeature.ALLOW_UNQUOTED_FIELD_NAMES.mappedFeature(), true);
 			thisObjectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 			thisObjectMapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
 		}
@@ -172,7 +174,6 @@ public class JsonUtil {
 	/**
 	 * 将json array反序列化为数组
 	 */
-	@SuppressWarnings("unchecked")
 	public static <T> T parse(String json, TypeReference<T> typeReference) {
 		if (json == null || "".equals(json)) {
 			return null;

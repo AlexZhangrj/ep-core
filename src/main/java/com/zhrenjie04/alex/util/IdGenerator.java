@@ -62,7 +62,7 @@ public class IdGenerator {
 	/**
 	 * 默认构造方法，默认从配置文件id-generator.properties中读取datacenterId和workerId
 	 */
-	public static void init(long workId) {
+	public static void init(int workerId) {
 		IdGenerator.workerId = workerId;
 		if (workerId > MAX_WORK_ID || workerId < 0) {
 			throw new CrisisError(String.format("worker Id can't be greater than %d or less than 0", MAX_WORK_ID));

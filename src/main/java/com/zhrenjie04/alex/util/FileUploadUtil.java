@@ -7,9 +7,6 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.UUID;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
-
 import com.zhrenjie04.alex.core.exception.CrisisError;
 
 public class FileUploadUtil {

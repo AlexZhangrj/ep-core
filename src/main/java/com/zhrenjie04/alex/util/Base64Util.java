@@ -68,11 +68,7 @@ public class Base64Util {
 			val >>= 6;
 			out[index + 0] = alphabet[val & 0x3F];
 		}
-		if (out != null) {
-			return new String(out);
-		} else {
-			return null;
-		}
+		return new String(out);
 	}
 
 	/**
