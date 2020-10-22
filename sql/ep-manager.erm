@@ -39,7 +39,7 @@
 	<settings>
 		<database>MySQL</database>
 		<capital>false</capital>
-		<table_style></table_style>
+		<table_style>funny</table_style>
 		<notation></notation>
 		<notation_level>0</notation_level>
 		<notation_expand_group>true</notation_expand_group>
@@ -146,7 +146,7 @@
 			</connections>
 			<display>false</display>
 			<creation_date>2017-01-26 15:16:35</creation_date>
-			<updated_date>2020-10-22 16:45:56</updated_date>
+			<updated_date>2020-10-22 16:49:52</updated_date>
 			<model_property>
 				<name>Project Name</name>
 				<value></value>
