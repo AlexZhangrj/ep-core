@@ -1,10 +1,15 @@
 package com.zhrenjie04.alex.core;
+
+import java.util.HashMap;
+
 /**
  * 注意：需要在ExceptionAdvice里remove移除ThreadLocal
  * @author zhangrenjie
  *
  */
-public class DataSourceHandler {
+public class DbUtil {
+	
+	public static HashMap<String,Integer> dbCountInGroupMap=new HashMap<String,Integer>();
 	
 	private static ThreadLocal<String> handlerThredLocal = new ThreadLocal<String>();
 

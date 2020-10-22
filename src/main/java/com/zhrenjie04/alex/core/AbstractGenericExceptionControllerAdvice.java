@@ -23,7 +23,7 @@ public class AbstractGenericExceptionControllerAdvice {
 	@ExceptionHandler(value = UnauthorizedException.class)
 	public ResponseEntity<String> unauthorizedException(Exception exception) {
 		logger.error("UnauthorizedException", exception);
-		DataSourceHandler.remove();
+		DbUtil.remove();
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
 		return new ResponseEntity<String>(
@@ -35,7 +35,7 @@ public class AbstractGenericExceptionControllerAdvice {
 	@ExceptionHandler(value = PrerequisiteNotSatisfiedException.class)
 	public ResponseEntity<String> prerequisiteNotSatisfiedException(Exception exception) {
 		logger.error("PrerequisiteNotSatisfiedException", exception);
-		DataSourceHandler.remove();
+		DbUtil.remove();
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
 		return new ResponseEntity<String>(
@@ -47,7 +47,7 @@ public class AbstractGenericExceptionControllerAdvice {
 	@ExceptionHandler(value = CrisisError.class)
 	public ResponseEntity<String> crisisError(CrisisError error) {
 		logger.error("CrisisError", error);
-		DataSourceHandler.remove();
+		DbUtil.remove();
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
 		return new ResponseEntity<String>(
@@ -60,7 +60,7 @@ public class AbstractGenericExceptionControllerAdvice {
 	public ResponseEntity<String> hystrixRuntimeException(HystrixRuntimeException exception) {
 		logger.error("HystrixRuntimeException", exception);
 		logger.error("fallback:", exception.getFallbackException());
-		DataSourceHandler.remove();
+		DbUtil.remove();
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
 		return new ResponseEntity<String>(
@@ -72,7 +72,7 @@ public class AbstractGenericExceptionControllerAdvice {
 	@ExceptionHandler(value = NullPointerException.class)
 	public ResponseEntity<String> nullPointerException(NullPointerException error) {
 		logger.error("NullPointerException", error);
-		DataSourceHandler.remove();
+		DbUtil.remove();
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
 		return new ResponseEntity<String>("{\"status\":500,\"message\":\"Null\"}", headers,
@@ -82,7 +82,7 @@ public class AbstractGenericExceptionControllerAdvice {
 	@ExceptionHandler(value = Exception.class)
 	public ResponseEntity<String> exception(Exception exception) {
 		logger.error("Exception", exception);
-		DataSourceHandler.remove();
+		DbUtil.remove();
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
 		return new ResponseEntity<String>(
@@ -94,7 +94,7 @@ public class AbstractGenericExceptionControllerAdvice {
 	@ExceptionHandler(value = Error.class)
 	public ResponseEntity<String> error(Error error) {
 		logger.error("Error", error);
-		DataSourceHandler.remove();
+		DbUtil.remove();
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
 		return new ResponseEntity<String>(
