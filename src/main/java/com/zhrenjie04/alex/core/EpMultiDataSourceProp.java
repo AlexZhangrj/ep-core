@@ -10,4 +10,5 @@ import lombok.Data;
 @ConfigurationProperties(prefix = "ep")
 public class EpMultiDataSourceProp {
 	HashMap<String,EpDataSourceProps>datasource=new HashMap<>();
+	HashMap<String,Integer>dsCount=new HashMap<>();
 }

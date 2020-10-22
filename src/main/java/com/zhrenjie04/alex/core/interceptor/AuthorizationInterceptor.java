@@ -11,11 +11,13 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.zhrenjie04.alex.core.EpAuthProp;
 import com.zhrenjie04.alex.core.Permission;
 import com.zhrenjie04.alex.core.User;
 import com.zhrenjie04.alex.core.exception.CrisisError;
@@ -32,46 +34,37 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
 
 	public static final String AUTHORIZATION_HEADER_KEY = "sid";
 
-	@Value("${auth.open-swagger}")
-	private Boolean openSwaggerBoolean;
+	@Autowired
+	EpAuthProp authProp;
+	
 	private static Boolean openSwagger;
-	@Value("${auth.system-code}")
-	private String systemCodeString;
 	private static String systemCode;
-	@Value("${auth.unfiltered-codes}")
-	private String unfilteredCodesString;
 	private static ArrayList<String> unfilteredCodes;
-
-	@Value("${auth.default-authorized-codes}")
-	private String defaultAuthorizedCodesString;
 	private static ArrayList<String> defaultAuthorizedCodes;
-
-	@Value("${auth.unfilteredPathStartWith}")
-	private String unfilteredPathStartWithString;
 	private static ArrayList<String> unfilteredPathStartWith;
 
 	Logger logger = LoggerFactory.getLogger(AuthorizationInterceptor.class);
 
 	@PostConstruct
 	protected void init() {
-		openSwagger=openSwaggerBoolean;
-		systemCode=systemCodeString;
+		openSwagger=authProp.getOpenSwagger();
+		systemCode=authProp.getSystemCode();
 		unfilteredCodes = new ArrayList<>();
-		String[] codes = unfilteredCodesString.split("\\,");
+		String[] codes = authProp.getUnfilteredCodes().split("\\,");
 		if (codes != null) {
 			for (String code : codes) {
 				unfilteredCodes.add(code);
 			}
 		}
 		defaultAuthorizedCodes = new ArrayList<>();
-		codes = defaultAuthorizedCodesString.split("\\,");
+		codes = authProp.getDefaultAuthorizedCodes().split("\\,");
 		if (codes != null) {
 			for (String code : codes) {
 				defaultAuthorizedCodes.add(code);
 			}
 		}
 		unfilteredPathStartWith=new ArrayList<>();
-		String[] starts=unfilteredPathStartWithString.split("\\,");
+		String[] starts=authProp.getUnfilteredPathStartWith().split("\\,");
 		if(starts!=null) {
 			for(String start:starts) {
 				unfilteredPathStartWith.add(start);
