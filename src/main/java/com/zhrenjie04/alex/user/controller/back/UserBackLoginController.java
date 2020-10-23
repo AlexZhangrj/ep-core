@@ -113,7 +113,8 @@ public class UserBackLoginController {
 	}
 	public static void main(String[] args) {
 		System.out.println("admin".hashCode());
-		System.out.println("admin".hashCode()%2);
-		System.out.println("user1".hashCode()%2);
+		System.out.println("admin".hashCode()%5);
+		System.out.println("user1".hashCode()%5);
+		System.out.println("user2".hashCode()%5);
 	}
 }
