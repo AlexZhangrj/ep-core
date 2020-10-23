@@ -27,12 +27,15 @@ import com.zhrenjie04.alex.user.dao.UserDao;
 import com.zhrenjie04.alex.util.RedisUtil;
 import com.zhrenjie04.alex.util.SessionUtil;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * @author 张人杰
  */
 @Controller
 @RequestMapping("/user/back")
 @Permission("back")
+@Slf4j
 public class UserBackLoginController {
 	
 	@Autowired
@@ -79,7 +82,8 @@ public class UserBackLoginController {
 			params.put("username", account.getUsername());
 			//设置数据源
 			Integer hashCode=account.getUsername().hashCode();
-			DbUtil.setDataSource("userNameKeyDb"+(hashCode%DbUtil.dbCountInGroupMap.get("userNameKeyDb")));
+			DbUtil.setDataSource("usernameKeyDb"+(hashCode%DbUtil.dbCountInGroupMap.get("usernameKeyDb")));
+			log.debug(DbUtil.getDataSource());
 			//操作数据库
 			User user = userDao.queryObject(params);
 			//移除ThreadLoacal变量
@@ -110,5 +114,6 @@ public class UserBackLoginController {
 	public static void main(String[] args) {
 		System.out.println("admin".hashCode());
 		System.out.println("admin".hashCode()%2);
+		System.out.println("user1".hashCode()%2);
 	}
 }

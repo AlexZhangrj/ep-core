@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?> 
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.zhrenjie04.alex.manager.dao.UserDao">
+<mapper namespace="com.zhrenjie04.alex.user.dao.UserDao">
 	<!-- cache type="org.mybatis.caches.memcached.MemcachedCache" / -->
     <resultMap type="com.zhrenjie04.alex.core.User"
         id="userResult">
@@ -20,12 +20,6 @@
         <result property="createdTime" column="created_time" />
         <result property="otherResults.groupName" column="group_name" />
     </resultMap>
-	<insert id="insertUserGroupRL" parameterType="java.util.HashMap">
-		insert into t_user_group(id,user_id,group_id)values(#{id},#{userId},#{groupId})
-	</insert>
-	<delete id="deleteUserGroupRL" parameterType="java.util.HashMap">
-		delete from t_user_group where user_id=#{userId} and group_id=#{groupId}
-	</delete>
     <select id="queryAll" resultMap="userResult" parameterType="java.util.HashMap">
         select * from t_user where user_id in(
         <foreach collection="ids" item="id" separator=",">#{id}</foreach>
@@ -52,127 +46,6 @@
         </if>
 		and is_deleted=0
 	</select>
-	<select id="count" resultType="java.lang.Long" parameterType="java.util.HashMap">
-		select count(*) from(select distinct u.user_id from t_user u left join t_org o on u.group_id=o.org_id
-		<if test="groupId != null">left join t_user_group ug on u.user_id=ug.user_id</if>
-		<if test="roleId != null">
-		left join t_job_user_role jur on u.user_id=jur.user_id
-		</if>
-		where
-		1=1
-        <if test="roleId != null">
-        and jur.role_id=#{roleId}
-        </if>
-        <if test="notRoleId != null">
-        and u.user_id not in(select user_id from t_job_user_role where role_id=#{notRoleId})
-        </if>
-		<if test="groupId != null">AND ug.group_id=#{groupId}</if>
-        <if test="keyword != null and keyword !=''">and full_text like concat('%',#{keyword},'%')</if>
-		and u.is_deleted=0
-		<if test="username != null">AND u.username=#{username}</if>
-		<if test="nickname != null">AND u.nickname like concat('%',#{nickname},'%')</if>
-		<if test="realname != null">AND u.realname like concat('%',#{realname},'%')</if>
-		<if test="cellphone != null">AND u.cellphone=#{cellphone}</if>
-		<if test="email != null">AND u.email=#{email}</if>
-		<if test="birthday != null">AND u.birthday=#{birthday}</if>
-		) as tmp
-	</select>
-	<select id="pageQueryAll" resultMap="userResult" parameterType="java.util.HashMap">
-		select distinct u.*,o.org_name group_name from t_user u left join t_org o on u.group_id=o.org_id
-		<if test="groupId != null">left join t_user_group ug on u.user_id=ug.user_id</if>
-		<if test="roleId != null">
-		left join t_job_user_role jur on u.user_id=jur.user_id
-		</if>
-		where
-		1=1
-        <if test="roleId != null">
-        and jur.role_id=#{roleId}
-        </if>
-        <if test="notRoleId != null">
-        and u.user_id not in(select user_id from t_job_user_role where role_id=#{notRoleId})
-        </if>
-		<if test="groupId != null">AND ug.group_id=#{groupId}</if>
-        <if test="keyword != null and keyword !=''">and full_text like concat('%',#{keyword},'%')</if>
-		and u.is_deleted=0
-		<if test="username != null">AND u.username=#{username}</if>
-		<if test="nickname != null">AND u.nickname like concat('%',#{nickname},'%')</if>
-		<if test="realname != null">AND u.realname like concat('%',#{realname},'%')</if>
-		<if test="cellphone != null">AND u.cellphone=#{cellphone}</if>
-		<if test="email != null">AND u.email=#{email}</if>
-		<if test="birthday != null">AND u.birthday=#{birthday}</if>
-		<if test="orderBy != null and orderBy !=''">
-			order by ${orderBy}
-			<if test="orderType != null and orderType !=''">${orderType}</if>
-		</if>
-		limit #{start},#{length}
-	</select>
-	<select id="countSearch" resultType="java.lang.Long" parameterType="java.util.HashMap">
-		select count(*) from t_user u
-		<if test="groupId != null">left join t_user_group ug on u.user_id=ug.user_id</if>
-		<if test="roleId != null">
-		left join t_job_user_role jur on u.user_id=jur.user_id
-		</if>
-		where
-		1=1
-		and u.is_deleted=0
-        <if test="roleId != null">
-        and jur.role_id=#{roleId}
-        </if>
-        <if test="notRoleId != null">
-        and u.user_id not in(select user_id from t_job_user_role where role_id=#{notRoleId})
-        </if>
-		<if test="groupId != null">AND ug.group_id=#{groupId}</if>
-		<if test="keyword != null">AND (
-										u.username=#{keyword} or
-										u.nickname like concat('%',#{keyword},'%') or
-										u.realname like concat('%',#{keyword},'%') or
-										u.cellphone=#{keyword} or
-										u.email=#{keyword} or
-										u.birthday=#{keyword}
-									)</if>
-		<if test="username != null">AND u.username=#{username}</if>
-		<if test="nickname != null">AND u.nickname like concat('%',#{nickname},'%')</if>
-		<if test="realname != null">AND u.realname like concat('%',#{realname},'%')</if>
-		<if test="cellphone != null">AND u.cellphone=#{cellphone}</if>
-		<if test="email != null">AND u.email=#{email}</if>
-		<if test="birthday != null">AND u.birthday=#{birthday}</if>
-	</select>
-	<select id="pageSearchAll" resultMap="userResult" parameterType="java.util.HashMap">
-		select distinct u.* from t_user u
-		<if test="groupId != null">left join t_user_group ug on u.user_id=ug.user_id</if>
-		<if test="roleId != null">
-		left join t_job_user_role jur on u.user_id=jur.user_id
-		</if>
-		where
-		1=1
-		and u.is_deleted=0
-        <if test="roleId != null">
-        and jur.role_id=#{roleId}
-        </if>
-        <if test="notRoleId != null">
-        and u.user_id not in(select user_id from t_job_user_role where role_id=#{notRoleId})
-        </if>
-		<if test="groupId != null">AND ug.group_id=#{groupId}</if>
-		<if test="keyword != null">AND (
-										u.username=#{keyword} or
-										u.nickname like concat('%',#{keyword},'%') or
-										u.realname like concat('%',#{keyword},'%') or
-										u.cellphone=#{keyword} or
-										u.email=#{keyword} or
-										u.birthday=#{keyword}
-									)</if>
-		<if test="username != null">AND u.username=#{username}</if>
-		<if test="nickname != null">AND u.nickname like concat('%',#{nickname},'%')</if>
-		<if test="realname != null">AND u.realname like concat('%',#{realname},'%')</if>
-		<if test="cellphone != null">AND u.cellphone=#{cellphone}</if>
-		<if test="email != null">AND u.email=#{email}</if>
-		<if test="birthday != null">AND u.birthday=#{birthday}</if>
-		<if test="orderBy != null and orderBy !=''">
-			order by ${orderBy}
-			<if test="orderType != null and orderType !=''">${orderType}</if>
-		</if>
-		limit #{start},#{length}
-	</select>
 	<insert id="insertObject" parameterType="com.zhrenjie04.alex.core.User">
         insert into t_user(
               `user_id`,
@@ -190,8 +63,7 @@
 			  `is_deleted`,
 			  `creater_id`,
 			  `creater_name`,
-			  `group_id`,
-			  `full_text`
+			  `group_id`
         )values(
               #{userId},
               #{username},
@@ -208,16 +80,9 @@
               0,
               #{createrId},
               #{createrName},
-              #{groupId},
-              concat(IFNULL(#{userId},''),':',IFNULL(#{username},''),':',IFNULL(#{realname},''),':',IFNULL(#{nickname},''),
-              ':',IFNULL(#{email},''),':',IFNULL(#{cellphone},''),':',IFNULL(#{birthday},''),':',IFNULL(#{gender},''))
+              #{groupId}
         )
 	</insert>
-    <update id="deleteAll" parameterType="java.util.HashMap">
-    	delete from t_user_group where user_id in(
-    		<foreach collection="ids" item="id" separator=",">#{id}</foreach>
-    	) and group_id=#{groupId}
-    </update>
     <update id="updateObject" parameterType="com.zhrenjie04.alex.core.User">
         update t_user set user_id=user_id
         <if test="password != null and password != ''">,password=#{password}</if>
@@ -230,8 +95,6 @@
         ,gender=#{gender}
         ,portrait_url=#{portraitUrl}
         ,last_modified_time=now(),last_modifier_id=#{lastModifierId},last_modifier_name=#{lastModifierName}
-        ,full_text=concat(IFNULL(#{userId},''),':',IFNULL(username,''),':',IFNULL(#{realname},''),':',IFNULL(#{nickname},''),
-              ':',IFNULL(#{email},''),':',IFNULL(#{cellphone},''),':',IFNULL(#{birthday},''),':',IFNULL(#{gender},''))
         where user_id=#{userId}
      </update>
     <update id="updateLocked" parameterType="com.zhrenjie04.alex.core.User">
