@@ -1,18 +1,13 @@
 package com.zhrenjie04.alex.user;
 
-import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.lang3.reflect.FieldUtils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.util.ReflectionUtils;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistration;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import io.swagger.v3.oas.models.security.SecurityScheme.In;
@@ -63,9 +58,9 @@ public class SwaggerConfig implements WebMvcConfigurer{
                 // 支持的通讯协议集合
                 .protocols(protocols)
                 // 授权信息设置，必要的header token等认证信息
-                .securitySchemes(securitySchemes);
-//                // 授权信息全局应用
-//                .securityContexts(securityContexts);
+                .securitySchemes(securitySchemes)
+                // 授权信息全局应用
+                .securityContexts(securityContexts);
     }
 
     /**
@@ -78,27 +73,4 @@ public class SwaggerConfig implements WebMvcConfigurer{
                 .version("2.0.4")
                 .build();
     }
-    
-//    /**
-//     * 通用拦截器排除swagger设置，所有拦截器都会自动加swagger相关的资源排除信息
-//     */
-//    @SuppressWarnings("unchecked")
-//    @Override
-//    public void addInterceptors(InterceptorRegistry registry) {
-//        try {
-//            Field registrationsField = FieldUtils.getField(InterceptorRegistry.class, "registrations", true);
-//            List<InterceptorRegistration> registrations = (List<InterceptorRegistration>) ReflectionUtils.getField(registrationsField, registry);
-//            if (registrations != null) {
-//                for (InterceptorRegistration interceptorRegistration : registrations) {
-//                    interceptorRegistration
-//                            .excludePathPatterns("/swagger**/**")
-//                            .excludePathPatterns("/webjars/**")
-//                            .excludePathPatterns("/v3/**")
-//                            .excludePathPatterns("/doc.html");
-//                }
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
 }
