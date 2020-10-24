@@ -64,9 +64,9 @@ public class UserBackLoginController {
 		userSearchKey.setCellphone("13900001111");
 		esTemplate.save(userSearchKey);
 		EsUserSearchKey userSearchKey1=new EsUserSearchKey();
-		userSearchKey.setUserId("2");
-		userSearchKey.setUsername("admin1");
-		userSearchKey.setCellphone("13900001111");
+		userSearchKey1.setUserId("2");
+		userSearchKey1.setUsername("admin1");
+		userSearchKey1.setCellphone("13900001112");
 		esTemplate.save(userSearchKey1);
 		response.setDateHeader("Expires", 0);
 		response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
