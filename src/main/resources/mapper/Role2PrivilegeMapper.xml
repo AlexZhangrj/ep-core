@@ -22,6 +22,6 @@
         <result property="frontEndSystem" column="front_end_system" />
 	</resultMap>
     <select id="queryAllPrivilegesByRoleId" resultMap="entityResult" parameterType="java.lang.String">
-        select * from t_identity_role where identity_id=#{id}
+        select * from t_privilege where privilege_id in(select privilege_id from t_role_privilege where role_id=#{id})
     </select>
 </mapper> 

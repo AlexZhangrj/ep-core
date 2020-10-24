@@ -221,7 +221,7 @@ public class UserBackLoginController {
 							@Override
 							public void run() {
 								DbUtil.setDataSource("roleIdKeyDb"+(roleId.hashCode()%DbUtil.dbCountInGroupMap.get("roleIdKeyDb")));
-								System.out.println(roleId+"---"+DbUtil.dbCountInGroupMap.get("roleIdKeyDb")+"::::"+DbUtil.getDataSource());
+								log.debug("{}---{}::::-{}",roleId,DbUtil.dbCountInGroupMap.get("roleIdKeyDb"),DbUtil.getDataSource());
 								privileges.addAll(role2PrivilegeDao.queryAllPrivilegesByRoleId(roleId));
 								DbUtil.remove();
 							}
