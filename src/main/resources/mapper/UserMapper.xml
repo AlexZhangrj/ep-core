@@ -20,14 +20,9 @@
         <result property="createdTime" column="created_time" />
         <result property="otherResults.groupName" column="group_name" />
     </resultMap>
-    <select id="queryAll" resultMap="userResult" parameterType="java.util.HashMap">
-        select * from t_user where user_id in(
-        <foreach collection="ids" item="id" separator=",">#{id}</foreach>
-        )
-    </select>
-	<select id="queryObjectById" resultMap="userResult" parameterType="java.lang.String">
+    <select id="queryObjectById" resultMap="userResult" parameterType="java.lang.String">
 		select * from t_user where user_id=#{id}
-    </select>
+    </select>	
 	<select id="queryObject" resultMap="userResult" parameterType="java.util.HashMap">
         <![CDATA[
             select * from t_user where 1=1

@@ -2,7 +2,6 @@ package com.zhrenjie04.alex.user.controller.back;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.Date;
 import java.util.List;
 
 import javax.imageio.ImageIO;
@@ -30,11 +29,13 @@ import com.zhrenjie04.alex.core.Permission;
 import com.zhrenjie04.alex.core.ResponseJsonWithFilter;
 import com.zhrenjie04.alex.core.User;
 import com.zhrenjie04.alex.core.exception.PrerequisiteNotSatisfiedException;
-import com.zhrenjie04.alex.manager.domain.EsUserSearchKey;
-import com.zhrenjie04.alex.manager.domain.Group;
 import com.zhrenjie04.alex.user.dao.GroupDao;
 import com.zhrenjie04.alex.user.dao.IdentityDao;
+import com.zhrenjie04.alex.user.dao.PositionDao;
 import com.zhrenjie04.alex.user.dao.UserDao;
+import com.zhrenjie04.alex.user.domain.EsUserSearchKey;
+import com.zhrenjie04.alex.user.domain.Group;
+import com.zhrenjie04.alex.user.domain.Position;
 import com.zhrenjie04.alex.util.RedisUtil;
 import com.zhrenjie04.alex.util.SessionUtil;
 
@@ -58,6 +59,8 @@ public class UserBackLoginController {
 	IdentityDao identityDao;
 	@Autowired
 	GroupDao groupDao;
+	@Autowired
+	PositionDao positionDao;
 	
 	@Autowired
 	ElasticsearchRestTemplate esTemplate;
@@ -173,9 +176,9 @@ public class UserBackLoginController {
 						public void run() {
 							DbUtil.setDataSource("groupIdKeyDb"+(groupId.hashCode()%DbUtil.dbCountInGroupMap.get("groupIdKeyDb")));
 							Group group = groupDao.queryObjectById(groupId);
-							Position position = positionDao.queryObjectById(position);
+							Position position = positionDao.queryObjectById(identity.getPositionId());
 							identity.setGroupName(group.getGroupName());
-							identity.setPositionName(positionName);
+							identity.setPositionName(position.getPositionName());
 							DbUtil.remove();
 						}
 					};

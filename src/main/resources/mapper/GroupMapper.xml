@@ -10,12 +10,12 @@
         <result property="positionId" column="position_id" />
         <result property="isLocked" column="is_locked" />
         <result property="isDeleted" column="is_deleted" />
-        <result property="created_time" column="created_time" />
-        <result property="creater_id" column="creater_id" />
-        <result property="creater_name" column="creater_name" />
-        <result property="last_modified_time" column="last_modified_time" />
-        <result property="last_modifier_id" column="last_modifier_id" />
-        <result property="last_modifier_name" column="last_modifier_name" />
+        <result property="createdTime" column="created_time" />
+        <result property="createrId" column="creater_id" />
+        <result property="createrName" column="creater_name" />
+        <result property="lastModifiedTime" column="last_modified_time" />
+        <result property="lastModifierId" column="last_modifier_id" />
+        <result property="lastModifierName" column="last_modifier_name" />
     </resultMap>
     <select id="queryObjectById" resultMap="groupResult" parameterType="java.lang.String">
         select * from t_group where group_id=#{id}
