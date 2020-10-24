@@ -98,6 +98,14 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-thymeleaf</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-elasticsearch</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-elasticsearch</artifactId>
+		</dependency>
 		<!-- 增加接口API说明支持 -->
 		<dependency>
 			<groupId>com.jhlabs</groupId>
@@ -150,13 +158,8 @@
 		</dependency>
 		<dependency>
 			<groupId>com.zhrenjie04.alex.web</groupId>
-			<artifactId>ep-message-interface</artifactId>
-			<version>${ep-message-interface.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.zhrenjie04.alex.web</groupId>
-			<artifactId>ep-manager-domain</artifactId>
-			<version>${ep-manager-domain.version}</version>
+			<artifactId>ep-user-domain</artifactId>
+			<version>${ep-user-domain.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>

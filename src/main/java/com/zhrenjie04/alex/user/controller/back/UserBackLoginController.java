@@ -23,6 +23,7 @@ import com.zhrenjie04.alex.core.Permission;
 import com.zhrenjie04.alex.core.ResponseJsonWithFilter;
 import com.zhrenjie04.alex.core.User;
 import com.zhrenjie04.alex.core.exception.PrerequisiteNotSatisfiedException;
+import com.zhrenjie04.alex.manager.domain.EsUserSearchKey;
 import com.zhrenjie04.alex.user.dao.UserDao;
 import com.zhrenjie04.alex.util.RedisUtil;
 import com.zhrenjie04.alex.util.SessionUtil;
@@ -48,6 +49,7 @@ public class UserBackLoginController {
 	@RequestMapping(value = "/login/validate-code", method = RequestMethod.GET)
 	@Permission("login.do-login")
 	public void genValidateCode(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		EsUserSearchKey userSearchKey=new EsUserSearchKey();
 		response.setDateHeader("Expires", 0);
 		response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
 		response.addHeader("Cache-Control", "post-check=0, pre-check=0");
