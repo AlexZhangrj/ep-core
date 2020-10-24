@@ -187,7 +187,7 @@ public class UserBackLoginController {
 							@Override
 							public void run() {
 								DbUtil.setDataSource("groupIdKeyDb"+(groupId.hashCode()%DbUtil.dbCountInGroupMap.get("groupIdKeyDb")));
-								System.out.println(groupId+"---"+DbUtil.dbCountInGroupMap.get("groupIdKeyDb")+"::::"+DbUtil.getDataSource());
+								log.debug("groupIdKeyDb---{}---{}::::{}",groupId,DbUtil.dbCountInGroupMap.get("groupIdKeyDb"),DbUtil.getDataSource());
 								Group group = groupDao.queryObjectById(groupId);
 								Position position = positionDao.queryObjectById(identity.getPositionId());
 								identity.setGroupName(group.getGroupName());
@@ -221,7 +221,7 @@ public class UserBackLoginController {
 							@Override
 							public void run() {
 								DbUtil.setDataSource("roleIdKeyDb"+(roleId.hashCode()%DbUtil.dbCountInGroupMap.get("roleIdKeyDb")));
-								log.debug("{}---{}::::-{}",roleId,DbUtil.dbCountInGroupMap.get("roleIdKeyDb"),DbUtil.getDataSource());
+								log.debug("roleIdKey---{}---{}::::-{}",roleId,DbUtil.dbCountInGroupMap.get("roleIdKeyDb"),DbUtil.getDataSource());
 								privileges.addAll(role2PrivilegeDao.queryAllPrivilegesByRoleId(roleId));
 								DbUtil.remove();
 							}
