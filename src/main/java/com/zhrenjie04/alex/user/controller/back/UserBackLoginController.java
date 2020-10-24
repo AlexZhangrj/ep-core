@@ -149,9 +149,7 @@ public class UserBackLoginController {
 		}
 	}
 	public static void main(String[] args) {
-		System.out.println("admin".hashCode());
-		System.out.println("admin".hashCode()%5);
-		System.out.println("user1".hashCode()%5);
-		System.out.println("user2".hashCode()%5);
+		//以id的String的hashCode求余
+		System.out.println("1".hashCode()%5);
 	}
 }
