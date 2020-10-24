@@ -3,7 +3,7 @@ package com.zhrenjie04.alex.user.controller.back;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.servlet.ServletOutputStream;
@@ -24,12 +24,16 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.google.code.kaptcha.Producer;
 import com.zhrenjie04.alex.core.DbUtil;
+import com.zhrenjie04.alex.core.Identity;
 import com.zhrenjie04.alex.core.JsonResult;
 import com.zhrenjie04.alex.core.Permission;
 import com.zhrenjie04.alex.core.ResponseJsonWithFilter;
 import com.zhrenjie04.alex.core.User;
 import com.zhrenjie04.alex.core.exception.PrerequisiteNotSatisfiedException;
 import com.zhrenjie04.alex.manager.domain.EsUserSearchKey;
+import com.zhrenjie04.alex.manager.domain.Group;
+import com.zhrenjie04.alex.user.dao.GroupDao;
+import com.zhrenjie04.alex.user.dao.IdentityDao;
 import com.zhrenjie04.alex.user.dao.UserDao;
 import com.zhrenjie04.alex.util.RedisUtil;
 import com.zhrenjie04.alex.util.SessionUtil;
@@ -50,6 +54,10 @@ public class UserBackLoginController {
 
 	@Autowired
 	UserDao userDao;
+	@Autowired
+	IdentityDao identityDao;
+	@Autowired
+	GroupDao groupDao;
 	
 	@Autowired
 	ElasticsearchRestTemplate esTemplate;
@@ -89,7 +97,7 @@ public class UserBackLoginController {
 	@RequestMapping(value = "/login/do-login", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	@Permission("login.do-login")
 	@ResponseJsonWithFilter(type = User.class, include = "userId,username,realname,nickname,email,cellphone,portraitUrl,birthday,gender")
-	public JsonResult login(@RequestBody User account, HttpServletRequest request, HttpServletResponse response) {
+	public JsonResult login(@RequestBody User account, HttpServletRequest request, HttpServletResponse response) throws InterruptedException {
 		String sid=(String)request.getAttribute("sid");
 		String capText = RedisUtil.get("validate-code:"+sid);
 		RedisUtil.set("validate-code:"+sid, "", 3*60);
@@ -151,23 +159,43 @@ public class UserBackLoginController {
 		log.debug(DbUtil.getDataSource());
 		//操作数据库
 		User user = userDao.queryObjectById(userId);
-		
-		//移除ThreadLoacal变量
-		DbUtil.remove();
 		if(user != null) {
 			if(user.getPassword()!=null&&user.getPassword().equals(account.getPassword())) {
+				List<Identity> identities=identityDao.queryListByUserId(userId);
+				if(identities.size()>0) {
+					user.setIdentities(identities);
+					user.setCurrentIdentityId(identities.get(0).getIdentityId());
+				}
+				for(Identity identity:identities) {
+					String groupId = identity.getGroupId();
+					Thread t=new Thread() {
+						@Override
+						public void run() {
+							DbUtil.setDataSource("groupIdKeyDb"+(groupId.hashCode()%DbUtil.dbCountInGroupMap.get("groupIdKeyDb")));
+							Group group = groupDao.queryObjectById(groupId);
+							identity.setGroupName(group.getGroupName());
+							DbUtil.remove();
+						}
+					};
+					t.start();
+					t.join();
+				}
 				JsonResult rt = JsonResult.success();
-				user.getOtherParams().put("lastRefreshTokenTime", new Date().getTime());
-				user.getOtherParams().put("endLineTime", new Date().getTime()+3*24*3600*1000);
 				user.setPassword("");
 				user.setSalt("");
 				SessionUtil.setSessionUser(request, user);
 				rt.put("user", user);
+				//移除ThreadLoacal变量
+				DbUtil.remove();
 				return rt;
 			}else {
+				//移除ThreadLoacal变量
+				DbUtil.remove();
 				throw new PrerequisiteNotSatisfiedException("密码错误");
 			}
 		}else {
+			//移除ThreadLoacal变量
+			DbUtil.remove();
 			throw new PrerequisiteNotSatisfiedException("该账号不存在");
 		}
 	}
@@ -175,5 +203,7 @@ public class UserBackLoginController {
 		//以id的String的hashCode求余
 		System.out.println("1".hashCode()%5);
 		System.out.println("2".hashCode()%5);
+		System.out.println("1".hashCode()%2);
+		System.out.println("2".hashCode()%2);
 	}
 }
