@@ -10,7 +10,7 @@ import com.zhrenjie04.alex.user.domain.IdentityId2RoleId;
 /**
  * @author 张人杰
  */
-@Repository("groupDao")
+@Repository("identityId2RoleIdDao")
 public interface IdentityId2RoleIdDao {
 	List<IdentityId2RoleId> queryAllByIdentityId(String identityId);
 }

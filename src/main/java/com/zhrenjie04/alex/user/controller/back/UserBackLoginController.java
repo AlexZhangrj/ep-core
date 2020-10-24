@@ -2,6 +2,7 @@ package com.zhrenjie04.alex.user.controller.back;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -200,6 +201,12 @@ public class UserBackLoginController {
 					for(Thread t:ts) {
 						t.join();
 					}
+					identities.sort(new Comparator<Identity>() {
+						@Override
+						public int compare(Identity o1, Identity o2) {
+							return o1.getIdentityId().compareTo(o2.getIdentityId());
+						}
+					});
 					user.setCurrentIdentityId(identities.get(0).getIdentityId());
 					List<IdentityId2RoleId> ids= identityId2RoleIdDao.queryAllByIdentityId(user.getCurrentIdentityId());
 					List<String>currentRoleIds = new LinkedList<>();
