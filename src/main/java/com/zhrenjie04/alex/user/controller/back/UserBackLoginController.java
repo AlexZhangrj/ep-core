@@ -96,6 +96,7 @@ public class UserBackLoginController {
 		if (capText != null && !capText.equals(account.getCaptcha()) || "".equals(capText) || capText == null) {
 			throw new PrerequisiteNotSatisfiedException("验证码不正确，请点击验证码刷新");
 		}
+		String userId="";
 		if(account.getUsername()!=null&&!"".equals(account.getUsername())) {
 			//以用户名密码方式登录
 			QueryBuilder queryBuilder=QueryBuilders.termQuery("username", account.getUsername());//全字段匹配：1.使用FieldType.Keyword，2.使用term
@@ -117,39 +118,62 @@ public class UserBackLoginController {
 				throw new PrerequisiteNotSatisfiedException("查到多个同名账号");
 			}
 			EsUserSearchKey userSearchKey=result.getSearchHit(0).getContent();
-			//设置数据源
-			Integer hashCode=userSearchKey.getUserId().hashCode();
-			DbUtil.setDataSource("userIdKeyDb"+(hashCode%DbUtil.dbCountInGroupMap.get("userIdKeyDb")));
-			log.debug(DbUtil.getDataSource());
-			//操作数据库
-			User user = userDao.queryObjectById(userSearchKey.getUserId());
-			//移除ThreadLoacal变量
-			DbUtil.remove();
-			if(user != null) {
-				if(user.getPassword()!=null&&user.getPassword().equals(account.getPassword())) {
-					JsonResult rt = JsonResult.success();
-					user.getOtherParams().put("lastRefreshTokenTime", new Date().getTime());
-					user.getOtherParams().put("endLineTime", new Date().getTime()+3*24*3600*1000);
-					user.setPassword("");
-					user.setSalt("");
-					SessionUtil.setSessionUser(request, user);
-					rt.put("user", user);
-					return rt;
-				}else {
-					throw new PrerequisiteNotSatisfiedException("密码错误");
-				}
-			}else {
-				throw new PrerequisiteNotSatisfiedException("该账号不存在");
-			}
+			userId=userSearchKey.getUserId();
 		}else if(account.getCellphone()!=null&&!"".equals(account.getCellphone())) {
 			//以手机号，验证码方式登录
-			throw new PrerequisiteNotSatisfiedException("目前不支持此种登录方式");
+			QueryBuilder queryBuilder=QueryBuilders.termQuery("cellphone", account.getCellphone());//全字段匹配：1.使用FieldType.Keyword，2.使用term
+			NativeSearchQuery nativeSearchQuery = new NativeSearchQueryBuilder()
+	                //查询条件
+	                .withQuery(queryBuilder)
+	                //分页
+	                .withPageable(PageRequest.of(0, 5))
+//	                //排序
+//	                .withSort(SortBuilders.fieldSort("userId").order(SortOrder.DESC))
+//	                //高亮字段显示
+//	                .withHighlightFields(new HighlightBuilder.Field("userId"))
+	                .build();
+			var result = esTemplate.search(nativeSearchQuery, EsUserSearchKey.class);
+			if(result.getTotalHits()==0) {
+				throw new PrerequisiteNotSatisfiedException("该账号不存在");
+			}
+			if(result.getTotalHits()>1) {
+				throw new PrerequisiteNotSatisfiedException("查到多个同名账号");
+			}
+			EsUserSearchKey userSearchKey=result.getSearchHit(0).getContent();
+			userId=userSearchKey.getUserId();
 		}else {
 			throw new PrerequisiteNotSatisfiedException("目前不支持此种登录方式");
+		}
+		
+		//设置数据源
+		Integer hashCode=userId.hashCode();
+		DbUtil.setDataSource("userIdKeyDb"+(hashCode%DbUtil.dbCountInGroupMap.get("userIdKeyDb")));
+		log.debug(DbUtil.getDataSource());
+		//操作数据库
+		User user = userDao.queryObjectById(userId);
+		
+		//移除ThreadLoacal变量
+		DbUtil.remove();
+		if(user != null) {
+			if(user.getPassword()!=null&&user.getPassword().equals(account.getPassword())) {
+				JsonResult rt = JsonResult.success();
+				user.getOtherParams().put("lastRefreshTokenTime", new Date().getTime());
+				user.getOtherParams().put("endLineTime", new Date().getTime()+3*24*3600*1000);
+				user.setPassword("");
+				user.setSalt("");
+				SessionUtil.setSessionUser(request, user);
+				rt.put("user", user);
+				return rt;
+			}else {
+				throw new PrerequisiteNotSatisfiedException("密码错误");
+			}
+		}else {
+			throw new PrerequisiteNotSatisfiedException("该账号不存在");
 		}
 	}
 	public static void main(String[] args) {
 		//以id的String的hashCode求余
 		System.out.println("1".hashCode()%5);
+		System.out.println("2".hashCode()%5);
 	}
 }
