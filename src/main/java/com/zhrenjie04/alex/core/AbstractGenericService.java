@@ -36,7 +36,7 @@ public abstract class AbstractGenericService<T extends AbstractGenericEntity, D 
 	 */
 	@Override
 	public JsonResult count(HashMap<String, Object> params, User sessionUser) {
-		params.put("userPrivilegeCodes", sessionUser.getPrivilegeCodes());
+		params.put("userPrivilegeCodes", sessionUser.getCurrentPrivilegeCodes());
 		params.put("userGroupId", sessionUser.getCurrentIdentity().getGroupId());
 		Long count = getDao().count(params);
 		JsonResult result = JsonResult.success();
@@ -52,7 +52,7 @@ public abstract class AbstractGenericService<T extends AbstractGenericEntity, D 
 	 */
 	@Override
 	public JsonResult queryAll(HashMap<String, Object> params, User sessionUser) {
-		params.put("userPrivilegeCodes", sessionUser.getPrivilegeCodes());
+		params.put("userPrivilegeCodes", sessionUser.getCurrentPrivilegeCodes());
 		params.put("userGroupId", sessionUser.getCurrentIdentity().getGroupId());
 		List<T> list = getDao().queryAll(params);
 		JsonResult result = JsonResult.success();
@@ -64,7 +64,7 @@ public abstract class AbstractGenericService<T extends AbstractGenericEntity, D 
 
 	@Override
 	public JsonResult pageQueryAll(HashMap<String, Object> params, User sessionUser) {
-		params.put("userPrivilegeCodes", sessionUser.getPrivilegeCodes());
+		params.put("userPrivilegeCodes", sessionUser.getCurrentPrivilegeCodes());
 		params.put("userGroupId", sessionUser.getCurrentIdentity().getGroupId());
 		Long total = getDao().count(params);
 		Long pageNo = (Long) params.get("pageNo");
@@ -90,7 +90,7 @@ public abstract class AbstractGenericService<T extends AbstractGenericEntity, D 
 	 */
 	@Override
 	public JsonResult queryObject(HashMap<String, Object> params, User sessionUser) {
-		params.put("userPrivilegeCodes", sessionUser.getPrivilegeCodes());
+		params.put("userPrivilegeCodes", sessionUser.getCurrentPrivilegeCodes());
 		params.put("userGroupId", sessionUser.getCurrentIdentity().getGroupId());
 		T object = getDao().queryObject(params);
 		JsonResult result = JsonResult.success();
@@ -164,7 +164,7 @@ public abstract class AbstractGenericService<T extends AbstractGenericEntity, D 
 	@Override
 	@Transactional
 	public JsonResult deleteAll(HashMap<String, Object> params, User sessionUser) {
-		params.put("userPrivilegeCodes", sessionUser.getPrivilegeCodes());
+		params.put("userPrivilegeCodes", sessionUser.getCurrentPrivilegeCodes());
 		params.put("userGroupId", sessionUser.getCurrentIdentity().getGroupId());
 		params.put("lastModifierId", sessionUser.getUserId());
 		params.put("lastModifierName", sessionUser.getRealname());
@@ -180,7 +180,7 @@ public abstract class AbstractGenericService<T extends AbstractGenericEntity, D 
 	@Override
 	@Transactional
 	public JsonResult updateAll(HashMap<String, Object> params, User sessionUser) {
-		params.put("userPrivilegeCodes", sessionUser.getPrivilegeCodes());
+		params.put("userPrivilegeCodes", sessionUser.getCurrentPrivilegeCodes());
 		params.put("userGroupId", sessionUser.getCurrentIdentity().getGroupId());
 		params.put("lastModifierId", sessionUser.getUserId());
 		params.put("lastModifierName", sessionUser.getRealname());

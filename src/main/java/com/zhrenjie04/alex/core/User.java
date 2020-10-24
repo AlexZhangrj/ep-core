@@ -84,11 +84,9 @@ public class User implements Serializable{
 	@ApiModelProperty("当前身份id")
 	private String currentIdentityId;
 	@ApiModelProperty("权限Codes")
-	private List<String> privilegeCodes = new LinkedList<String>();
+	private List<String> currentPrivilegeCodes = new LinkedList<String>();
 	@ApiModelProperty("角色ids，用于不能删除自己的角色的判断")
 	private List<String> currentRoleIds = new LinkedList<String>();
-	@ApiModelProperty("主功能菜单")
-	private List<MenuItem> menuLinks = new LinkedList<MenuItem>();
 	@ApiModelProperty("账号所属集团id")
 	private String groupId;
 	@ApiModelProperty("验证码传输字段")
@@ -114,11 +112,12 @@ public class User implements Serializable{
 	@ApiModelProperty("jwt-token失效时间")
 	private Date jwtExpiredTime;
 	
+	@JsonIgnore
 	public boolean hasPrivilege(String privilegeCode) {
-		if (privilegeCodes == null) {
+		if (currentPrivilegeCodes == null) {
 			return false;
 		} else {
-			return privilegeCodes.contains(privilegeCode);
+			return currentPrivilegeCodes.contains(privilegeCode);
 		}
 	}
 

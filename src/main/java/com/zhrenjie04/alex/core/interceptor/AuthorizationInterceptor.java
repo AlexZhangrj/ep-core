@@ -155,7 +155,7 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
 			throw new UnauthorizedException("您已被系统拉入黑名单，无法做任何操作");
 		}
 		// 所有访问都需要权限验证
-		if (defaultAuthorizedCodes.contains(needCode) || user.getPrivilegeCodes().contains(needCode)) {
+		if (defaultAuthorizedCodes.contains(needCode) || user.getCurrentPrivilegeCodes().contains(needCode)) {
 			request.setAttribute("user", user);
 			return true;
 		} else {
