@@ -4,10 +4,10 @@
 	<!-- cache type="org.mybatis.caches.memcached.MemcachedCache" / -->
     <resultMap type="com.zhrenjie04.alex.user.domain.Position"
         id="positionResult">
-        <result property="positionId" column="positionId" />
-        <result property="positionName" column="positionName" />
-        <result property="positionCode" column="positionCode" />
-        <result property="groupId" column="groupId" />
+        <result property="positionId" column="position_id" />
+        <result property="positionName" column="position_name" />
+        <result property="positionCode" column="position_code" />
+        <result property="groupId" column="group_id" />
         <result property="isLocked" column="is_locked" />
         <result property="isDeleted" column="is_deleted" />
         <result property="createdTime" column="created_time" />
