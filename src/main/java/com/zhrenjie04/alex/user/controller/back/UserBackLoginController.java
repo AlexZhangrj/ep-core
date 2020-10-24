@@ -173,7 +173,9 @@ public class UserBackLoginController {
 						public void run() {
 							DbUtil.setDataSource("groupIdKeyDb"+(groupId.hashCode()%DbUtil.dbCountInGroupMap.get("groupIdKeyDb")));
 							Group group = groupDao.queryObjectById(groupId);
+							Position position = positionDao.queryObjectById(position);
 							identity.setGroupName(group.getGroupName());
+							identity.setPositionName(positionName);
 							DbUtil.remove();
 						}
 					};
