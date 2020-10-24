@@ -23,7 +23,7 @@
 	<category_index>0</category_index>
 	<zoom>0.8</zoom>
 	<x>214</x>
-	<y>515</y>
+	<y>92</y>
 	<default_color>
 		<r>155</r>
 		<g>155</g>
@@ -52,11 +52,11 @@
 		<suspend_validator>false</suspend_validator>
 		<export_setting>
 			<export_ddl_setting>
-				<output_path></output_path>
-				<encoding></encoding>
-				<line_feed></line_feed>
+				<output_path>sql/ep-user-service.sql</output_path>
+				<encoding>UTF-8</encoding>
+				<line_feed>LF</line_feed>
 				<is_open_after_saved>true</is_open_after_saved>
-				<environment_id>null</environment_id>
+				<environment_id>0</environment_id>
 				<category_id>null</category_id>
 				<ddl_target>
 					<create_comment>true</create_comment>
@@ -146,7 +146,7 @@
 			</connections>
 			<display>false</display>
 			<creation_date>2017-01-26 15:16:35</creation_date>
-			<updated_date>2020-10-24 07:26:22</updated_date>
+			<updated_date>2020-10-24 08:17:50</updated_date>
 			<model_property>
 				<name>Project Name</name>
 				<value></value>
