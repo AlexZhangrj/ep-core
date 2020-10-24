@@ -9,7 +9,7 @@ import com.zhrenjie04.alex.user.domain.Privilege;
 /**
  * @author 张人杰
  */
-@Repository("groupDao")
+@Repository("role2PrivilegeDao")
 public interface Role2PrivilegeDao {
 	List<Privilege> queryAllPrivilegesByRoleId(String roleId);
 }
