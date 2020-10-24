@@ -2,6 +2,7 @@ package com.zhrenjie04.alex.user.controller.back;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.imageio.ImageIO;
@@ -101,12 +102,12 @@ public class UserBackLoginController {
 	@Permission("login.do-login")
 	@ResponseJsonWithFilter(type = User.class, include = "userId,username,realname,nickname,email,cellphone,portraitUrl,birthday,gender")
 	public JsonResult login(@RequestBody User account, HttpServletRequest request, HttpServletResponse response) throws InterruptedException {
-		String sid=(String)request.getAttribute("sid");
-		String capText = RedisUtil.get("validate-code:"+sid);
-		RedisUtil.set("validate-code:"+sid, "", 3*60);
-		if (capText != null && !capText.equals(account.getCaptcha()) || "".equals(capText) || capText == null) {
-			throw new PrerequisiteNotSatisfiedException("验证码不正确，请点击验证码刷新");
-		}
+//		String sid=(String)request.getAttribute("sid");
+//		String capText = RedisUtil.get("validate-code:"+sid);
+//		RedisUtil.set("validate-code:"+sid, "", 3*60);
+//		if (capText != null && !capText.equals(account.getCaptcha()) || "".equals(capText) || capText == null) {
+//			throw new PrerequisiteNotSatisfiedException("验证码不正确，请点击验证码刷新");
+//		}
 		String userId="";
 		if(account.getUsername()!=null&&!"".equals(account.getUsername())) {
 			//以用户名密码方式登录
@@ -169,12 +170,14 @@ public class UserBackLoginController {
 					user.setIdentities(identities);
 					user.setCurrentIdentityId(identities.get(0).getIdentityId());
 				}
+				List<Thread> ts=new LinkedList<>();
 				for(Identity identity:identities) {
 					String groupId = identity.getGroupId();
 					Thread t=new Thread() {
 						@Override
 						public void run() {
 							DbUtil.setDataSource("groupIdKeyDb"+(groupId.hashCode()%DbUtil.dbCountInGroupMap.get("groupIdKeyDb")));
+							System.out.println(groupId+"---"+DbUtil.dbCountInGroupMap.get("groupIdKeyDb")+"::::"+DbUtil.getDataSource());
 							Group group = groupDao.queryObjectById(groupId);
 							Position position = positionDao.queryObjectById(identity.getPositionId());
 							identity.setGroupName(group.getGroupName());
@@ -183,6 +186,9 @@ public class UserBackLoginController {
 						}
 					};
 					t.start();
+					ts.add(t);
+				}
+				for(Thread t:ts) {
 					t.join();
 				}
 				JsonResult rt = JsonResult.success();
