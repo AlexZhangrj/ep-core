@@ -25,7 +25,7 @@ CREATE TABLE t_group
 	id_path varchar(1024),
 	is_locked tinyint unsigned zerofill,
 	is_deleted tinyint zerofill,
-	created_time datetime DEFAULT NOW(),
+	created_time datetime DEFAULT NOW(), 
 	creater_id bigint,
 	creater_name varchar(255),
 	last_modified_time datetime ON UPDATE CURRENT_TIMESTAMP,
@@ -66,7 +66,8 @@ CREATE TABLE t_identity_role
 	last_modified_time datetime ON UPDATE CURRENT_TIMESTAMP,
 	last_modifier_id bigint,
 	last_modifier_name varchar(255),
-	PRIMARY KEY (id)
+	PRIMARY KEY (id),
+	UNIQUE (id)
 );
 
 
@@ -119,8 +120,6 @@ CREATE TABLE t_role
 	role_id varchar(30) NOT NULL,
 	role_name varchar(255) NOT NULL,
 	role_code varchar(255) NOT NULL,
-	parent_id bigint,
-	id_path varchar(1024),
 	group_id bigint,
 	is_locked tinyint zerofill DEFAULT 0,
 	is_deleted tinyint zerofill DEFAULT 0,
@@ -139,6 +138,7 @@ CREATE TABLE t_role_privilege
 	id varchar(30) NOT NULL,
 	role_id varchar(30),
 	privilege_id varchar(30),
+	is_deleted tinyint zerofill,
 	created_time datetime DEFAULT NOW(),
 	creater_id bigint,
 	creater_name varchar(255),
@@ -165,9 +165,9 @@ CREATE TABLE t_user
 	birthday date,
 	gender varchar(10),
 	is_locked tinyint zerofill DEFAULT 0,
-	is_deleted tinyint zerofill,
 	last_login_ip varchar(128),
 	last_login_time datetime,
+	is_deleted tinyint zerofill,
 	created_time datetime DEFAULT NOW(),
 	creater_id bigint,
 	creater_name varchar(255),
