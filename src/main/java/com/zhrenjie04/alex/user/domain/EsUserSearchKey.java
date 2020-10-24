@@ -1,4 +1,4 @@
-package com.zhrenjie04.alex.manager.domain;
+package com.zhrenjie04.alex.user.domain;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;

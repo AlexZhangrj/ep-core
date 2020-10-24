@@ -1,4 +1,4 @@
-package com.zhrenjie04.alex.manager.domain;
+package com.zhrenjie04.alex.user.domain;
 
 import java.util.Date;
 
@@ -7,14 +7,14 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 @Data
-@EqualsAndHashCode(of = {"positionId"}, callSuper = false)
+@EqualsAndHashCode(of = {"groupId"}, callSuper = false)
 @ToString
-public class Position {
-
-	private String positionId;
-	private String positionName;
-	private String positionCode;
+public class Group {
 	private String groupId;
+	private String groupName;
+	private String groupCode;
+	private String parentId;
+	private String idPath;
 	private Boolean isLocked=false;
 	private Boolean isDeleted=false;
 	private Date createdTime;
@@ -23,5 +23,4 @@ public class Position {
 	private Date lastModifiedTime;
 	private String lastModifierId;
 	private String lastModifierName;
-
 }
