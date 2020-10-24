@@ -146,7 +146,7 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
 		if (user == null) {
 			throw new UnauthorizedException("session已失效");
 		}
-		if(user.getOtherParams().get("endLineTime")==null||(long)(user.getOtherParams().get("endLineTime"))<new Date().getTime()) {
+		if(user.getJwtExpiredTime()==null||user.getJwtExpiredTime().getTime()<new Date().getTime()) {
 			throw new UnauthorizedException("session已失效");
 		}
 		if(RedisUtil.sismember("banedTokens", token)) {

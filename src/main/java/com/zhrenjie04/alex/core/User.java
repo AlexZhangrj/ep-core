@@ -1,5 +1,6 @@
 package com.zhrenjie04.alex.core;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
@@ -32,11 +33,10 @@ import lombok.ToString;
 @Data
 @EqualsAndHashCode(of = {"userId"}, callSuper = false)
 @ToString
-public class User extends AbstractGenericEntity {
+public class User implements Serializable{
 	
 	private static final long serialVersionUID = -3683386137654425948L;
-	public User() {
-	}
+
 	@ApiModelProperty("用户id")
 	private String userId;
 	@ApiModelProperty("用户名")
@@ -102,6 +102,16 @@ public class User extends AbstractGenericEntity {
 
 	private HashMap<String, Identity> idToIdentityMap = new HashMap<String, Identity>();
 
+	private Date createdTime;
+	private String createrId;
+	private String createrName;
+	private Date lastModifiedTime;
+	private String lastModifierId;
+	private String lastModifierName;
+
+	@ApiModelProperty("jwt-token失效时间")
+	private Date jwtExpiredTime;
+	
 	public boolean hasPrivilege(String privilegeCode) {
 		if (privilegeCodes == null) {
 			return false;
@@ -140,16 +150,6 @@ public class User extends AbstractGenericEntity {
 				idToIdentityMap.put(identity.getIdentityId(), identity);
 			}
 		}
-	}
-
-	@Override
-	public String getPK() {
-		return userId;
-	}
-
-	@Override
-	public void setPK(String id) {
-		this.userId = id;
 	}
 	
 }
