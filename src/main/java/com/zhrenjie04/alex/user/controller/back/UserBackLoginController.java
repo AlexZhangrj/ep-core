@@ -64,7 +64,7 @@ public class UserBackLoginController {
 		userSearchKey.setCellphone("13900001111");
 		esTemplate.save(userSearchKey);
 		EsUserSearchKey userSearchKey1=new EsUserSearchKey();
-		userSearchKey.setUserId("1");
+		userSearchKey.setUserId("2");
 		userSearchKey.setUsername("admin1");
 		userSearchKey.setCellphone("13900001111");
 		esTemplate.save(userSearchKey1);
@@ -116,26 +116,25 @@ public class UserBackLoginController {
 			if(result.getTotalHits()>1) {
 				throw new PrerequisiteNotSatisfiedException("查到多个同名账号");
 			}
-			HashMap<String, Object> params = new HashMap<String, Object>(16);
-			params.put("username", account.getUsername());
+			EsUserSearchKey userSearchKey=result.getSearchHit(0).getContent();
 			//设置数据源
-			Integer hashCode=account.getUsername().hashCode();
-			DbUtil.setDataSource("usernameKeyDb"+(hashCode%DbUtil.dbCountInGroupMap.get("usernameKeyDb")));
+			Integer hashCode=userSearchKey.getUserId().hashCode();
+			DbUtil.setDataSource("userIdKeyDb"+(hashCode%DbUtil.dbCountInGroupMap.get("userIdKeyDb")));
 			log.debug(DbUtil.getDataSource());
 			//操作数据库
-			User user = userDao.queryObject(params);
+			User user = userDao.queryObjectById(userSearchKey.getUserId());
 			//移除ThreadLoacal变量
 			DbUtil.remove();
 			if(user != null) {
 				if(user.getPassword()!=null&&user.getPassword().equals(account.getPassword())) {
-					JsonResult result = JsonResult.success();
+					JsonResult rt = JsonResult.success();
 					user.getOtherParams().put("lastRefreshTokenTime", new Date().getTime());
 					user.getOtherParams().put("endLineTime", new Date().getTime()+3*24*3600*1000);
 					user.setPassword("");
 					user.setSalt("");
 					SessionUtil.setSessionUser(request, user);
-					result.put("user", user);
-					return result;
+					rt.put("user", user);
+					return rt;
 				}else {
 					throw new PrerequisiteNotSatisfiedException("密码错误");
 				}
