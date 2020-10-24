@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -44,12 +45,19 @@ public class UserBackLoginController {
 
 	@Autowired
 	UserDao userDao;
+	
+	@Autowired
+	ElasticsearchRestTemplate esTemplate;
 
 
 	@RequestMapping(value = "/login/validate-code", method = RequestMethod.GET)
 	@Permission("login.do-login")
 	public void genValidateCode(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		EsUserSearchKey userSearchKey=new EsUserSearchKey();
+		userSearchKey.setUserId("1");
+		userSearchKey.setUsername("admin");
+		userSearchKey.setCellphone("13900001111");
+		esTemplate.save(userSearchKey);
 		response.setDateHeader("Expires", 0);
 		response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
 		response.addHeader("Cache-Control", "post-check=0, pre-check=0");
