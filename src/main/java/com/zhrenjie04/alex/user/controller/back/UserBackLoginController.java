@@ -10,8 +10,13 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -58,6 +63,11 @@ public class UserBackLoginController {
 		userSearchKey.setUsername("admin");
 		userSearchKey.setCellphone("13900001111");
 		esTemplate.save(userSearchKey);
+		EsUserSearchKey userSearchKey1=new EsUserSearchKey();
+		userSearchKey.setUserId("1");
+		userSearchKey.setUsername("admin1");
+		userSearchKey.setCellphone("13900001111");
+		esTemplate.save(userSearchKey1);
 		response.setDateHeader("Expires", 0);
 		response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
 		response.addHeader("Cache-Control", "post-check=0, pre-check=0");
@@ -88,6 +98,24 @@ public class UserBackLoginController {
 		}
 		if(account.getUsername()!=null&&!"".equals(account.getUsername())) {
 			//以用户名密码方式登录
+			QueryBuilder queryBuilder=QueryBuilders.termQuery("username", account.getUsername());//全字段匹配：1.使用FieldType.Keyword，2.使用term
+			NativeSearchQuery nativeSearchQuery = new NativeSearchQueryBuilder()
+	                //查询条件
+	                .withQuery(queryBuilder)
+	                //分页
+	                .withPageable(PageRequest.of(0, 5))
+//	                //排序
+//	                .withSort(SortBuilders.fieldSort("userId").order(SortOrder.DESC))
+//	                //高亮字段显示
+//	                .withHighlightFields(new HighlightBuilder.Field("userId"))
+	                .build();
+			var result = esTemplate.search(nativeSearchQuery, EsUserSearchKey.class);
+			if(result.getTotalHits()==0) {
+				throw new PrerequisiteNotSatisfiedException("该账号不存在");
+			}
+			if(result.getTotalHits()>1) {
+				throw new PrerequisiteNotSatisfiedException("查到多个同名账号");
+			}
 			HashMap<String, Object> params = new HashMap<String, Object>(16);
 			params.put("username", account.getUsername());
 			//设置数据源
