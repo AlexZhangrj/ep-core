@@ -5,7 +5,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.crypto.spec.SecretKeySpec;
-import javax.xml.bind.DatatypeConverter;
 
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
@@ -24,8 +23,7 @@ public class JwtUtil {
 
 	public static String encode(String msg) {
 		SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
-		byte[] apiKeySecretBytes = DatatypeConverter.printBase64Binary(jwtAuthKey.getBytes()).getBytes();
-		Key signingKey = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());
+		Key signingKey = new SecretKeySpec(jwtAuthKey.getBytes(), signatureAlgorithm.getJcaName());
 		JwtBuilder builder = Jwts.builder().setSubject(msg).signWith(signatureAlgorithm, signingKey);
 		// 签名,用HS256加密
 		String encodedStr = builder.compact();
@@ -36,8 +34,7 @@ public class JwtUtil {
 		if (encodedString == null || "".equals(encodedString)) {
 			return null;
 		}
-		byte[] apiKeySecretBytes = DatatypeConverter.printBase64Binary(jwtAuthKey.getBytes()).getBytes();
-		String decodedString = Jwts.parser().setSigningKey(apiKeySecretBytes).parseClaimsJws(encodedString).getBody()
+		String decodedString = Jwts.parser().setSigningKey(jwtAuthKey.getBytes()).parseClaimsJws(encodedString).getBody()
 				.getSubject();
 		return decodedString;
 	}

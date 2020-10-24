@@ -72,6 +72,8 @@ public class User implements Serializable{
 	private String gender;
 	@ApiModelProperty("是否已锁定")
 	private Boolean isLocked = false;
+	@ApiModelProperty("是否已删除")
+	private Boolean isDeleted = false;
 	@ApiModelProperty("最后登录IP")
 	private String lastLoginIp;
 	@ApiModelProperty("最后登录时间")
