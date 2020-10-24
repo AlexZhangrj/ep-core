@@ -18,7 +18,7 @@
         <result property="lastModifierId" column="last_modifier_id" />
         <result property="lastModifierName" column="last_modifier_name" />
     </resultMap>
-    <select id="queryAllPrivilegesByRoleId" resultMap="entityResult" parameterType="java.lang.String">
-        select * from t_privilege while privilege_id in(select privilege_id from t_role_privilege where role_id=#{id})
+    <select id="queryAllByIdentityId" resultMap="entityResult" parameterType="java.lang.String">
+        select * from t_privilege where privilege_id in(select privilege_id from t_role_privilege where role_id=#{id})
     </select>
 </mapper> 

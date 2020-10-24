@@ -3,7 +3,7 @@
 <mapper namespace="com.zhrenjie04.alex.user.dao.Role2PrivilegeDao">
 	<!-- cache type="org.mybatis.caches.memcached.MemcachedCache" / -->
 	<resultMap type="com.zhrenjie04.alex.user.domain.Privilege"
-		id="privilegeResult">
+		id="entityResult">
         <result property="privilegeId" column="privilege_id" />
         <result property="privilegeName" column="privilege_name" />
         <result property="privilegeCode" column="privilege_code" />
@@ -21,7 +21,7 @@
         <result property="sortValue" column="sort_value" />
         <result property="frontEndSystem" column="front_end_system" />
 	</resultMap>
-    <select id="queryAllByIdentityId" resultMap="entityResult" parameterType="java.lang.String">
+    <select id="queryAllPrivilegesByRoleId" resultMap="entityResult" parameterType="java.lang.String">
         select * from t_identity_role where identity_id=#{id}
     </select>
 </mapper> 
