@@ -4,6 +4,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import javax.imageio.ImageIO;
 import javax.servlet.ServletOutputStream;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.google.code.kaptcha.Producer;
+import com.google.common.collect.Sets;
 import com.zhrenjie04.alex.core.DbUtil;
 import com.zhrenjie04.alex.core.Identity;
 import com.zhrenjie04.alex.core.JsonResult;
@@ -32,11 +34,15 @@ import com.zhrenjie04.alex.core.User;
 import com.zhrenjie04.alex.core.exception.PrerequisiteNotSatisfiedException;
 import com.zhrenjie04.alex.user.dao.GroupDao;
 import com.zhrenjie04.alex.user.dao.IdentityDao;
+import com.zhrenjie04.alex.user.dao.IdentityId2RoleIdDao;
 import com.zhrenjie04.alex.user.dao.PositionDao;
+import com.zhrenjie04.alex.user.dao.Role2PrivilegeDao;
 import com.zhrenjie04.alex.user.dao.UserDao;
 import com.zhrenjie04.alex.user.domain.EsUserSearchKey;
 import com.zhrenjie04.alex.user.domain.Group;
+import com.zhrenjie04.alex.user.domain.IdentityId2RoleId;
 import com.zhrenjie04.alex.user.domain.Position;
+import com.zhrenjie04.alex.user.domain.Privilege;
 import com.zhrenjie04.alex.util.RedisUtil;
 import com.zhrenjie04.alex.util.SessionUtil;
 
@@ -62,6 +68,10 @@ public class UserBackLoginController {
 	GroupDao groupDao;
 	@Autowired
 	PositionDao positionDao;
+	@Autowired
+	IdentityId2RoleIdDao identityId2RoleIdDao;
+	@Autowired
+	Role2PrivilegeDao role2PrivilegeDao;
 	
 	@Autowired
 	ElasticsearchRestTemplate esTemplate;
@@ -169,27 +179,57 @@ public class UserBackLoginController {
 				if(identities.size()>0) {
 					user.setIdentities(identities);
 					user.setCurrentIdentityId(identities.get(0).getIdentityId());
-				}
-				List<Thread> ts=new LinkedList<>();
-				for(Identity identity:identities) {
-					String groupId = identity.getGroupId();
-					Thread t=new Thread() {
-						@Override
-						public void run() {
-							DbUtil.setDataSource("groupIdKeyDb"+(groupId.hashCode()%DbUtil.dbCountInGroupMap.get("groupIdKeyDb")));
-							System.out.println(groupId+"---"+DbUtil.dbCountInGroupMap.get("groupIdKeyDb")+"::::"+DbUtil.getDataSource());
-							Group group = groupDao.queryObjectById(groupId);
-							Position position = positionDao.queryObjectById(identity.getPositionId());
-							identity.setGroupName(group.getGroupName());
-							identity.setPositionName(position.getPositionName());
-							DbUtil.remove();
-						}
-					};
-					t.start();
-					ts.add(t);
-				}
-				for(Thread t:ts) {
-					t.join();
+					List<Thread> ts=new LinkedList<>();
+					for(Identity identity:identities) {
+						String groupId = identity.getGroupId();
+						Thread t=new Thread() {
+							@Override
+							public void run() {
+								DbUtil.setDataSource("groupIdKeyDb"+(groupId.hashCode()%DbUtil.dbCountInGroupMap.get("groupIdKeyDb")));
+								System.out.println(groupId+"---"+DbUtil.dbCountInGroupMap.get("groupIdKeyDb")+"::::"+DbUtil.getDataSource());
+								Group group = groupDao.queryObjectById(groupId);
+								Position position = positionDao.queryObjectById(identity.getPositionId());
+								identity.setGroupName(group.getGroupName());
+								identity.setPositionName(position.getPositionName());
+								DbUtil.remove();
+							}
+						};
+						t.start();
+						ts.add(t);
+					}
+					for(Thread t:ts) {
+						t.join();
+					}
+					user.setCurrentIdentityId(identities.get(0).getIdentityId());
+					List<IdentityId2RoleId> ids= identityId2RoleIdDao.queryAllByIdentityId(user.getCurrentIdentityId());
+					List<String>currentRoleIds = new LinkedList<>();
+					for(IdentityId2RoleId id:ids) {
+						currentRoleIds.add(id.getRoleId());
+					}
+					user.setCurrentRoleIds(currentRoleIds);
+					Set<Privilege>privileges = Sets.<Privilege>newConcurrentHashSet();
+					ts=new LinkedList<>();
+					for(String roleId:currentRoleIds) {
+						Thread t=new Thread() {
+							@Override
+							public void run() {
+								DbUtil.setDataSource("roleIdKeyDb"+(roleId.hashCode()%DbUtil.dbCountInGroupMap.get("roleIdKeyDb")));
+								System.out.println(roleId+"---"+DbUtil.dbCountInGroupMap.get("roleIdKeyDb")+"::::"+DbUtil.getDataSource());
+								privileges.addAll(role2PrivilegeDao.queryAllPrivilegesByRoleId(roleId));
+								DbUtil.remove();
+							}
+						};
+						t.start();
+						ts.add(t);
+					}
+					for(Thread t:ts) {
+						t.join();
+					}
+					List<String>privilegeCodes=new LinkedList<>();
+					for(Privilege p:privileges) {
+						privilegeCodes.add(p.getPrivilegeCode());
+					}
+					user.setCurrentPrivilegeCodes(privilegeCodes);
 				}
 				JsonResult rt = JsonResult.success();
 				user.setPassword("");
