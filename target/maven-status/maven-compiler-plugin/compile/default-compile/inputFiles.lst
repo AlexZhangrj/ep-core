@@ -7,12 +7,14 @@
 /Users/zhangrenjie/developing/gitee/backend/ep-core/src/main/java/com/zhrenjie04/alex/core/TreeViewNodeState.java
 /Users/zhangrenjie/developing/gitee/backend/ep-core/src/main/java/com/zhrenjie04/alex/util/RjRSAUtil.java
 /Users/zhangrenjie/developing/gitee/backend/ep-core/src/main/java/com/zhrenjie04/alex/core/filter/NoCachedFilter.java
+/Users/zhangrenjie/developing/gitee/backend/ep-core/src/main/java/com/zhrenjie04/alex/core/EpIdGeneratorProp.java
 /Users/zhangrenjie/developing/gitee/backend/ep-core/src/main/java/com/zhrenjie04/alex/core/GenericDao.java
 /Users/zhangrenjie/developing/gitee/backend/ep-core/src/main/java/com/zhrenjie04/alex/util/PropertyNameUtil.java
+/Users/zhangrenjie/developing/gitee/backend/ep-core/src/main/java/com/zhrenjie04/alex/core/EpJwtProp.java
 /Users/zhangrenjie/developing/gitee/backend/ep-core/src/main/java/com/zhrenjie04/alex/util/DbDefaultValueUtil.java
+/Users/zhangrenjie/developing/gitee/backend/ep-core/src/main/java/com/zhrenjie04/alex/core/EpAuthProp.java
 /Users/zhangrenjie/developing/gitee/backend/ep-core/src/main/java/com/zhrenjie04/alex/core/AbstractGenericServiceMongoDb.java
 /Users/zhangrenjie/developing/gitee/backend/ep-core/src/main/java/com/zhrenjie04/alex/core/TClazzLocal.java
-/Users/zhangrenjie/developing/gitee/backend/ep-core/src/main/java/com/zhrenjie04/alex/core/MenuItem.java
 /Users/zhangrenjie/developing/gitee/backend/ep-core/src/main/java/com/zhrenjie04/alex/core/exception/PrerequisiteNotSatisfiedException.java
 /Users/zhangrenjie/developing/gitee/backend/ep-core/src/main/java/com/zhrenjie04/alex/core/FilterWithNoneFiltered.java
 /Users/zhangrenjie/developing/gitee/backend/ep-core/src/main/java/com/zhrenjie04/alex/core/AbstractGenericController.java
@@ -23,6 +25,7 @@
 /Users/zhangrenjie/developing/gitee/backend/ep-core/src/main/java/com/zhrenjie04/alex/util/PropertyDefaultValueUtil.java
 /Users/zhangrenjie/developing/gitee/backend/ep-core/src/main/java/com/zhrenjie04/alex/core/interceptor/CorsInterceptor.java
 /Users/zhangrenjie/developing/gitee/backend/ep-core/src/main/java/com/zhrenjie04/alex/core/MapReduceResultType.java
+/Users/zhangrenjie/developing/gitee/backend/ep-core/src/main/java/com/zhrenjie04/alex/core/EpSessionUtilProp.java
 /Users/zhangrenjie/developing/gitee/backend/ep-core/src/main/java/com/zhrenjie04/alex/util/JsonUtil.java
 /Users/zhangrenjie/developing/gitee/backend/ep-core/src/main/java/com/zhrenjie04/alex/core/ResponseJsonWithFilter.java
 /Users/zhangrenjie/developing/gitee/backend/ep-core/src/main/java/com/zhrenjie04/alex/core/GenericService.java
@@ -44,6 +47,7 @@
 /Users/zhangrenjie/developing/gitee/backend/ep-core/src/main/java/com/zhrenjie04/alex/util/SessionUtil.java
 /Users/zhangrenjie/developing/gitee/backend/ep-core/src/main/java/com/zhrenjie04/alex/util/PropertyTypeUtil.java
 /Users/zhangrenjie/developing/gitee/backend/ep-core/src/main/java/com/zhrenjie04/alex/core/AppErrorController.java
+/Users/zhangrenjie/developing/gitee/backend/ep-core/src/main/java/com/zhrenjie04/alex/core/EpRedisProp.java
 /Users/zhangrenjie/developing/gitee/backend/ep-core/src/main/java/com/zhrenjie04/alex/core/exception/CrisisError.java
 /Users/zhangrenjie/developing/gitee/backend/ep-core/src/main/java/com/zhrenjie04/alex/core/AlexJsonSerializer.java
 /Users/zhangrenjie/developing/gitee/backend/ep-core/src/main/java/com/zhrenjie04/alex/util/SaltUtil.java
@@ -53,6 +57,7 @@
 /Users/zhangrenjie/developing/gitee/backend/ep-core/src/main/java/com/zhrenjie04/alex/util/IdGenerator.java
 /Users/zhangrenjie/developing/gitee/backend/ep-core/src/main/java/com/zhrenjie04/alex/core/OperationLog.java
 /Users/zhangrenjie/developing/gitee/backend/ep-core/src/main/java/com/zhrenjie04/alex/core/TreeNode.java
+/Users/zhangrenjie/developing/gitee/backend/ep-core/src/main/java/com/zhrenjie04/alex/core/EpImgProp.java
 /Users/zhangrenjie/developing/gitee/backend/ep-core/src/main/java/com/zhrenjie04/alex/core/ResultFilter.java
 /Users/zhangrenjie/developing/gitee/backend/ep-core/src/main/java/com/zhrenjie04/alex/util/SpringUtil.java
 /Users/zhangrenjie/developing/gitee/backend/ep-core/src/main/java/com/zhrenjie04/alex/core/ResponseJson.java
@@ -72,6 +77,7 @@
 /Users/zhangrenjie/developing/gitee/backend/ep-core/src/main/java/com/zhrenjie04/alex/core/DbUtil.java
 /Users/zhangrenjie/developing/gitee/backend/ep-core/src/main/java/com/zhrenjie04/alex/core/PageResult.java
 /Users/zhangrenjie/developing/gitee/backend/ep-core/src/main/java/com/zhrenjie04/alex/util/HtmlCleaner.java
+/Users/zhangrenjie/developing/gitee/backend/ep-core/src/main/java/com/zhrenjie04/alex/core/EpHttpClientProp.java
 /Users/zhangrenjie/developing/gitee/backend/ep-core/src/main/java/com/zhrenjie04/alex/util/AbstractRedisMap.java
 /Users/zhangrenjie/developing/gitee/backend/ep-core/src/main/java/com/zhrenjie04/alex/core/interceptor/AuthorizationInterceptor.java
 /Users/zhangrenjie/developing/gitee/backend/ep-core/src/main/java/com/zhrenjie04/alex/core/AlexJsonHttpMessageConverter.java

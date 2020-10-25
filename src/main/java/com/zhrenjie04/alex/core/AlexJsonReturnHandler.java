@@ -49,7 +49,8 @@ public class AlexJsonReturnHandler implements HandlerMethodReturnValueHandler {
 			}
 		});
 		jsonSerializer.endAddFilter();
-		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+		response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
+//		response.setHeader("Content-Type", MediaType.APPLICATION_JSON_UTF8_VALUE);
 		String json = jsonSerializer.toJson(returnValue);
 		if (returnValue instanceof JsonResult) {
 			logger.debug("returnValue is JsonResult");
