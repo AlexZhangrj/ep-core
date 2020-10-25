@@ -111,7 +111,7 @@ public class UserBackLoginController {
 	
 	@RequestMapping(value = "/login/do-login", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	@Permission("login.do-login")
-	@ResponseJsonWithFilter(type = User.class, include = "userId,username,realname,nickname,email,cellphone,portraitUrl,birthday,gender")
+	@ResponseJsonWithFilter(type = User.class, include = "userId,username,realname,nickname,email,cellphone,portraitUrl,birthday,gender,identities")
 	public JsonResult login(@RequestBody User account, HttpServletRequest request, HttpServletResponse response) throws InterruptedException {
 //		String sid=(String)request.getAttribute("sid");
 //		String capText = RedisUtil.get("validate-code:"+sid);
