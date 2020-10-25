@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
-import com.zhrenjie04.alex.user.domain.Group;
 import com.zhrenjie04.alex.user.domain.IdentityId2RoleId;
 
 /**

@@ -3,6 +3,7 @@ package com.google.code.kaptcha.util;
 import java.awt.Color;
 import java.awt.Font;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 
 
 /**
@@ -108,7 +109,7 @@ public class ConfigHelper
 		{
 			try
 			{
-				instance = Class.forName(paramValue).newInstance();
+				instance = Class.forName(paramValue).getDeclaredConstructor().newInstance();
 			}
 			catch (IllegalAccessException iae)
 			{
@@ -121,6 +122,14 @@ public class ConfigHelper
 			catch (InstantiationException ie)
 			{
 				throw new ConfigException(paramName, paramValue, ie);
+			} catch (IllegalArgumentException e) {
+				throw new ConfigException(paramName, paramValue, e);
+			} catch (InvocationTargetException e) {
+				throw new ConfigException(paramName, paramValue, e);
+			} catch (NoSuchMethodException e) {
+				throw new ConfigException(paramName, paramValue, e);
+			} catch (SecurityException e) {
+				throw new ConfigException(paramName, paramValue, e);
 			}
 		}
 
