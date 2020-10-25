@@ -20,6 +20,7 @@ CREATE TABLE t_group
 (
 	group_id varchar(30) NOT NULL,
 	group_name varchar(255),
+	group_short_name varchar(4),
 	group_code varchar(200),
 	parent_id varchar(30),
 	id_path varchar(1024),
