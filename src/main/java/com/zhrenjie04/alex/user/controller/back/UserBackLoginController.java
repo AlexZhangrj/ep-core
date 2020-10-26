@@ -259,8 +259,8 @@ public class UserBackLoginController {
 			throw new PrerequisiteNotSatisfiedException("该账号不存在");
 		}
 	}
-	@RequestMapping(value = "/login/get-current-user-info", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
-	@Permission("login.get-current-user-info")
+	@RequestMapping(value = "/login/get-current-user", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@Permission("login.get-current-user")
 	@ResponseJsonWithFilter(type = User.class, include = "userId,username,realname,nickname,email,cellphone,portraitUrl,birthday,gender,"
 			+ "identities,currentIdentityId,currentPrivilegeCodes,currentRoleIds")
 	public JsonResult getCurrentUserInfo(@RequestBody User account, HttpServletRequest request, HttpServletResponse response) throws InterruptedException {
