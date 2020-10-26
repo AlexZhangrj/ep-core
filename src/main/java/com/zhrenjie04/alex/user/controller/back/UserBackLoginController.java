@@ -206,25 +206,22 @@ public class UserBackLoginController {
 						t.join();
 					}
 					log.debug(PinYinUtil.getPinYin(identities.get(0).getGroupShortName()));
-					Collections.sort(identities, new Comparator<Identity>() {
-						@Override
-						public int compare(Identity o1, Identity o2) {
-							var c1=PinYinUtil.getPinYin(o1.getGroupShortName()).compareTo(PinYinUtil.getPinYin(o2.getGroupShortName()));
-							if(c1 == 0) {
-								var c2 = PinYinUtil.getPinYin(o1.getPositionName()).compareTo(PinYinUtil.getPinYin(o2.getPositionName()));
-								if( c2 == 0){
-									var c3=PinYinUtil.getPinYin(o1.getGroupName()).compareTo(PinYinUtil.getPinYin(o2.getGroupName()));
-									if(c3 == 0) {
-										return PinYinUtil.getPinYin(o1.getIdentityId()).compareTo(PinYinUtil.getPinYin(o2.getIdentityId()));
-									}else {
-										return c3;
-									}
+					Collections.sort(identities, (o1, o2) -> {
+						var c1=PinYinUtil.getPinYin(o1.getGroupShortName()).compareTo(PinYinUtil.getPinYin(o2.getGroupShortName()));
+						if(c1 == 0) {
+							var c2 = PinYinUtil.getPinYin(o1.getPositionName()).compareTo(PinYinUtil.getPinYin(o2.getPositionName()));
+							if( c2 == 0){
+								var c3=PinYinUtil.getPinYin(o1.getGroupName()).compareTo(PinYinUtil.getPinYin(o2.getGroupName()));
+								if(c3 == 0) {
+									return PinYinUtil.getPinYin(o1.getIdentityId()).compareTo(PinYinUtil.getPinYin(o2.getIdentityId()));
 								}else {
-									return c2;
+									return c3;
 								}
 							}else {
-								return c1;
+								return c2;
 							}
+						}else {
+							return c1;
 						}
 					});
 					user.setIdentities(identities);
