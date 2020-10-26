@@ -6,6 +6,7 @@
         id="groupResult">
         <result property="groupId" column="group_id" />
         <result property="groupName" column="group_name" />
+        <result property="groupShortName" column="group_short_name" />
         <result property="groupCode" column="group_code" />
         <result property="parentId" column="parent_id" />
         <result property="idPath" column="id_path" />

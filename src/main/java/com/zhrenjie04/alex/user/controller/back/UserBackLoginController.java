@@ -194,6 +194,7 @@ public class UserBackLoginController {
 								Group group = groupDao.queryObjectById(groupId);
 								Position position = positionDao.queryObjectById(identity.getPositionId());
 								identity.setGroupName(group.getGroupName());
+								identity.setGroupShortName(group.getGroupShortName());
 								identity.setPositionName(position.getPositionName());
 								DbUtil.remove();
 							}
@@ -207,7 +208,17 @@ public class UserBackLoginController {
 					identities.sort(new Comparator<Identity>() {
 						@Override
 						public int compare(Identity o1, Identity o2) {
-							return o1.getIdentityId().compareTo(o2.getIdentityId());
+							var c1=o1.getGroupName().compareTo(o2.getGroupName());
+							if(c1 == 0) {
+								var c2 = o1.getPositionName().compareTo(o2.getPositionName());
+								if( c2 == 0){
+									return o1.getIdentityId().compareTo(o2.getIdentityId());
+								}else {
+									return c2;
+								}
+							}else {
+								return c1;
+							}
 						}
 					});
 					user.setCurrentIdentityId(identities.get(0).getIdentityId());
@@ -285,7 +296,11 @@ public class UserBackLoginController {
 		//以id的String的hashCode求余
 		System.out.println("1".hashCode()%5);
 		System.out.println("2".hashCode()%5);
+		System.out.println("");
 		System.out.println("1".hashCode()%2);
 		System.out.println("2".hashCode()%2);
+		System.out.println("3".hashCode()%2);
+		System.out.println("4".hashCode()%2);
+		System.out.println("5".hashCode()%2);
 	}
 }
