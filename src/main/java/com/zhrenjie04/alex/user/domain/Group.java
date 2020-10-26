@@ -12,6 +12,7 @@ import lombok.ToString;
 public class Group {
 	private String groupId;
 	private String groupName;
+	private String groupShortName;
 	private String groupCode;
 	private String parentId;
 	private String idPath;
