@@ -261,7 +261,7 @@ public class UserBackLoginController {
 	@Permission("login.get-current-user")
 	@ResponseJsonWithFilter(type = User.class, include = "userId,username,realname,nickname,email,cellphone,portraitUrl,birthday,gender,"
 			+ "identities,currentIdentityId,currentPrivilegeCodes,currentRoleIds")
-	public JsonResult getCurrentUserInfo(@RequestBody User account, HttpServletRequest request, HttpServletResponse response) throws InterruptedException {
+	public JsonResult getCurrentUserInfo(HttpServletRequest request, HttpServletResponse response) throws InterruptedException {
 		User user=SessionUtil.getSessionUser(request);
 		if(user == null) {
 			throw new UnauthorizedException("您尚未登录!");
