@@ -114,7 +114,7 @@ public class UserBackLoginController {
 	@RequestMapping(value = "/login/do-login", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	@Permission("login.do-login")
 	@ResponseJsonWithFilter(type = User.class, include = "userId,username,realname,nickname,email,cellphone,portraitUrl,birthday,gender,"
-			+ "identities,currentIdentityId,currentPrivilegeCodes,currentRoleIds")
+			+ "identities,currentIdentityId,currentPrivilegeCodes,currentRoleIds,currentIdentity")
 	public JsonResult login(@RequestBody User account, HttpServletRequest request, HttpServletResponse response) throws InterruptedException {
 		String sid=(String)request.getAttribute("sid");
 		String capText = RedisUtil.get("validate-code:"+sid);
@@ -272,7 +272,7 @@ public class UserBackLoginController {
 	@RequestMapping(value = "/login/get-current-user", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
 	@Permission("login.get-current-user")
 	@ResponseJsonWithFilter(type = User.class, include = "userId,username,realname,nickname,email,cellphone,portraitUrl,birthday,gender,"
-			+ "identities,currentIdentityId,currentPrivilegeCodes,currentRoleIds")
+			+ "identities,currentIdentityId,currentPrivilegeCodes,currentRoleIds,currentIdentity")
 	public JsonResult getCurrentUserInfo(HttpServletRequest request, HttpServletResponse response) throws InterruptedException {
 		User user=SessionUtil.getSessionUser(request);
 		if(user == null) {
