@@ -208,11 +208,16 @@ public class UserBackLoginController {
 					identities.sort(new Comparator<Identity>() {
 						@Override
 						public int compare(Identity o1, Identity o2) {
-							var c1=o1.getGroupName().compareTo(o2.getGroupName());
+							var c1=o1.getGroupShortName().compareTo(o2.getGroupShortName());
 							if(c1 == 0) {
 								var c2 = o1.getPositionName().compareTo(o2.getPositionName());
 								if( c2 == 0){
-									return o1.getIdentityId().compareTo(o2.getIdentityId());
+									var c3=o1.getGroupName().compareTo(o2.getGroupName());
+									if(c3 == 0) {
+										return o1.getIdentityId().compareTo(o2.getIdentityId());
+									}else {
+										return c3;
+									}
 								}else {
 									return c2;
 								}
