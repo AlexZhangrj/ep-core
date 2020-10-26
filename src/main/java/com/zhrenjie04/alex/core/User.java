@@ -121,7 +121,6 @@ public class User implements Serializable{
 		}
 	}
 
-	@JsonIgnore
 	public Identity getCurrentIdentity() {
 		if (currentIdentityId == null || "".equals(currentIdentityId)) {
 			return new Identity();

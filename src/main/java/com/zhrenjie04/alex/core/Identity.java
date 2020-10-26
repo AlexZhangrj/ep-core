@@ -24,6 +24,8 @@ public class Identity implements Serializable{
 	/** 只用于前端显示 */
 	private String groupName;
 	/** 只用于前端显示 */
+	private String groupShortName;
+	/** 只用于前端显示 */
 	private String positionName;
 	/** 该身份已锁定 */
 	private Boolean isLocked;
