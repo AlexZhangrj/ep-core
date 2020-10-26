@@ -33,6 +33,7 @@ import com.zhrenjie04.alex.core.Permission;
 import com.zhrenjie04.alex.core.ResponseJsonWithFilter;
 import com.zhrenjie04.alex.core.User;
 import com.zhrenjie04.alex.core.exception.PrerequisiteNotSatisfiedException;
+import com.zhrenjie04.alex.core.exception.UnauthorizedException;
 import com.zhrenjie04.alex.user.dao.GroupDao;
 import com.zhrenjie04.alex.user.dao.IdentityDao;
 import com.zhrenjie04.alex.user.dao.IdentityId2RoleIdDao;
@@ -176,6 +177,8 @@ public class UserBackLoginController {
 		//操作数据库
 		User user = userDao.queryObjectById(userId);
 		if(user != null) {
+			user.setPassword("");//密码不存入redis
+			user.setSalt("");//盐值不存入redis
 			if(user.getPassword()!=null&&user.getPassword().equals(account.getPassword())) {
 				List<Identity> identities=identityDao.queryListByUserId(userId);
 				if(identities.size()>0) {
@@ -240,8 +243,6 @@ public class UserBackLoginController {
 					user.setCurrentPrivilegeCodes(privilegeCodes);
 				}
 				JsonResult rt = JsonResult.success();
-				user.setPassword("");
-				user.setSalt("");
 				SessionUtil.setSessionUser(request, user);
 				rt.put("user", user);
 				//移除ThreadLoacal变量
@@ -257,6 +258,21 @@ public class UserBackLoginController {
 			DbUtil.remove();
 			throw new PrerequisiteNotSatisfiedException("该账号不存在");
 		}
+	}
+	@RequestMapping(value = "/login/get-current-user-info", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	@Permission("login.get-current-user-info")
+	@ResponseJsonWithFilter(type = User.class, include = "userId,username,realname,nickname,email,cellphone,portraitUrl,birthday,gender,"
+			+ "identities,currentIdentityId,currentPrivilegeCodes,currentRoleIds")
+	public JsonResult getCurrentUserInfo(@RequestBody User account, HttpServletRequest request, HttpServletResponse response) throws InterruptedException {
+		User user=SessionUtil.getSessionUser(request);
+		if(user == null) {
+			throw new UnauthorizedException("您尚未登录");
+		}
+		JsonResult rt = JsonResult.success();
+		rt.put("user", user);
+		//移除ThreadLoacal变量
+		DbUtil.remove();
+		return rt;
 	}
 	public static void main(String[] args) {
 		//以id的String的hashCode求余
