@@ -3,7 +3,6 @@ package com.zhrenjie04.alex.user.controller.back;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -21,6 +20,7 @@ import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -294,6 +294,60 @@ public class UserBackLoginController {
 	public JsonResult logout(HttpServletRequest request) {
 		SessionUtil.killSession(request);
 		return JsonResult.success();
+	}
+
+	@RequestMapping(value = "/switch-identity/{identityId}", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+	@Permission("login.do-logout")
+	@ResponseJsonWithFilter(type = FilterWithNoneFiltered.class)
+	public JsonResult switchIdentity(HttpServletRequest request,@PathVariable(name="identityId",required = true)String identityId) throws InterruptedException {
+		User user= SessionUtil.getSessionUser(request);
+		Boolean hasIdentityId=false;
+		for(Identity identity: user.getIdentities()){
+			if(identityId.equals(identity.getIdentityId())) {
+				hasIdentityId = true;
+				break;
+			}
+		}
+		if(hasIdentityId) {
+			Integer hashCode=user.getUserId().hashCode();
+			DbUtil.setDataSource("userIdKeyDb"+(hashCode%DbUtil.dbCountInGroupMap.get("userIdKeyDb")));
+			user.setCurrentIdentityId(identityId);
+			List<IdentityId2RoleId> ids= identityId2RoleIdDao.queryAllByIdentityId(user.getCurrentIdentityId());
+			List<String>currentRoleIds = new LinkedList<>();
+			for(IdentityId2RoleId id:ids) {
+				currentRoleIds.add(id.getRoleId());
+			}
+			user.setCurrentRoleIds(currentRoleIds);
+			Set<Privilege>privileges = Sets.<Privilege>newConcurrentHashSet();
+			List<Thread>ts=new LinkedList<>();
+			for(String roleId:currentRoleIds) {
+				Thread t=new Thread() {
+					@Override
+					public void run() {
+						DbUtil.setDataSource("roleIdKeyDb"+(roleId.hashCode()%DbUtil.dbCountInGroupMap.get("roleIdKeyDb")));
+						log.debug("roleIdKey---{}---{}::::-{}",roleId,DbUtil.dbCountInGroupMap.get("roleIdKeyDb"),DbUtil.getDataSource());
+						privileges.addAll(role2PrivilegeDao.queryAllPrivilegesByRoleId(roleId));
+						DbUtil.remove();
+					}
+				};
+				t.start();
+				ts.add(t);
+			}
+			for(Thread t:ts) {
+				t.join();
+			}
+			List<String>privilegeCodes=new LinkedList<>();
+			for(Privilege p:privileges) {
+				privilegeCodes.add(p.getPrivilegeCode());
+			}
+			user.setCurrentPrivilegeCodes(privilegeCodes);
+			DbUtil.remove();
+			var result=JsonResult.success();
+			result.put("user", user);
+			return result;
+		}else {
+			throw new PrerequisiteNotSatisfiedException("当前用户不存在此身份！");
+		}
 	}
 	
 	public static void main(String[] args) {
