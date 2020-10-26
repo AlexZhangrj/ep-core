@@ -2,9 +2,12 @@ package com.zhrenjie04.alex.user.controller.back;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.imageio.ImageIO;
@@ -12,13 +15,16 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.elasticsearch.client.RestClients.ElasticsearchRestClient;
 import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
+import org.springframework.data.elasticsearch.core.query.UpdateQuery;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -81,7 +87,6 @@ public class UserBackLoginController {
 	@Autowired
 	ElasticsearchRestTemplate esTemplate;
 
-
 	@RequestMapping(value = "/login/validate-code", method = RequestMethod.GET)
 	@Permission("login.do-login")
 	public void genValidateCode(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -89,12 +94,25 @@ public class UserBackLoginController {
 		userSearchKey.setUserId("1");
 		userSearchKey.setUsername("admin");
 		userSearchKey.setCellphone("13900001111");
-		esTemplate.save(userSearchKey);
-		EsUserSearchKey userSearchKey1=new EsUserSearchKey();
-		userSearchKey1.setUserId("2");
-		userSearchKey1.setUsername("admin1");
-		userSearchKey1.setCellphone("13900001112");
-		esTemplate.save(userSearchKey1);
+		EsUserSearchKey userSearchKey2=new EsUserSearchKey();
+		userSearchKey2.setUserId("2");
+		userSearchKey2.setUsername("admin1");
+		userSearchKey2.setCellphone("13900001112");
+		esTemplate.save(userSearchKey2);
+		EsUserSearchKey userSearchKey3=new EsUserSearchKey();
+		userSearchKey3.setUserId("3");
+		userSearchKey3.setUsername("admin3");
+		userSearchKey3.setCellphone("13900001112");
+		QueryBuilder queryBuilder=QueryBuilders.termQuery("userId", "3");//全字段匹配：1.使用FieldType.Keyword，2.使用term
+		NativeSearchQuery nativeSearchQuery = new NativeSearchQueryBuilder()
+				.withQuery(queryBuilder)
+                .withPageable(PageRequest.of(0, 5))
+                .build();
+		var result = esTemplate.search(nativeSearchQuery, EsUserSearchKey.class);
+		if(result.getTotalHits()==1) {
+			userSearchKey3.setCreatedTime(result.getSearchHit(0).getContent().getCreatedTime());
+		}
+		esTemplate.save(userSearchKey3);
 		response.setDateHeader("Expires", 0);
 		response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
 		response.addHeader("Cache-Control", "post-check=0, pre-check=0");
