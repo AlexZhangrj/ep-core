@@ -2,6 +2,7 @@ package com.zhrenjie04.alex.user.controller.back;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
@@ -204,7 +205,8 @@ public class UserBackLoginController {
 					for(Thread t:ts) {
 						t.join();
 					}
-					identities.sort(new Comparator<Identity>() {
+					log.debug(PinYinUtil.getPinYin(identities.get(0).getGroupShortName()));
+					Collections.sort(identities, new Comparator<Identity>() {
 						@Override
 						public int compare(Identity o1, Identity o2) {
 							var c1=PinYinUtil.getPinYin(o1.getGroupShortName()).compareTo(PinYinUtil.getPinYin(o2.getGroupShortName()));
