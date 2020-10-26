@@ -177,8 +177,6 @@ public class UserBackLoginController {
 		//操作数据库
 		User user = userDao.queryObjectById(userId);
 		if(user != null) {
-			user.setPassword("");//密码不存入redis
-			user.setSalt("");//盐值不存入redis
 			if(user.getPassword()!=null&&user.getPassword().equals(account.getPassword())) {
 				List<Identity> identities=identityDao.queryListByUserId(userId);
 				if(identities.size()>0) {
@@ -266,7 +264,7 @@ public class UserBackLoginController {
 	public JsonResult getCurrentUserInfo(@RequestBody User account, HttpServletRequest request, HttpServletResponse response) throws InterruptedException {
 		User user=SessionUtil.getSessionUser(request);
 		if(user == null) {
-			throw new UnauthorizedException("您尚未登录");
+			throw new UnauthorizedException("您尚未登录!");
 		}
 		JsonResult rt = JsonResult.success();
 		rt.put("user", user);
