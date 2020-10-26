@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.google.code.kaptcha.Producer;
 import com.google.common.collect.Sets;
 import com.zhrenjie04.alex.core.DbUtil;
+import com.zhrenjie04.alex.core.FilterWithNoneFiltered;
 import com.zhrenjie04.alex.core.Identity;
 import com.zhrenjie04.alex.core.JsonResult;
 import com.zhrenjie04.alex.core.Permission;
@@ -272,6 +273,14 @@ public class UserBackLoginController {
 		DbUtil.remove();
 		return rt;
 	}
+	@RequestMapping(value = "/login/do-logout", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+	@Permission("login.do-logout")
+	@ResponseJsonWithFilter(type = FilterWithNoneFiltered.class)
+	public JsonResult logout(HttpServletRequest request) {
+		SessionUtil.killSession(request);
+		return JsonResult.success();
+	}
+	
 	public static void main(String[] args) {
 		//以id的String的hashCode求余
 		System.out.println("1".hashCode()%5);
