@@ -1,6 +1,9 @@
 package com.zhrenjie04.alex.user.domain;
 
+import java.util.Date;
+
 import org.springframework.data.annotation.Id;
+import org.springframework.data.elasticsearch.annotations.DateFormat;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
@@ -20,4 +23,6 @@ public class EsUserSearchKey {
 	private String username;
 	@Field(type = FieldType.Keyword)
 	private String cellphone;
+	@Field(type = FieldType.Date, format = DateFormat.basic_date_time)
+	private Date createdTime=new Date();
 }
