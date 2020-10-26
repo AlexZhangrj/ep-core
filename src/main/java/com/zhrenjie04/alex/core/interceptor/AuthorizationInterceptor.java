@@ -139,21 +139,21 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
 		if (token == null && user == null) {
 			throw new UnauthorizedException("您尚未登录");
 		}
-		if(user == null && token!=null && !"".equals(token) && !getIsBackMethod(method)) {//redis session优先,后端程序不通过token验证权限
-			user = JsonUtil.parse(JwtUtil.decode(token),User.class);
-		}
+//		if(user == null && token!=null && !"".equals(token) && !getIsBackMethod(method)) {//redis session优先,后端程序不通过token验证权限
+//			user = JsonUtil.parse(JwtUtil.decode(token),User.class);
+//			if(user!=null&&(user.getJwtExpiredTime()==null||user.getJwtExpiredTime().getTime()<new Date().getTime())) {
+//				throw new UnauthorizedException("session已失效");
+//			}
+//		}
 		if (user == null) {
 			throw new UnauthorizedException("session已失效");
 		}
-		if(user.getJwtExpiredTime()==null||user.getJwtExpiredTime().getTime()<new Date().getTime()) {
-			throw new UnauthorizedException("session已失效");
-		}
-		if(RedisUtil.sismember("banedTokens", token)) {
-			throw new UnauthorizedException("session已失效");
-		}
-		if(RedisUtil.sismember("banedUserIds", user.getUserId())) {
-			throw new UnauthorizedException("您已被系统拉入黑名单，无法做任何操作");
-		}
+//		if(RedisUtil.sismember("banedTokens", token)) {
+//			throw new UnauthorizedException("session已失效");
+//		}
+//		if(RedisUtil.sismember("banedUserIds", user.getUserId())) {
+//			throw new UnauthorizedException("您已被系统拉入黑名单，无法做任何操作");
+//		}
 		// 所有访问都需要权限验证
 		if (defaultAuthorizedCodes.contains(needCode) || user.getCurrentPrivilegeCodes().contains(needCode)) {
 			request.setAttribute("user", user);
