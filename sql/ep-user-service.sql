@@ -10,6 +10,7 @@ DROP TABLE IF EXISTS t_privilege;
 DROP TABLE IF EXISTS t_role;
 DROP TABLE IF EXISTS t_role_privilege;
 DROP TABLE IF EXISTS t_user;
+DROP TABLE IF EXISTS t_user_friend;
 
 
 
@@ -179,6 +180,19 @@ CREATE TABLE t_user
 	last_modifier_name varchar(255),
 	PRIMARY KEY (user_id),
 	UNIQUE (username)
+);
+
+
+CREATE TABLE t_user_friend
+(
+	id varchar(30) NOT NULL,
+	user_id varchar(30),
+	friend_id varchar(30),
+	memo varchar(255),
+	is_locked tinyint unsigned zerofill,
+	is_deleted tinyint unsigned zerofill,
+	last_modified_time datetime,
+	PRIMARY KEY (id)
 );
 
 
