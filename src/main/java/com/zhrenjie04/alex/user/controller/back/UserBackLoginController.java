@@ -116,12 +116,12 @@ public class UserBackLoginController {
 	@ResponseJsonWithFilter(type = User.class, include = "userId,username,realname,nickname,email,cellphone,portraitUrl,birthday,gender,"
 			+ "identities,currentIdentityId,currentPrivilegeCodes,currentRoleIds")
 	public JsonResult login(@RequestBody User account, HttpServletRequest request, HttpServletResponse response) throws InterruptedException {
-//		String sid=(String)request.getAttribute("sid");
-//		String capText = RedisUtil.get("validate-code:"+sid);
-//		RedisUtil.set("validate-code:"+sid, "", 3*60);
-//		if (capText != null && !capText.equals(account.getCaptcha()) || "".equals(capText) || capText == null) {
-//			throw new PrerequisiteNotSatisfiedException("验证码不正确，请点击验证码刷新");
-//		}
+		String sid=(String)request.getAttribute("sid");
+		String capText = RedisUtil.get("validate-code:"+sid);
+		RedisUtil.set("validate-code:"+sid, "", 3*60);
+		if (capText != null && !capText.equals(account.getCaptcha()) || "".equals(capText) || capText == null) {
+			throw new PrerequisiteNotSatisfiedException("验证码不正确，请点击验证码刷新");
+		}
 		String userId="";
 		if(account.getUsername()!=null&&!"".equals(account.getUsername())) {
 			//以用户名密码方式登录
