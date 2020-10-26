@@ -46,6 +46,7 @@ import com.zhrenjie04.alex.user.domain.Group;
 import com.zhrenjie04.alex.user.domain.IdentityId2RoleId;
 import com.zhrenjie04.alex.user.domain.Position;
 import com.zhrenjie04.alex.user.domain.Privilege;
+import com.zhrenjie04.alex.util.PinYinUtil;
 import com.zhrenjie04.alex.util.RedisUtil;
 import com.zhrenjie04.alex.util.SessionUtil;
 
@@ -181,8 +182,6 @@ public class UserBackLoginController {
 			if(user.getPassword()!=null&&user.getPassword().equals(account.getPassword())) {
 				List<Identity> identities=identityDao.queryListByUserId(userId);
 				if(identities.size()>0) {
-					user.setIdentities(identities);
-					user.setCurrentIdentityId(identities.get(0).getIdentityId());
 					List<Thread> ts=new LinkedList<>();
 					for(Identity identity:identities) {
 						String groupId = identity.getGroupId();
@@ -208,13 +207,13 @@ public class UserBackLoginController {
 					identities.sort(new Comparator<Identity>() {
 						@Override
 						public int compare(Identity o1, Identity o2) {
-							var c1=o1.getGroupShortName().compareTo(o2.getGroupShortName());
+							var c1=PinYinUtil.getPinYin(o1.getGroupShortName()).compareTo(PinYinUtil.getPinYin(o2.getGroupShortName()));
 							if(c1 == 0) {
-								var c2 = o1.getPositionName().compareTo(o2.getPositionName());
+								var c2 = PinYinUtil.getPinYin(o1.getPositionName()).compareTo(PinYinUtil.getPinYin(o2.getPositionName()));
 								if( c2 == 0){
-									var c3=o1.getGroupName().compareTo(o2.getGroupName());
+									var c3=PinYinUtil.getPinYin(o1.getGroupName()).compareTo(PinYinUtil.getPinYin(o2.getGroupName()));
 									if(c3 == 0) {
-										return o1.getIdentityId().compareTo(o2.getIdentityId());
+										return PinYinUtil.getPinYin(o1.getIdentityId()).compareTo(PinYinUtil.getPinYin(o2.getIdentityId()));
 									}else {
 										return c3;
 									}
@@ -226,6 +225,7 @@ public class UserBackLoginController {
 							}
 						}
 					});
+					user.setIdentities(identities);
 					user.setCurrentIdentityId(identities.get(0).getIdentityId());
 					List<IdentityId2RoleId> ids= identityId2RoleIdDao.queryAllByIdentityId(user.getCurrentIdentityId());
 					List<String>currentRoleIds = new LinkedList<>();
