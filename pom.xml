@@ -32,6 +32,7 @@
 		<rxnetty.version>0.4.9</rxnetty.version>
 		<mongo-java-driver.version>3.10.2</mongo-java-driver.version>
 		<lombok.version>1.18.12</lombok.version>
+		<pinyin4j.version>2.5.1</pinyin4j.version>
 		
 		<ep-core.version>2.0.4</ep-core.version>
 		<ep-admin.version>0.0.3</ep-admin.version>
