@@ -94,6 +94,7 @@ public class UserBackLoginController {
 		userSearchKey.setUserId("1");
 		userSearchKey.setUsername("admin");
 		userSearchKey.setCellphone("13900001111");
+		esTemplate.save(userSearchKey);
 		EsUserSearchKey userSearchKey2=new EsUserSearchKey();
 		userSearchKey2.setUserId("2");
 		userSearchKey2.setUsername("admin1");
@@ -319,6 +320,9 @@ public class UserBackLoginController {
 	@ResponseJsonWithFilter(type = FilterWithNoneFiltered.class)
 	public JsonResult switchIdentity(HttpServletRequest request,@PathVariable(name="identityId",required = true)String identityId) throws InterruptedException {
 		User user= SessionUtil.getSessionUser(request);
+		if(user==null) {
+			throw new PrerequisiteNotSatisfiedException("您已掉线！");
+		}
 		Boolean hasIdentityId=false;
 		for(Identity identity: user.getIdentities()){
 			if(identityId.equals(identity.getIdentityId())) {
