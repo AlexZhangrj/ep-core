@@ -127,18 +127,18 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
 				|| request.getRequestURI().startsWith("/v3/api-docs")||request.getRequestURI().startsWith("/swagger-ui.html"))||request.getRequestURI().startsWith("/webjars")) {
 			return true;
 		}
-		User user = SessionUtil.getSessionUser(request);
-		request.setAttribute("user", user);
 		HandlerMethod method = (HandlerMethod) handler;
 		String needCode = systemCode + ":" + getPrivilegeCode(method);
 		// 不需要验证权限（不需要登录），则生成sid
 		if (unfilteredCodes.contains(needCode)) {
 			return true;
 		}
-		// 需要验证权限
-		if (token == null && user == null) {
-			throw new UnauthorizedException("您尚未登录");
-		}
+		User user = SessionUtil.getSessionUser(request);
+		request.setAttribute("user", user);
+//		// 需要验证权限
+//		if (token == null && user == null) {
+//			throw new UnauthorizedException("您尚未登录");
+//		}
 //		if(user == null && token!=null && !"".equals(token) && !getIsBackMethod(method)) {//redis session优先,后端程序不通过token验证权限
 //			user = JsonUtil.parse(JwtUtil.decode(token),User.class);
 //			if(user!=null&&(user.getJwtExpiredTime()==null||user.getJwtExpiredTime().getTime()<new Date().getTime())) {

@@ -14,6 +14,7 @@
 /Users/zhangrenjie/developing/gitee/backend/ep-core/src/main/java/com/zhrenjie04/alex/util/DbDefaultValueUtil.java
 /Users/zhangrenjie/developing/gitee/backend/ep-core/src/main/java/com/zhrenjie04/alex/core/EpAuthProp.java
 /Users/zhangrenjie/developing/gitee/backend/ep-core/src/main/java/com/zhrenjie04/alex/core/AbstractGenericServiceMongoDb.java
+/Users/zhangrenjie/developing/gitee/backend/ep-core/src/main/java/com/zhrenjie04/alex/util/PinYinUtil.java
 /Users/zhangrenjie/developing/gitee/backend/ep-core/src/main/java/com/zhrenjie04/alex/core/TClazzLocal.java
 /Users/zhangrenjie/developing/gitee/backend/ep-core/src/main/java/com/zhrenjie04/alex/core/exception/PrerequisiteNotSatisfiedException.java
 /Users/zhangrenjie/developing/gitee/backend/ep-core/src/main/java/com/zhrenjie04/alex/core/FilterWithNoneFiltered.java
@@ -43,7 +44,6 @@
 /Users/zhangrenjie/developing/gitee/backend/ep-core/src/main/java/com/zhrenjie04/alex/core/EpMultiDataSourceProp.java
 /Users/zhangrenjie/developing/gitee/backend/ep-core/src/main/java/com/zhrenjie04/alex/core/AlexOperationLogAspect.java
 /Users/zhangrenjie/developing/gitee/backend/ep-core/src/main/java/com/zhrenjie04/alex/util/DateTimeUtil.java
-/Users/zhangrenjie/developing/gitee/backend/ep-core/src/main/java/com/zhrenjie04/alex/util/PingYinUtil.java
 /Users/zhangrenjie/developing/gitee/backend/ep-core/src/main/java/com/zhrenjie04/alex/util/SessionUtil.java
 /Users/zhangrenjie/developing/gitee/backend/ep-core/src/main/java/com/zhrenjie04/alex/util/PropertyTypeUtil.java
 /Users/zhangrenjie/developing/gitee/backend/ep-core/src/main/java/com/zhrenjie04/alex/core/AppErrorController.java
