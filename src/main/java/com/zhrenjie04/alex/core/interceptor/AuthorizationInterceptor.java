@@ -146,7 +146,7 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
 //			}
 //		}
 		if (user == null) {
-			throw new UnauthorizedException("session已失效");
+			throw new UnauthorizedException("您已掉线！");
 		}
 //		if(RedisUtil.sismember("banedTokens", token)) {
 //			throw new UnauthorizedException("session已失效");
@@ -159,7 +159,7 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
 			request.setAttribute("user", user);
 			return true;
 		} else {
-			throw new UnauthorizedException("没有对应的权限");
+			throw new UnauthorizedException("您没有此操作的权限");
 		}
 	}
 
