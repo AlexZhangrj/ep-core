@@ -314,13 +314,10 @@ public class UserBackLoginController {
 	}
 
 	@RequestMapping(value = "/switch-identity/{identityId}", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
-	@Permission("login.do-logout")
+	@Permission("switch.identity")
 	@ResponseJsonWithFilter(type = FilterWithNoneFiltered.class)
 	public JsonResult switchIdentity(HttpServletRequest request,@PathVariable(name="identityId",required = true)String identityId) throws InterruptedException {
 		User user= SessionUtil.getSessionUser(request);
-		if(user==null) {
-			throw new PrerequisiteNotSatisfiedException("您已掉线！");
-		}
 		Boolean hasIdentityId=false;
 		for(Identity identity: user.getIdentities()){
 			if(identityId.equals(identity.getIdentityId())) {
