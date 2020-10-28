@@ -298,13 +298,11 @@ public class UserBackLoginController {
 			+ "identities,currentIdentityId,currentPrivilegeCodes,currentRoleIds,currentIdentity")
 	public JsonResult getCurrentUserInfo(HttpServletRequest request, HttpServletResponse response) throws InterruptedException {
 		User user=SessionUtil.getSessionUser(request);
-		if(user == null) {
-			throw new UnauthorizedException("您尚未登录!");
-		}
+//		if(user == null) {
+//			throw new UnauthorizedException("您尚未登录!");
+//		}
 		JsonResult rt = JsonResult.success();
 		rt.put("user", user);
-		//移除ThreadLoacal变量
-		DbUtil.remove();
 		return rt;
 	}
 	@RequestMapping(value = "/login/do-logout", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
