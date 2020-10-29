@@ -23,6 +23,6 @@ public class EsUserSearchKey {
 	private String username;
 	@Field(type = FieldType.Keyword)
 	private String cellphone;
-	@Field(type = FieldType.Date, format = DateFormat.basic_date_time)
+	@Field(type = FieldType.Text, format = DateFormat.basic_date_time, fielddata = true)
 	private Date createdTime=new Date();
 }
