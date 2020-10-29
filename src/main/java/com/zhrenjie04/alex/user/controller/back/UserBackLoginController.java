@@ -293,7 +293,7 @@ public class UserBackLoginController {
 		}
 	}
 	@RequestMapping(value = "/login/get-current-user", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
-	@Permission("login.get-current-user")
+	@Permission("get-current-user")
 	@ResponseJsonWithFilter(type = User.class, include = "userId,username,realname,nickname,email,cellphone,portraitUrl,birthday,gender,"
 			+ "identities,currentIdentityId,currentPrivilegeCodes,currentRoleIds,currentIdentity")
 	public JsonResult getCurrentUserInfo(HttpServletRequest request, HttpServletResponse response) throws InterruptedException {
