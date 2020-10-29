@@ -14,7 +14,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.search.sort.SortBuilder;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,8 +31,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.google.code.kaptcha.Producer;
 import com.google.common.collect.Sets;
 import com.zhrenjie04.alex.core.DbUtil;
-import com.zhrenjie04.alex.core.JsonFilterWithNoneFiltered;
 import com.zhrenjie04.alex.core.Identity;
+import com.zhrenjie04.alex.core.JsonFilterWithNoneFiltered;
 import com.zhrenjie04.alex.core.JsonResult;
 import com.zhrenjie04.alex.core.Permission;
 import com.zhrenjie04.alex.core.ResponseJsonWithFilter;
