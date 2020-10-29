@@ -39,7 +39,7 @@ public abstract class AbstractGenericController<T extends AbstractGenericEntity,
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
 	@Permission("query-object")
 //	@ResponseJsonWithFilter(type = FilterWithNormalFiltered.class)
-	@ResponseJsonWithFilter(type = FilterWithNoneFiltered.class)
+	@ResponseJsonWithFilter(type = JsonFilterWithNoneFiltered.class)
 	public JsonResult queryObject(HttpServletRequest request, @PathVariable(name = "id", required = true) String id) {
 		User user =(User)request.getAttribute("user");
 		HashMap<String, Object> params = new HashMap<String, Object>(16);
@@ -51,7 +51,7 @@ public abstract class AbstractGenericController<T extends AbstractGenericEntity,
 	@RequestMapping(value = "/all", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
 	@Permission("query-all")
 //	@ResponseJsonWithFilter(type = FilterWithNormalFiltered.class)
-	@ResponseJsonWithFilter(type = FilterWithNoneFiltered.class)
+	@ResponseJsonWithFilter(type = JsonFilterWithNoneFiltered.class)
 	public JsonResult queryAll(HttpServletRequest request) {
 		User user =(User)request.getAttribute("user");
 		HashMap<String, Object> params = new HashMap<String, Object>(16);
@@ -62,7 +62,7 @@ public abstract class AbstractGenericController<T extends AbstractGenericEntity,
 	@RequestMapping(value = "/page/search-{keyword}/order-by-{orderBy}/order-type-{orderType}/page-no/{pageNo}/page-size/{pageSize}", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
 	@Permission("page-query")
 //	@ResponseJsonWithFilter(type = FilterWithNormalFiltered.class)
-	@ResponseJsonWithFilter(type = FilterWithNoneFiltered.class)
+	@ResponseJsonWithFilter(type = JsonFilterWithNoneFiltered.class)
 	public JsonResult pageQueryAll(HttpServletRequest request,
 			@PathVariable(name = "keyword", required = true) String keyword,
 			@PathVariable(name = "orderBy", required = false) String orderBy,
@@ -88,7 +88,7 @@ public abstract class AbstractGenericController<T extends AbstractGenericEntity,
 	@RequestMapping(value = "/", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	@Permission("add")
 //	@ResponseJsonWithFilter(type = FilterWithNormalFiltered.class)
-	@ResponseJsonWithFilter(type = FilterWithNoneFiltered.class)
+	@ResponseJsonWithFilter(type = JsonFilterWithNoneFiltered.class)
 	public JsonResult insertObject(HttpServletRequest request, @RequestBody @Validated T object,
 			BindingResult bindingResult) {
 		if (bindingResult.hasErrors()) {
@@ -106,7 +106,7 @@ public abstract class AbstractGenericController<T extends AbstractGenericEntity,
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = "application/json;charset=UTF-8")
 	@Permission("modify")
-	@ResponseJsonWithFilter(type = FilterWithNoneFiltered.class)
+	@ResponseJsonWithFilter(type = JsonFilterWithNoneFiltered.class)
 	public JsonResult updateObject(HttpServletRequest request, @PathVariable(name = "id", required = true) String id,
 			@RequestBody @Validated T object, BindingResult bindingResult) {
 		if (bindingResult.hasErrors()) {
@@ -124,7 +124,7 @@ public abstract class AbstractGenericController<T extends AbstractGenericEntity,
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = "application/json;charset=UTF-8")
 	@Permission("delete")
-	@ResponseJsonWithFilter(type = FilterWithNoneFiltered.class)
+	@ResponseJsonWithFilter(type = JsonFilterWithNoneFiltered.class)
 	public JsonResult deleteObject(HttpServletRequest request, @PathVariable(name = "id", required = true) String id) {
 		HashMap<String, Object> params = new HashMap<String, Object>(16);
 		params.put("id", id);
@@ -134,7 +134,7 @@ public abstract class AbstractGenericController<T extends AbstractGenericEntity,
 
 	@RequestMapping(value = "/by-ids/{ids}", method = RequestMethod.DELETE, produces = "application/json;charset=UTF-8")
 	@Permission("delete-by-ids")
-	@ResponseJsonWithFilter(type = FilterWithNoneFiltered.class)
+	@ResponseJsonWithFilter(type = JsonFilterWithNoneFiltered.class)
 	public JsonResult deleteByIds(HttpServletRequest request,
 			@PathVariable(name = "ids", required = true) String idsStr) {
 		String[] ids = idsStr.split("\\-");

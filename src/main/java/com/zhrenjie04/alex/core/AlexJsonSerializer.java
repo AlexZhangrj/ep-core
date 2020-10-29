@@ -358,11 +358,11 @@ public class AlexJsonSerializer {
 			TClazzLocal.remove();
 			return;
 		}
-		if (clazz == FilterWithNoneFiltered.class) {
+		if (clazz == JsonFilterWithNoneFiltered.class) {
 			TClazzLocal.remove();
 			return;
 		}
-		if (clazz == FilterWithNormalFiltered.class) {
+		if (clazz == JsonFilterWithNormalFiltered.class) {
 			// 默认普通filter不显示otherParams和otherResults
 			Class<?> tClazz = TClazzLocal.get();
 			TClazzLocal.remove();
