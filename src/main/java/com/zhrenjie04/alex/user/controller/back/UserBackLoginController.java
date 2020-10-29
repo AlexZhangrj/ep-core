@@ -363,8 +363,7 @@ public class UserBackLoginController {
 	
 	@RequestMapping(value = "/user/search/username-{username}/cellphone-{cellphone}/page-no-{pageNo}/page-size-{pageSize}", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
 	@Permission("user.search")
-	@ResponseJsonWithFilter(type = User.class, include = "userId,username,realname,nickname,email,cellphone,portraitUrl,birthday,gender,"
-			+ "identities,currentIdentityId,currentPrivilegeCodes,currentRoleIds,currentIdentity")
+	@ResponseJsonWithFilter(type = User.class, include = "userId,username,realname,nickname,email,cellphone,portraitUrl,birthday,gender")
 	public JsonResult pageSearchAll(HttpServletRequest request,
 			@PathVariable(name = "username", required = false) String username,
 			@PathVariable(name = "cellphone", required = false) String cellphone,
@@ -427,6 +426,7 @@ public class UserBackLoginController {
 		rt.put("pageNo", pageNo);
 		rt.put("pageSize", pageSize);
 		rt.put("total", result.getTotalHits());
+		rt.put("totalPages", result.getTotalHits()/pageSize);
 		return rt;
 	}
 	
