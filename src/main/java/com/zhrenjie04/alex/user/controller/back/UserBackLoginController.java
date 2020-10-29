@@ -32,7 +32,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.google.code.kaptcha.Producer;
 import com.google.common.collect.Sets;
 import com.zhrenjie04.alex.core.DbUtil;
-import com.zhrenjie04.alex.core.FilterWithNoneFiltered;
+import com.zhrenjie04.alex.core.JsonFilterWithNoneFiltered;
 import com.zhrenjie04.alex.core.Identity;
 import com.zhrenjie04.alex.core.JsonResult;
 import com.zhrenjie04.alex.core.Permission;
@@ -301,7 +301,7 @@ public class UserBackLoginController {
 	}
 	@RequestMapping(value = "/login/do-logout", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
 	@Permission("login.do-logout")
-	@ResponseJsonWithFilter(type = FilterWithNoneFiltered.class)
+	@ResponseJsonWithFilter(type = JsonFilterWithNoneFiltered.class)
 	public JsonResult logout(HttpServletRequest request) {
 		SessionUtil.killSession(request);
 		return JsonResult.success();
@@ -309,7 +309,7 @@ public class UserBackLoginController {
 
 	@RequestMapping(value = "/switch-identity/{identityId}", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
 	@Permission("switch.identity")
-	@ResponseJsonWithFilter(type = FilterWithNoneFiltered.class)
+	@ResponseJsonWithFilter(type = JsonFilterWithNoneFiltered.class)
 	public JsonResult switchIdentity(HttpServletRequest request,@PathVariable(name="identityId",required = true)String identityId) throws InterruptedException {
 		User user= SessionUtil.getSessionUser(request);
 		Boolean hasIdentityId=false;
@@ -362,7 +362,7 @@ public class UserBackLoginController {
 	}
 	
 	@RequestMapping(value = "/user/search/username-{username}/cellphone-{cellphone}/page-no-{pageNo}/page-size-{pageSize}", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
-	@Permission("all.search")
+	@Permission("user.search")
 	@ResponseJsonWithFilter(type = User.class, include = "userId,username,realname,nickname,email,cellphone,portraitUrl,birthday,gender,"
 			+ "identities,currentIdentityId,currentPrivilegeCodes,currentRoleIds,currentIdentity")
 	public JsonResult pageSearchAll(HttpServletRequest request,
@@ -430,6 +430,42 @@ public class UserBackLoginController {
 		return rt;
 	}
 	
+	@RequestMapping(value = "/user/es-idx-total-count", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+	@Permission("user.count")
+	@ResponseJsonWithFilter(type = JsonFilterWithNoneFiltered.class)
+	public JsonResult exIdxTotalCount(HttpServletRequest request) {
+		SearchHits<EsUserSearchKey>result=null;
+		//显示所有数据
+		QueryBuilder queryBuilder=QueryBuilders.wildcardQuery("username", "*");
+		NativeSearchQuery nativeSearchQuery = new NativeSearchQueryBuilder()
+                //查询条件
+                .withQuery(queryBuilder)
+                .withSort(SortBuilders.fieldSort("createdTime").order(SortOrder.DESC))
+                //分页
+                .withPageable(PageRequest.of(0, 1))
+                .build();
+		result = esTemplate.search(nativeSearchQuery, EsUserSearchKey.class);
+		JsonResult rt=JsonResult.success();
+		rt.put("total", result.getTotalHits());
+		return rt;
+	}
+	
+	@RequestMapping(value = "/user/db-total-count", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+	@Permission("user.count")
+	@ResponseJsonWithFilter(type = JsonFilterWithNoneFiltered.class)
+	public JsonResult dbTotalCount(HttpServletRequest request) {
+		Integer dbCount=DbUtil.dbCountInGroupMap.get("userIdKeyDb");
+		Long total=0L;
+		for(int i=0;i<dbCount;i++) {
+			DbUtil.setDataSource("userIdKeyDb"+i);
+			log.debug(DbUtil.getDataSource());
+			total += userDao.countTotal();
+			DbUtil.remove();
+		}
+		JsonResult rt=JsonResult.success();
+		rt.put("total", total);
+		return rt;
+	}
 	public static void main(String[] args) {
 		//以id的String的hashCode求余
 		System.out.println("1".hashCode()%5);

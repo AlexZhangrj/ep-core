@@ -23,24 +23,9 @@
     <select id="queryObjectById" resultMap="userResult" parameterType="java.lang.String">
 		select * from t_user where user_id=#{id}
     </select>	
-	<select id="queryObject" resultMap="userResult" parameterType="java.util.HashMap">
-        <![CDATA[
-            select * from t_user where 1=1
-        ]]>
-		<if test="id != null">
-			and user_id=#{id}
-		</if>
-		<if test="username != null">
-			and username=#{username}
-		</if>
-        <if test="password != null">
-            and password=#{password}
-        </if>
-        <if test="cellphone != null">
-            and cellphone=#{cellphone}
-        </if>
-		and is_deleted=0
-	</select>
+    <select id="countTotal" resultType="java.lang.Long" parameterType="java.lang.String">
+		select count(username) from t_user where is_deleted=0
+    </select>	
 	<insert id="insertObject" parameterType="com.zhrenjie04.alex.core.User">
         insert into t_user(
               `user_id`,
@@ -78,22 +63,4 @@
               #{groupId}
         )
 	</insert>
-    <update id="updateObject" parameterType="com.zhrenjie04.alex.core.User">
-        update t_user set user_id=user_id
-        <if test="password != null and password != ''">,password=#{password}</if>
-        <if test="salt != null and salt != ''">,salt=#{salt}</if>
-        ,realname=#{realname}
-        ,nickname=#{nickname}
-        ,email=#{email}
-        ,cellphone=#{cellphone}
-        ,birthday=#{birthday}
-        ,gender=#{gender}
-        ,portrait_url=#{portraitUrl}
-        ,last_modified_time=now(),last_modifier_id=#{lastModifierId},last_modifier_name=#{lastModifierName}
-        where user_id=#{userId}
-     </update>
-    <update id="updateLocked" parameterType="com.zhrenjie04.alex.core.User">
-        update t_user set is_locked=#{isLocked}
-        where user_id=#{userId}
-     </update>
 </mapper> 

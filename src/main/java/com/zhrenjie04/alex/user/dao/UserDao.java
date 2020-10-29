@@ -10,4 +10,5 @@ import com.zhrenjie04.alex.core.User;
 @Repository("userDao")
 public interface UserDao {
 	User queryObjectById(String id);
+	Long countTotal();
 }
