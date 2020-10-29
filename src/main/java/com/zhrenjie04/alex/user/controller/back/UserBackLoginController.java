@@ -2,12 +2,9 @@ package com.zhrenjie04.alex.user.controller.back;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.imageio.ImageIO;
@@ -15,16 +12,17 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.sort.SortBuilder;
+import org.elasticsearch.search.sort.SortBuilders;
+import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.elasticsearch.client.RestClients.ElasticsearchRestClient;
 import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
+import org.springframework.data.elasticsearch.core.SearchHits;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
-import org.springframework.data.elasticsearch.core.query.UpdateQuery;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -41,7 +39,6 @@ import com.zhrenjie04.alex.core.Permission;
 import com.zhrenjie04.alex.core.ResponseJsonWithFilter;
 import com.zhrenjie04.alex.core.User;
 import com.zhrenjie04.alex.core.exception.PrerequisiteNotSatisfiedException;
-import com.zhrenjie04.alex.core.exception.UnauthorizedException;
 import com.zhrenjie04.alex.user.dao.GroupDao;
 import com.zhrenjie04.alex.user.dao.IdentityDao;
 import com.zhrenjie04.alex.user.dao.IdentityId2RoleIdDao;
@@ -298,9 +295,6 @@ public class UserBackLoginController {
 			+ "identities,currentIdentityId,currentPrivilegeCodes,currentRoleIds,currentIdentity")
 	public JsonResult getCurrentUserInfo(HttpServletRequest request, HttpServletResponse response) throws InterruptedException {
 		User user=SessionUtil.getSessionUser(request);
-//		if(user == null) {
-//			throw new UnauthorizedException("您尚未登录!");
-//		}
 		JsonResult rt = JsonResult.success();
 		rt.put("user", user);
 		return rt;
@@ -365,6 +359,75 @@ public class UserBackLoginController {
 		}else {
 			throw new PrerequisiteNotSatisfiedException("当前用户不存在此身份！");
 		}
+	}
+	
+	@RequestMapping(value = "/user/search/username-{username}/cellphone-{cellphone}/page-no-{pageNo}/page-size-{pageSize}", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+	@Permission("all.search")
+	@ResponseJsonWithFilter(type = User.class, include = "userId,username,realname,nickname,email,cellphone,portraitUrl,birthday,gender,"
+			+ "identities,currentIdentityId,currentPrivilegeCodes,currentRoleIds,currentIdentity")
+	public JsonResult pageSearchAll(HttpServletRequest request,
+			@PathVariable(name = "username", required = false) String username,
+			@PathVariable(name = "cellphone", required = false) String cellphone,
+			@PathVariable(name = "pageNo", required = true) Integer pageNo,
+			@PathVariable(name = "pageSize", required = true) Integer pageSize) {
+		SearchHits<EsUserSearchKey>result=null;
+		if(username!=null&&!"".equals(username)) {
+			//用户名搜索
+			QueryBuilder queryBuilder=QueryBuilders.termQuery("username", username);//全字段匹配：1.使用FieldType.Keyword，2.使用term
+			NativeSearchQuery nativeSearchQuery = new NativeSearchQueryBuilder()
+	                //查询条件
+	                .withQuery(queryBuilder)
+	                .withSort(SortBuilders.fieldSort("createdTime").order(SortOrder.DESC))
+	                //分页
+	                .withPageable(PageRequest.of(pageNo-1, pageSize))
+	                .build();
+			result = esTemplate.search(nativeSearchQuery, EsUserSearchKey.class);
+		}else if(cellphone!=null&&!"".equals(cellphone)) {
+			//手机号搜索
+			QueryBuilder queryBuilder=QueryBuilders.termQuery("cellphone", cellphone);//全字段匹配：1.使用FieldType.Keyword，2.使用term
+			NativeSearchQuery nativeSearchQuery = new NativeSearchQueryBuilder()
+	                //查询条件
+	                .withQuery(queryBuilder)
+	                .withSort(SortBuilders.fieldSort("createdTime").order(SortOrder.DESC))
+	                //分页
+	                .withPageable(PageRequest.of(pageNo-1, pageSize))
+	                .build();
+			result = esTemplate.search(nativeSearchQuery, EsUserSearchKey.class);
+		}else {
+			//显示所有数据
+			QueryBuilder queryBuilder=QueryBuilders.wildcardQuery("username", "*");
+			NativeSearchQuery nativeSearchQuery = new NativeSearchQueryBuilder()
+	                //查询条件
+	                .withQuery(queryBuilder)
+	                .withSort(SortBuilders.fieldSort("createdTime").order(SortOrder.DESC))
+	                //分页
+	                .withPageable(PageRequest.of(pageNo-1, pageSize))
+	                .build();
+			result = esTemplate.search(nativeSearchQuery, EsUserSearchKey.class);
+		}
+		List<User>users=new LinkedList<>();
+		if(result.getSearchHits()!=null) {
+			var list=result.getSearchHits();
+			for(var esUserSearchKey:list) {
+				var userId=esUserSearchKey.getContent().getUserId();
+				//设置数据源
+				Integer hashCode=userId.hashCode();
+				DbUtil.setDataSource("userIdKeyDb"+(hashCode%DbUtil.dbCountInGroupMap.get("userIdKeyDb")));
+				log.debug(DbUtil.getDataSource());
+				//操作数据库
+				User user = userDao.queryObjectById(userId);
+				if(user != null) {
+					users.add(user);
+				}
+				DbUtil.remove();
+			}
+		}
+		JsonResult rt=JsonResult.success();
+		rt.put("users", users);
+		rt.put("pageNo", pageNo);
+		rt.put("pageSize", pageSize);
+		rt.put("total", result.getTotalHits());
+		return rt;
 	}
 	
 	public static void main(String[] args) {
