@@ -23,6 +23,6 @@ public class EsUserSearchKey {
 	private String username;
 	@Field(type = FieldType.Keyword)
 	private String cellphone;
-	@Field(type = FieldType.Text, format = DateFormat.basic_date_time, fielddata = true)
+	@Field(type = FieldType.Text, format = DateFormat.basic_date_time, fielddata = true)//ES中排序字段必须为FieldType.Text，并且fielddata必须为true
 	private Date createdTime=new Date();
 }
