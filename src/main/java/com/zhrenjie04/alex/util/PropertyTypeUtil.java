@@ -31,13 +31,13 @@ public class PropertyTypeUtil {
 		} else if (dbColumnType.startsWith("varchar")) {
 			return "String";
 		} else if (dbColumnType.startsWith("datetime")) {
-			return "Timestamp";
+			return "Date";
 		} else if (dbColumnType.startsWith("tinyint")) {
 			return "Boolean";
 		} else if (dbColumnType.startsWith("date")) {
 			return "Date";
 		} else if (dbColumnType.startsWith("decimal")) {
-			return "Decimal";
+			return "BigDecimal";
 		} else if (dbColumnType.startsWith("int")) {
 			return "Long";
 		} else {
