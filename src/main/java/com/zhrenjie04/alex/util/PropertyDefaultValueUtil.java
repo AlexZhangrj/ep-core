@@ -25,8 +25,8 @@ public class PropertyDefaultValueUtil {
 			return "\"" + defaultValue + "\"";
 		} else if ("Boolean".equals(javaType)) {
 			return defaultValue.endsWith("0") ? "false" : "true";
-		} else if ("Decimal".equals(javaType)) {
-			return "new Decimal(\"" + defaultValue + "\")";
+		} else if ("BigDecimal".equals(javaType)) {
+			return "new BigDecimal(\"" + defaultValue + "\")";
 		} else {
 			throw new RuntimeException("default is not supported:" + javaType + ":" + defaultValue);
 		}
