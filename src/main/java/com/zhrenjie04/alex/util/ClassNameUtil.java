@@ -14,7 +14,7 @@ public class ClassNameUtil {
 		if (key == null || "".equals(key)) {
 			return "";
 		}
-		key = key.substring(1);// 跳过t
+//		key = key.substring(1);// 跳过t（2020.11.05跳过t的过程在使用方中控制）
 		StringBuffer sb = new StringBuffer("");
 		int i = 0;
 		for (; i < key.length(); i++) {
