@@ -35,6 +35,7 @@
 		<pinyin4j.version>2.5.1</pinyin4j.version>
 		
 		<ep-core.version>2.0.4</ep-core.version>
+		<ep-generator.version>4.0.0</ep-generator.version>
 		<ep-admin.version>0.0.3</ep-admin.version>
 		<ep-gateway.version>0.0.3</ep-gateway.version>
 		
