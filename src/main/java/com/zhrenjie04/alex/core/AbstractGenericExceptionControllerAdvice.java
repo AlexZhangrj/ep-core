@@ -12,6 +12,7 @@ import com.netflix.hystrix.exception.HystrixRuntimeException;
 import com.zhrenjie04.alex.core.exception.CrisisError;
 import com.zhrenjie04.alex.core.exception.PrerequisiteNotSatisfiedException;
 import com.zhrenjie04.alex.core.exception.UnauthorizedException;
+import com.zhrenjie04.alex.util.DbUtil;
 
 /**
  * @author 张人杰

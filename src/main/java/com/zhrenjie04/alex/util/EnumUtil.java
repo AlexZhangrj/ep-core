@@ -1,6 +1,8 @@
-package com.zhrenjie04.alex.core;
+package com.zhrenjie04.alex.util;
 
-public class EnumUtils {
+import com.zhrenjie04.alex.core.BaseEnum;
+
+public class EnumUtil {
 
     public static <T extends Enum<?> & BaseEnum> T codeOf(Class<T> enumClass, Object code) {
         T[] enumConstants = enumClass.getEnumConstants();
