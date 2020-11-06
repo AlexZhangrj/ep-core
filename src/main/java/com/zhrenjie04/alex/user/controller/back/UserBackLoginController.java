@@ -30,7 +30,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.google.code.kaptcha.Producer;
 import com.google.common.collect.Sets;
-import com.zhrenjie04.alex.core.DbUtil;
 import com.zhrenjie04.alex.core.Identity;
 import com.zhrenjie04.alex.core.JsonFilterWithNoneFiltered;
 import com.zhrenjie04.alex.core.JsonResult;
@@ -49,6 +48,7 @@ import com.zhrenjie04.alex.user.domain.Group;
 import com.zhrenjie04.alex.user.domain.IdentityId2RoleId;
 import com.zhrenjie04.alex.user.domain.Position;
 import com.zhrenjie04.alex.user.domain.Privilege;
+import com.zhrenjie04.alex.util.DbUtil;
 import com.zhrenjie04.alex.util.PinYinUtil;
 import com.zhrenjie04.alex.util.RedisUtil;
 import com.zhrenjie04.alex.util.SessionUtil;
