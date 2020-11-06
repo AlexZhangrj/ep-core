@@ -5,6 +5,7 @@ import org.springframework.format.support.FormattingConversionService;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 
 import com.zhrenjie04.alex.core.BaseEumnConverter;
+import com.zhrenjie04.alex.util.JsonUtil;
 
 @Configuration
 public class EnumParamsConfiguration extends WebMvcConfigurationSupport{
@@ -17,6 +18,10 @@ public class EnumParamsConfiguration extends WebMvcConfigurationSupport{
 
 	public static void main(String[] args) {
 		System.out.println(new AuditStatusEnumConverter().convert("auditing").getDescription());
+		ExampleEntity entity=new ExampleEntity();
+		entity.setId("adfafasdfasdfasdf");
+		entity.setStatus(AuditStatusEnum.Auditing);
+		System.out.println(JsonUtil.stringify(entity));
 	}
 }
 

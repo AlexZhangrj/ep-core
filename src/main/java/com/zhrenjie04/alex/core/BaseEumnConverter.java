@@ -9,8 +9,7 @@ public class BaseEumnConverter<T extends Enum<?> & BaseEnum> extends AbstractCon
 	@Override
 	public T convert(String source) {
 		ParameterizedType parameterizedType=(ParameterizedType)this.getClass().getGenericSuperclass();
-		System.out.println(parameterizedType.getTypeName());
-
+//		System.out.println(parameterizedType.getTypeName());
 		Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
 		Class<T> clazz=(Class<T>)actualTypeArguments[0];
 		return EnumUtil.codeOf(clazz, source);
