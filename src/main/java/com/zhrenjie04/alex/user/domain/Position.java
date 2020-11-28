@@ -15,8 +15,8 @@ public class Position {
 	private String positionName;
 	private String positionCode;
 	private String groupId;
-	private Boolean isLocked=false;
-	private Boolean isDeleted=false;
+	private Boolean isLocked;
+	private Boolean isDeleted;
 	private Date createdTime;
 	private String createrId;
 	private String createrName;

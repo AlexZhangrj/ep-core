@@ -7,14 +7,12 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 @Data
+@EqualsAndHashCode(of = {"roleId"}, callSuper = false)
 @ToString
-@EqualsAndHashCode(of= {"id"})
-public class IdentityId2RoleId{
-	private String id;
-	private String identityId;
+public class Role {
 	private String roleId;
-	private String groupId;
-	private String userId;
+	private String roleName;
+	private String roleCode;
 	private Boolean isLocked;
 	private Boolean isDeleted;
 	private Date createdTime;
