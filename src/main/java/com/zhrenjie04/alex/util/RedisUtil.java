@@ -521,7 +521,7 @@ public final class RedisUtil {
 		}
 	}
 
-	public static boolean lock(String key, int keepTime) {
+	public static boolean tryLock(String key, int keepTime) {
 		Jedis jedis = null;
 		try {
 			if (key == null || "".equals(key)) {
