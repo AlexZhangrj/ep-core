@@ -16,10 +16,10 @@ public class CorsInterceptor implements HandlerInterceptor{
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
-        response.setHeader("Access-Control-Allow-Origin", "*");
+        response.setHeader("Access-Control-Allow-Origin", "true");
 //        response.setHeader("Access-Control-Allow-Methods", request.getMethod() + "," + request.getHeader("Access-Control-Request-Method"));
         response.setHeader("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE, HEAD, OPTIONS");
-        response.setHeader("Access-Control-Max-Age", "3600");
+        response.setHeader("Access-Control-Max-Age", "-1");
         response.setHeader("Access-Control-Allow-Headers", "x-requested-with, Authorization, authorization, Accept, Origin, XRequestedWith, Content-Type, LastModified");
 //        response.setHeader("Access-Control-Allow-Headers", "x-requested-with,Authorization, authorization,content-type");
         response.setHeader("Access-Control-Allow-Credentials","true");

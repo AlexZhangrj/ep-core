@@ -110,6 +110,7 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
 			cookie.setPath("/");
 			cookie.setMaxAge(-1);
 			response.addCookie(cookie);
+			response.addHeader("sid", sid);
 		}
 		request.setAttribute("sid", sid);
 		// 处理jwt头部
