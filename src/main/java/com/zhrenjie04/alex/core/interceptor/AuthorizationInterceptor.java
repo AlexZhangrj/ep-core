@@ -104,14 +104,17 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
 				}
 			}
 		}
-		if(sid==null) {
-			sid = "t-" + UUID.randomUUID();
-			Cookie cookie = new Cookie("sid", sid);
-			cookie.setPath("/");
-			cookie.setMaxAge(-1);
-			response.addCookie(cookie);
-			response.addHeader("sid", sid);
+		if(sid == null) {
+			sid=request.getHeader("sid");
+			if(sid == null) {
+				sid = "t-" + UUID.randomUUID();
+			}
 		}
+		Cookie cookie = new Cookie("sid", sid);
+		cookie.setPath("/");
+		cookie.setMaxAge(-1);
+		response.addCookie(cookie);
+		response.addHeader("sid", sid);
 		request.setAttribute("sid", sid);
 		// 处理jwt头部
 		String token=request.getHeader("token");
