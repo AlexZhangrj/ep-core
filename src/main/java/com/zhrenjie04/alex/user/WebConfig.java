@@ -29,10 +29,18 @@ public class WebConfig implements WebMvcConfigurer {
     public FilterRegistrationBean<CorsFilter> corsFilter() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowCredentials(true);
         config.addAllowedOrigin("*");
-        config.addAllowedHeader("*");
-        config.addAllowedMethod("*");
+        config.setAllowCredentials(true);
+        config.addAllowedMethod("GET");
+        config.addAllowedMethod("PUT");
+        config.addAllowedMethod("POST");
+        config.addAllowedMethod("DELETE");
+        config.addAllowedMethod("OPTIONS");
+        config.setMaxAge(1000L);
+        config.addAllowedHeader("Origin");
+        config.addAllowedHeader("Content-Type");
+        config.addAllowedHeader("X-Auth-Token");
+        config.addAllowedHeader("Authorization");
         source.registerCorsConfiguration("/**", config);
         FilterRegistrationBean<CorsFilter> bean = new FilterRegistrationBean<CorsFilter>(new CorsFilter(source));
         bean.setOrder(0);

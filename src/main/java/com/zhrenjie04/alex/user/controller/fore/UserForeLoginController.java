@@ -14,15 +14,13 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.search.sort.SortBuilders;
-import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
-import org.springframework.data.elasticsearch.core.SearchHits;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -61,6 +59,11 @@ import lombok.extern.slf4j.Slf4j;
 @Controller
 @RequestMapping("/user/fore")
 @Permission("back")
+//实现跨域注解
+//origin="*"代表所有域名都可访问
+//maxAge飞行前响应的缓存持续时间的最大年龄，简单来说就是Cookie的有效期 单位为秒
+//若maxAge是负数,则代表为临时Cookie,不会被持久化,Cookie信息保存在浏览器内存中,浏览器关闭Cookie就消失
+//@CrossOrigin(origins = "*",maxAge = 3600, methods = {RequestMethod.POST,RequestMethod.PUT,RequestMethod.GET},allowedHeaders = {"*"})
 @Slf4j
 public class UserForeLoginController {
 	
@@ -118,6 +121,7 @@ public class UserForeLoginController {
 		String capText = captchaProducer.createText();
 		String sid=(String)request.getAttribute("sid");
 		RedisUtil.set("validate-code:"+sid, capText, 3*60);
+		log.debug("sid:::{}",sid);
 		BufferedImage bi = captchaProducer.createImage(capText);
 		ServletOutputStream out = response.getOutputStream();
 		ImageIO.write(bi, "jpg", out);
@@ -134,6 +138,7 @@ public class UserForeLoginController {
 			+ "identities,currentIdentityId,currentPrivilegeCodes,currentRoleIds,currentIdentity")
 	public JsonResult login(@RequestBody User account, HttpServletRequest request, HttpServletResponse response) throws InterruptedException {
 		String sid=(String)request.getAttribute("sid");
+		log.debug("sid:::{}",sid);
 		String capText = RedisUtil.get("validate-code:"+sid);
 		RedisUtil.set("validate-code:"+sid, "", 3*60);
 		if (capText != null && !capText.equals(account.getCaptcha()) || "".equals(capText) || capText == null) {
