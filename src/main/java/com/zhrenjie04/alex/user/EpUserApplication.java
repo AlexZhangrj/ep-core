@@ -35,6 +35,7 @@ import com.zhrenjie04.alex.core.EpMultiDataSourceProp;
 import com.zhrenjie04.alex.core.EpRedisProp;
 import com.zhrenjie04.alex.core.EpSessionUtilProp;
 import com.zhrenjie04.alex.core.Permission;
+import com.zhrenjie04.alex.core.filter.CorsWebFilter;
 import com.zhrenjie04.alex.util.Base64ImageUtil;
 import com.zhrenjie04.alex.util.FileUploadUtil;
 import com.zhrenjie04.alex.util.HttpClientUtil;
@@ -57,7 +58,7 @@ import com.zhrenjie04.alex.util.SpringUtil;
 @Import({ WebConfig.class, DynamicDataSourceConfig.class ,ContextConfig.class, SwaggerConfig.class,
 	EpMultiDataSourceProp.class,EpRedisProp.class,EpHttpClientProp.class,
 	EpIdGeneratorProp.class, EpSessionUtilProp.class, EpImgProp.class, 
-	EpJwtProp.class, EpAuthProp.class })
+	EpJwtProp.class, EpAuthProp.class,CorsWebFilter.class })
 public class EpUserApplication implements ApplicationContextAware{
 
 	private static final Logger logger = LoggerFactory.getLogger(EpUserApplication.class);

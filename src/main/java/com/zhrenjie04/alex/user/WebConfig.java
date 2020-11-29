@@ -1,5 +1,6 @@
 package com.zhrenjie04.alex.user;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -36,11 +37,12 @@ public class WebConfig implements WebMvcConfigurer {
         config.addAllowedMethod("POST");
         config.addAllowedMethod("DELETE");
         config.addAllowedMethod("OPTIONS");
-        config.setMaxAge(1000L);
+        config.setMaxAge(-1L);
         config.addAllowedHeader("Origin");
         config.addAllowedHeader("Content-Type");
         config.addAllowedHeader("X-Auth-Token");
         config.addAllowedHeader("Authorization");
+        config.addAllowedHeader("sid");
         source.registerCorsConfiguration("/**", config);
         FilterRegistrationBean<CorsFilter> bean = new FilterRegistrationBean<CorsFilter>(new CorsFilter(source));
         bean.setOrder(0);
