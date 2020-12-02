@@ -23,6 +23,7 @@
 /Users/zhangrenjie/developing/gitee/backend/ep-core/src/main/java/com/zhrenjie04/alex/core/AbstractGenericController.java
 /Users/zhangrenjie/developing/gitee/backend/ep-core/src/main/java/com/zhrenjie04/alex/core/AbstractGenericEntity.java
 /Users/zhangrenjie/developing/gitee/backend/ep-core/src/main/java/com/zhrenjie04/alex/util/ClassNameUtil.java
+/Users/zhangrenjie/developing/gitee/backend/ep-core/src/main/java/com/zhrenjie04/alex/core/filter/CorsWebFilter.java
 /Users/zhangrenjie/developing/gitee/backend/ep-core/src/main/java/com/zhrenjie04/alex/util/EnumUtil.java
 /Users/zhangrenjie/developing/gitee/backend/ep-core/src/main/java/com/zhrenjie04/alex/core/exception/UnauthorizedException.java
 /Users/zhangrenjie/developing/gitee/backend/ep-core/src/main/java/com/zhrenjie04/alex/util/PropertyDefaultValueUtil.java

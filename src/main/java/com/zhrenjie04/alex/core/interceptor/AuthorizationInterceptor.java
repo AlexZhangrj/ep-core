@@ -21,6 +21,7 @@ import com.zhrenjie04.alex.core.Permission;
 import com.zhrenjie04.alex.core.User;
 import com.zhrenjie04.alex.core.exception.CrisisError;
 import com.zhrenjie04.alex.core.exception.UnauthorizedException;
+import com.zhrenjie04.alex.util.IdGenerator;
 import com.zhrenjie04.alex.util.JsonUtil;
 import com.zhrenjie04.alex.util.JwtUtil;
 import com.zhrenjie04.alex.util.RedisUtil;
@@ -107,7 +108,7 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
 		if(sid == null) {
 			sid=request.getHeader("sid");
 			if(sid == null) {
-				sid = "t-" + UUID.randomUUID();
+				sid = "t-" + IdGenerator.nextIdBase48String() + UUID.randomUUID();
 			}
 		}
 		Cookie cookie = new Cookie("sid", sid);
