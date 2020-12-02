@@ -51,7 +51,7 @@ public class IdGenerator {
 	/** 上次生成ID的时间截 */
 	private static long lastTimestamp = -1L;
 	
-	private static String base48Chars="abcdefghijkmnopqrstuvwxyzBCDEFGHJKLMNPQRSTUVWXYZ";
+	private static String base48Chars="abcdefgh5jkmn6pqrstuvwxy7BCDEFGHJK8MNPQRSTUVWXY9";
 
 	private static HashMap<String,Integer> charToIntegerMap=new HashMap<String,Integer>();
 	static {

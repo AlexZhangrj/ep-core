@@ -108,7 +108,7 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
 		if(sid == null) {
 			sid=request.getHeader("sid");
 			if(sid == null) {
-				sid = "t-" + IdGenerator.nextIdBase48String() + UUID.randomUUID();
+				sid = "t-" + IdGenerator.nextIdBase48String() + "-" + UUID.randomUUID();
 			}
 		}
 		Cookie cookie = new Cookie("sid", sid);
