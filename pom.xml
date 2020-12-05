@@ -55,7 +55,6 @@
 		<dependency>
 			<groupId>de.codecentric</groupId>
 			<artifactId>spring-boot-admin-starter-client</artifactId>
-			<version>${spring-boot-admin-starter-client.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
@@ -84,7 +83,6 @@
 		<dependency>
 			<groupId>org.mybatis.spring.boot</groupId>
 			<artifactId>mybatis-spring-boot-starter</artifactId>
-			<version>${mybatis-spring-boot-starter.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -110,18 +108,15 @@
 		<dependency>
 			<groupId>com.jhlabs</groupId>
 			<artifactId>filters</artifactId>
-			<version>2.0.235-1</version>
 		</dependency>
 		<dependency>
 			<groupId>io.springfox</groupId>
 			<artifactId>springfox-boot-starter</artifactId>
-			<version>${springfox.version}</version>
 		</dependency>
 		<!-- jwt依赖 -->
 		<dependency>
 			<groupId>io.jsonwebtoken</groupId>
 			<artifactId>jjwt</artifactId>
-			<version>${jjwt.version}</version>
 		</dependency>
 		<!-- HTTP组件 -->
 		<dependency>
@@ -144,17 +139,14 @@
 		<dependency>
 			<groupId>commons-fileupload</groupId>
 			<artifactId>commons-fileupload</artifactId>
-			<version>${commons-fileupload.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.googlecode.log4jdbc</groupId>
 			<artifactId>log4jdbc</artifactId>
-			<version>${log4jdbc.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.zhrenjie04.alex.web</groupId>
 			<artifactId>ep-core</artifactId>
-			<version>${ep-core.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.zhrenjie04.alex.web</groupId>
