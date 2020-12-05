@@ -23,18 +23,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 	</properties>
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>org.springframework.cloud</groupId>
-				<artifactId>spring-cloud-dependencies</artifactId>
-				<version>${spring-cloud.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
-
+	
 	<build>
 		<plugins>
 			<plugin>
@@ -151,7 +140,6 @@
 		<dependency>
 			<groupId>com.zhrenjie04.alex.web</groupId>
 			<artifactId>ep-user-domain</artifactId>
-			<version>${ep-user-domain.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>
