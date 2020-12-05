@@ -138,6 +138,16 @@
 			</dependency>
 			<dependency>
 				<groupId>com.zhrenjie04.alex.web</groupId>
+				<artifactId>ep-user-domain</artifactId>
+				<version>${ep-user-domain.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.zhrenjie04.alex.web</groupId>
+				<artifactId>ep-user-interface</artifactId>
+				<version>${ep-user-interface.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.zhrenjie04.alex.web</groupId>
 				<artifactId>ep-message-interface</artifactId>
 				<version>${ep-message-interface.version}</version>
 			</dependency>
