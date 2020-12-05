@@ -51,9 +51,7 @@
 		<ep-ip-tunnel-swap-service.version>0.0.4</ep-ip-tunnel-swap-service.version>
 		<ep-tcp-service.version>0.0.4</ep-tcp-service.version>
 
-		<ep-user-domain.version>2.0.4</ep-user-domain.version>
-		<ep-user-interface.version>2.0.4</ep-user-interface.version>
-		<ep-user-service.version>2.0.4</ep-user-service.version>
+		<ep-user.version>2.0.4</ep-user.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -139,12 +137,12 @@
 			<dependency>
 				<groupId>com.zhrenjie04.alex.web</groupId>
 				<artifactId>ep-user-domain</artifactId>
-				<version>${ep-user-domain.version}</version>
+				<version>${ep-user.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.zhrenjie04.alex.web</groupId>
 				<artifactId>ep-user-interface</artifactId>
-				<version>${ep-user-interface.version}</version>
+				<version>${ep-user.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.zhrenjie04.alex.web</groupId>
