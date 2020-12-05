@@ -2,6 +2,12 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.zhrenjie04.alex.web</groupId>
+	<artifactId>ep-user-service</artifactId>
+	<version>${ep-user-service.version}</version>
+	<packaging>jar</packaging>
+	<name>ep-user-service</name>
+	<description>Alex E-Platform User Microservice</description>
 
 	<parent>
 		<groupId>com.zhrenjie04.alex</groupId>
@@ -9,14 +15,6 @@
 		<version>2020.9</version>
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
-
-	<groupId>com.zhrenjie04.alex.web</groupId>
-	<artifactId>ep-user-service</artifactId>
-	<version>${ep-user-service.version}</version>
-	<packaging>jar</packaging>
-
-	<name>ep-user-service</name>
-	<description>Alex E-Platform User Microservice</description>
 
 	<properties>
 		<start-class>com.zhrenjie04.alex.user.EpUserApplication</start-class>
