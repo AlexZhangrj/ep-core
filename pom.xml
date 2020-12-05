@@ -28,7 +28,6 @@
 		<dependency>
 			<groupId>com.zhrenjie04.alex.web</groupId>
 			<artifactId>ep-core</artifactId>
-			<version>${ep-core.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>
