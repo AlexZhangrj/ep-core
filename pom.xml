@@ -1,4 +1,6 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
@@ -13,7 +15,7 @@
 	<version>2020.9</version>
 	<packaging>pom</packaging>
 
-  	<properties>
+	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>11</java.version>
@@ -33,12 +35,12 @@
 		<mongo-java-driver.version>3.10.2</mongo-java-driver.version>
 		<lombok.version>1.18.12</lombok.version>
 		<pinyin4j.version>2.5.1</pinyin4j.version>
-		
+
 		<ep-core.version>2.0.4</ep-core.version>
 		<ep-generator.version>4.0.0</ep-generator.version>
 		<ep-admin.version>0.0.3</ep-admin.version>
 		<ep-gateway.version>0.0.3</ep-gateway.version>
-		
+
 		<ep-manager-domain.version>0.0.4</ep-manager-domain.version>
 		<ep-manager-interface.version>0.0.4</ep-manager-interface.version>
 		<ep-manager-service.version>0.0.4</ep-manager-service.version>
@@ -61,6 +63,88 @@
 				<version>${spring-cloud.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
+			</dependency>
+			<dependency>
+				<groupId>de.codecentric</groupId>
+				<artifactId>spring-boot-admin-starter-client</artifactId>
+				<version>${spring-boot-admin-starter-client.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.mybatis.spring.boot</groupId>
+				<artifactId>mybatis-spring-boot-starter</artifactId>
+				<version>${mybatis-spring-boot-starter.version}</version>
+			</dependency>
+			<!-- 增加接口API说明支持 -->
+			<dependency>
+				<groupId>com.jhlabs</groupId>
+				<artifactId>filters</artifactId>
+				<version>2.0.235-1</version>
+			</dependency>
+			<dependency>
+				<groupId>io.springfox</groupId>
+				<artifactId>springfox-swagger-ui</artifactId>
+				<version>${springfox.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>io.springfox</groupId>
+				<artifactId>springfox-swagger2</artifactId>
+				<version>${springfox.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.zookeeper</groupId>
+				<artifactId>zookeeper</artifactId>
+				<version>${zookeeper.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>io.springfox</groupId>
+				<artifactId>springfox-boot-starter</artifactId>
+				<version>${springfox.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.belerweb</groupId>
+				<artifactId>pinyin4j</artifactId>
+				<version>${pinyin4j.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-text</artifactId>
+				<version>${apache-commons-text.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.mybatis</groupId>
+				<artifactId>mybatis</artifactId>
+				<version>${mybatis.version}</version>
+			</dependency>
+			<!-- jwt依赖 -->
+			<dependency>
+				<groupId>io.jsonwebtoken</groupId>
+				<artifactId>jjwt</artifactId>
+				<version>${jjwt.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-fileupload</groupId>
+				<artifactId>commons-fileupload</artifactId>
+				<version>${commons-fileupload.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.googlecode.log4jdbc</groupId>
+				<artifactId>log4jdbc</artifactId>
+				<version>${log4jdbc.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.zhrenjie04.alex.web</groupId>
+				<artifactId>ep-core</artifactId>
+				<version>${ep-core.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.zhrenjie04.alex.web</groupId>
+				<artifactId>ep-message-interface</artifactId>
+				<version>${ep-message-interface.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.zhrenjie04.alex.web</groupId>
+				<artifactId>ep-manager-domain</artifactId>
+				<version>${ep-manager-domain.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
