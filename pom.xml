@@ -12,7 +12,7 @@
 
 	<groupId>com.zhrenjie04.alex</groupId>
 	<artifactId>ep-backend</artifactId>
-	<version>2020.9</version>
+	<version>2020.9-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<properties>
