@@ -54,14 +54,7 @@
 
 		<ep-user.version>2.0.4</ep-user.version>
 	</properties>
-
-	<modules>
-		<module>ep-core</module>
-		<module>ep-user-domain</module>
-		<module>ep-user-interface</module>
-		<module>ep-user-service</module>
-	</modules>
-
+	
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
