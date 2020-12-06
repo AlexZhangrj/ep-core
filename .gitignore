@@ -25,6 +25,8 @@ hs_err_pid*
 .factorypath
 .project
 .settings/*
-target/*
-debug-logs/*
-logs/*
+/target/
+/.idea/
+/debug-logs/
+/logs/
+/ep-user-service.iml

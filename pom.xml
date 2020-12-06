@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.zhrenjie04.alex.web</groupId>
 	<artifactId>ep-user-service</artifactId>
-	<version>${ep-user.version}</version>
+	<version>${ep-user.version}${version-type}</version>
 	<packaging>jar</packaging>
 	<name>ep-user-service</name>
 	<description>Alex E-Platform User Microservice</description>
