@@ -1,0 +1,14 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3" lang="zh-cmn-Hans">
+    <head>
+        <meta charset="UTF-8"/>
+        <title>图片上传</title>
+    </head>
+    <body>
+        <form action="/user/back/login/upload-file" method="post" enctype="multipart/form-data">
+            <input name="imageFile" type="file"/>
+            <input type="submit"/>
+        </form>
+    </body>
+</html>

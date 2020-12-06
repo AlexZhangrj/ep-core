@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhrenjie04.alex.user.dao.UserDao">
+	<!-- cache type="org.mybatis.caches.memcached.MemcachedCache" / -->
+    <resultMap type="com.zhrenjie04.alex.core.User"
+        id="userResult">
+        <result property="userId" column="user_id" />
+        <result property="username" column="username" />
+        <result property="password" column="password" />
+        <result property="realname" column="realname" />
+        <result property="nickname" column="nickname" />
+        <result property="cellphone" column="cellphone" />
+        <result property="email" column="email" />
+        <result property="gender" column="gender" />
+        <result property="birthday" column="birthday" />
+        <result property="isDeleted" column="is_deleted" />
+        <result property="isLocked" column="is_locked" />
+        <result property="portraitUrl" column="portrait_url" />
+        <result property="groupId" column="group_id" />
+        <result property="createdTime" column="created_time" />
+        <result property="otherResults.groupName" column="group_name" />
+    </resultMap>
+    <select id="queryObjectById" resultMap="userResult" parameterType="java.lang.String">
+		select * from t_user where user_id=#{id}
+    </select>	
+    <select id="countTotal" resultType="java.lang.Long" parameterType="java.lang.String">
+		select count(username) from t_user where is_deleted=0
+    </select>	
+	<insert id="insertObject" parameterType="com.zhrenjie04.alex.core.User">
+        insert into t_user(
+              `user_id`,
+			  `username`,
+			  `password`,
+			  `salt`,
+			  `realname`,
+			  `nickname`,
+			  `email`,
+			  `cellphone`,
+			  `birthday`,
+			  `gender`,
+			  `portrait_url`,
+			  `is_locked`,
+			  `is_deleted`,
+			  `creater_id`,
+			  `creater_name`,
+			  `group_id`
+        )values(
+              #{userId},
+              #{username},
+              #{password},
+              #{salt},
+              #{realname},
+              #{nickname},
+              #{email},
+              #{cellphone},
+              #{birthday},
+              #{gender},
+              #{portraitUrl},
+              0,
+              0,
+              #{createrId},
+              #{createrName},
+              #{groupId}
+        )
+	</insert>
+</mapper> 
