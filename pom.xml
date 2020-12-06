@@ -15,6 +15,7 @@
 		<artifactId>ep-backend</artifactId>
 		<version>2020.9-SNAPSHOT</version>
 		<relativePath /> <!-- lookup parent from repository -->
+
 	</parent>
 
 	<properties>
