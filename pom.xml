@@ -8,7 +8,7 @@
 		<groupId>com.zhrenjie04.alex</groupId>
 		<artifactId>ep-backend</artifactId>
 		<version>2020.9</version>
-		<relativePath /> <!-- lookup parent from repository -->
+		<relativePath>../</relativePath> <!-- lookup parent from repository -->
 	</parent>
 
 	<groupId>com.zhrenjie04.alex.web</groupId>
