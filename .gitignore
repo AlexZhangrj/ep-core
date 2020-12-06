@@ -26,3 +26,5 @@ hs_err_pid*
 .project
 .settings/*
 target/*
+.idea
+/ep-user-domain.iml
