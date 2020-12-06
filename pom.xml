@@ -16,6 +16,7 @@
 	<packaging>pom</packaging>
 
 	<properties>
+		<version-type>-SNAPSHOT</version-type>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>11</java.version>
@@ -53,6 +54,14 @@
 
 		<ep-user.version>2.0.4</ep-user.version>
 	</properties>
+
+	<modules>
+		<module>ep-core</module>
+		<module>ep-user-domain</module>
+		<module>ep-user-interface</module>
+		<module>ep-user-service</module>
+	</modules>
+
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
