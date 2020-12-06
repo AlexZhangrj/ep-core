@@ -26,3 +26,4 @@ hs_err_pid*
 .settings/*
 /.idea/
 /ep-backend.iml
+/ep-core/target/
