@@ -13,7 +13,7 @@
 
 	<groupId>com.zhrenjie04.alex.web</groupId>
 	<artifactId>ep-core</artifactId>
-	<version>${ep-core.version}</version>
+	<version>${ep-core.version}${version-type}</version>
 	<packaging>jar</packaging>
 
 	<name>ep-core</name>
