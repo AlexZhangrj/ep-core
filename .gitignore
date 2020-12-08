@@ -23,7 +23,9 @@
 hs_err_pid*
 .project
 .settings/*
-.settings/*
 /.idea/
-/ep-backend.iml
-/ep-core/target/
+.idea
+.settings
+*.iml
+/target/
+/.settings/
