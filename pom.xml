@@ -57,6 +57,7 @@
 
 	<modules>
 		<module>ep-core</module>
+		<module>ep-user-domain</module>
 	</modules>
 
 	<dependencyManagement>
