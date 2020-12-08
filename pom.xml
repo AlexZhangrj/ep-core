@@ -54,7 +54,11 @@
 
 		<ep-user.version>2.0.4</ep-user.version>
 	</properties>
-	
+
+	<modules>
+		<module>ep-core</module>
+	</modules>
+
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
