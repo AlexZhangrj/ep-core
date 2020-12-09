@@ -1,16 +1,12 @@
 package com.zhrenjie04.alex.util;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
+import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisPool;
-import redis.clients.jedis.JedisPoolConfig;
+import redis.clients.jedis.*;
 
 /**
  * @author 张人杰 -1永久存储 -2不更新存储时间
@@ -26,15 +22,41 @@ public final class RedisUtil {
 	private static int globalKeeptime = 7200;
 	
 	private static JedisPool jedisPool = null;
+	private static Boolean isCluster = false;
+	private static JedisCluster jedisCluster = null;
 
-	public static void init(int maxTotal,int maxIdle,int minIdle,long maxWaitMillis,boolean testOnBorrow,int globalKeeptimeInput,String addr,int port,int timeout,String auth,int database) {
+	public static void init(int maxTotal,int maxIdle,int minIdle,int connectionTimeout, int soTimeout,int maxAttempts,boolean testOnBorrow,int globalKeeptime,String clusterAddrs,int timeout,String auth,int database) {
+		isCluster=true;
+		GenericObjectPoolConfig config = new GenericObjectPoolConfig();
+		config.setMaxTotal(maxTotal);
+		config.setMaxIdle(maxIdle);
+		config.setMinIdle(minIdle);
+		config.setMaxWaitMillis(soTimeout);
+		config.setTestOnBorrow(testOnBorrow);
+		RedisUtil.globalKeeptime = globalKeeptime;
+		Set<HostAndPort> jedisClusterNodes = new HashSet<HostAndPort>();
+		String[]hostAndPorts=clusterAddrs.split(",");
+		for(String hostAndPort:hostAndPorts){
+			String ip=hostAndPort.split(":")[0];
+			Integer port=Integer.valueOf(hostAndPort.split(":")[1]);
+			jedisClusterNodes.add(new HostAndPort(ip, port));
+		}
+		if (auth == null || "".equals(auth)) {
+			jedisCluster = new JedisCluster(jedisClusterNodes, connectionTimeout, soTimeout, maxAttempts, auth, config);
+		} else {
+			jedisCluster = new JedisCluster(jedisClusterNodes, connectionTimeout, soTimeout, maxAttempts, config);
+		}
+	}
+
+	public static void init(int maxTotal,int maxIdle,int minIdle,long maxWaitMillis,boolean testOnBorrow,int globalKeeptime,String addr,int port,int timeout,String auth,int database) {
+		isCluster=false;
 		JedisPoolConfig config = new JedisPoolConfig();
 		config.setMaxTotal(maxTotal);
 		config.setMaxIdle(maxIdle);
 		config.setMinIdle(minIdle);
 		config.setMaxWaitMillis(maxWaitMillis);
 		config.setTestOnBorrow(testOnBorrow);
-		globalKeeptime = globalKeeptimeInput;
+		RedisUtil.globalKeeptime = globalKeeptime;
 		if (auth == null || "".equals(auth)) {
 			jedisPool = new JedisPool(config, addr, port, timeout, null, database);
 		} else {
@@ -80,8 +102,12 @@ public final class RedisUtil {
 			if (key == null || "".equals(key)) {
 				return;
 			}
-			jedis = getJedis();
-			jedis.del(key);
+			if(isCluster){
+				jedisCluster.del(key);
+			}else{
+				jedis = getJedis();
+				jedis.del(key);
+			}
 		} catch (Exception e) {
 			logger.error("RedisUtil", e);
 			throw e;
@@ -106,10 +132,17 @@ public final class RedisUtil {
 			if (value == null) {
 				value = "";
 			}
-			jedis = getJedis();
-			jedis.set(key, value);
-			if (keepTime != -2) {
-				jedis.expire(key, keepTime);
+			if(isCluster) {
+				jedisCluster.set(key, value);
+				if (keepTime != -2) {
+					jedisCluster.expire(key, keepTime);
+				}
+			}else{
+				jedis = getJedis();
+				jedis.set(key, value);
+				if (keepTime != -2) {
+					jedis.expire(key, keepTime);
+				}
 			}
 		} catch (Exception e) {
 			logger.error("RedisUtil", e);
@@ -132,10 +165,17 @@ public final class RedisUtil {
 			if (key == null || "".equals(key)) {
 				return;
 			}
-			jedis = getJedis();
-			jedis.sadd(key, members);
-			if (keepTime != -2) {
-				jedis.expire(key, keepTime);
+			if(isCluster) {
+				jedisCluster.sadd(key, members);
+				if (keepTime != -2) {
+					jedisCluster.expire(key, keepTime);
+				}
+			}else {
+				jedis = getJedis();
+				jedis.sadd(key, members);
+				if (keepTime != -2) {
+					jedis.expire(key, keepTime);
+				}
 			}
 		} catch (Exception e) {
 			logger.error("RedisUtil", e);
@@ -158,12 +198,20 @@ public final class RedisUtil {
 			if (key == null || "".equals(key)) {
 				return null;
 			}
-			jedis = getJedis();
-			String result = jedis.get(key);
-			if (keepTime != -2) {
-				jedis.expire(key, keepTime);
+			if(isCluster) {
+				String result = jedisCluster.get(key);
+				if (keepTime != -2) {
+					jedisCluster.expire(key, keepTime);
+				}
+				return result;
+			}else {
+				jedis = getJedis();
+				String result = jedis.get(key);
+				if (keepTime != -2) {
+					jedis.expire(key, keepTime);
+				}
+				return result;
 			}
-			return result;
 		} catch (Exception e) {
 			logger.error("RedisUtil", e);
 			throw e;
@@ -185,10 +233,17 @@ public final class RedisUtil {
 			if (key == null || "".equals(key)) {
 				return;
 			}
-			jedis = getJedis();
-			jedis.hmset(key, hash);
-			if (keepTime != -2) {
-				jedis.expire(key, keepTime);
+			if(isCluster) {
+				jedisCluster.hmset(key, hash);
+				if (keepTime != -2) {
+					jedisCluster.expire(key, keepTime);
+				}
+			}else {
+				jedis = getJedis();
+				jedis.hmset(key, hash);
+				if (keepTime != -2) {
+					jedis.expire(key, keepTime);
+				}
 			}
 		} catch (Exception e) {
 			logger.error("RedisUtil", e);
@@ -217,10 +272,17 @@ public final class RedisUtil {
 			if (value == null) {
 				value = "";
 			}
-			jedis = getJedis();
-			jedis.hset(key, field, value);
-			if (keepTime != -2) {
-				jedis.expire(key, keepTime);
+			if(isCluster) {
+				jedisCluster.hset(key, field, value);
+				if (keepTime != -2) {
+					jedisCluster.expire(key, keepTime);
+				}
+			}else {
+				jedis = getJedis();
+				jedis.hset(key, field, value);
+				if (keepTime != -2) {
+					jedis.expire(key, keepTime);
+				}
 			}
 		} catch (Exception e) {
 			logger.error("RedisUtil", e);
@@ -246,12 +308,20 @@ public final class RedisUtil {
 			if (field == null || "".equals(field)) {
 				return null;
 			}
-			jedis = getJedis();
-			String result = jedis.hget(key, field);
-			if (keepTime != -2) {
-				jedis.expire(key, keepTime);
+			if(isCluster) {
+				String result = jedisCluster.hget(key, field);
+				if (keepTime != -2) {
+					jedisCluster.expire(key, keepTime);
+				}
+				return result;
+			}else {
+				jedis = getJedis();
+				String result = jedis.hget(key, field);
+				if (keepTime != -2) {
+					jedis.expire(key, keepTime);
+				}
+				return result;
 			}
-			return result;
 		} catch (Exception e) {
 			logger.error("RedisUtil", e);
 			throw e;
@@ -276,12 +346,20 @@ public final class RedisUtil {
 			if (fields == null) {
 				return null;
 			}
-			jedis = getJedis();
-			List<String> result = jedis.hmget(key, fields);
-			if (keepTime != -2) {
-				jedis.expire(key, keepTime);
+			if(isCluster) {
+				List<String> result = jedisCluster.hmget(key, fields);
+				if (keepTime != -2) {
+					jedisCluster.expire(key, keepTime);
+				}
+				return result;
+			}else {
+				jedis = getJedis();
+				List<String> result = jedis.hmget(key, fields);
+				if (keepTime != -2) {
+					jedis.expire(key, keepTime);
+				}
+				return result;
 			}
-			return result;
 		} catch (Exception e) {
 			logger.error("RedisUtil", e);
 			throw e;
@@ -303,10 +381,17 @@ public final class RedisUtil {
 			if (key == null || "".equals(key)) {
 				return;
 			}
-			jedis = getJedis();
-			jedis.sadd(key, members);
-			if (keepTime != -2) {
-				jedis.expire(key, keepTime);
+			if(isCluster) {
+				jedisCluster.sadd(key, members);
+				if (keepTime != -2) {
+					jedisCluster.expire(key, keepTime);
+				}
+			}else {
+				jedis = getJedis();
+				jedis.sadd(key, members);
+				if (keepTime != -2) {
+					jedis.expire(key, keepTime);
+				}
 			}
 		} catch (Exception e) {
 			logger.error("RedisUtil", e);
@@ -330,8 +415,12 @@ public final class RedisUtil {
 			if (key == null || "".equals(key)) {
 				return 0L;
 			}
-			jedis = getJedis();
-			return jedis.ttl(key);
+			if(isCluster) {
+				return jedisCluster.ttl(key);
+			}else {
+				jedis = getJedis();
+				return jedis.ttl(key);
+			}
 		} catch (Exception e) {
 			logger.error("RedisUtil", e);
 			throw e;
@@ -349,12 +438,18 @@ public final class RedisUtil {
 			if (key == null || "".equals(key) || members == null || members.length == 0) {
 				return;
 			}
-			jedis = getJedis();
-			jedis.srem(key, members);
-			if (keepTime != -2) {
-				jedis.expire(key, keepTime);
+			if(isCluster) {
+				jedisCluster.srem(key, members);
+				if (keepTime != -2) {
+					jedisCluster.expire(key, keepTime);
+				}
+			}else {
+				jedis = getJedis();
+				jedis.srem(key, members);
+				if (keepTime != -2) {
+					jedis.expire(key, keepTime);
+				}
 			}
-			return;
 		} catch (Exception e) {
 			logger.error("RedisUtil", e);
 			throw e;
@@ -372,12 +467,20 @@ public final class RedisUtil {
 			if (key == null || "".equals(key)) {
 				return null;
 			}
-			jedis = getJedis();
-			String value = jedis.spop(key);
-			if (keepTime != -2) {
-				jedis.expire(key, keepTime);
+			if(isCluster) {
+				String value = jedisCluster.spop(key);
+				if (keepTime != -2) {
+					jedisCluster.expire(key, keepTime);
+				}
+				return value;
+			}else {
+				jedis = getJedis();
+				String value = jedis.spop(key);
+				if (keepTime != -2) {
+					jedis.expire(key, keepTime);
+				}
+				return value;
 			}
-			return value;
 		} catch (Exception e) {
 			logger.error("RedisUtil", e);
 			throw e;
@@ -395,12 +498,20 @@ public final class RedisUtil {
 			if (key == null || "".equals(key)) {
 				return Collections.emptySet();
 			}
-			jedis = getJedis();
-			Set<String> members = jedis.smembers(key);
-			if (keepTime != -2) {
-				jedis.expire(key, keepTime);
+			if(isCluster) {
+				Set<String> members = jedisCluster.smembers(key);
+				if (keepTime != -2) {
+					jedisCluster.expire(key, keepTime);
+				}
+				return members;
+			}else {
+				jedis = getJedis();
+				Set<String> members = jedis.smembers(key);
+				if (keepTime != -2) {
+					jedis.expire(key, keepTime);
+				}
+				return members;
 			}
-			return members;
 		} catch (Exception e) {
 			logger.error("RedisUtil", e);
 			throw e;
@@ -425,12 +536,20 @@ public final class RedisUtil {
 			if (member == null || "".equals(member)) {
 				return false;
 			}
-			jedis = getJedis();
-			boolean result = jedis.sismember(key, member);
-			if (keepTime != -2) {
-				jedis.expire(key, keepTime);
+			if(isCluster) {
+				boolean result = jedisCluster.sismember(key, member);
+				if (keepTime != -2) {
+					jedisCluster.expire(key, keepTime);
+				}
+				return result;
+			}else {
+				jedis = getJedis();
+				boolean result = jedis.sismember(key, member);
+				if (keepTime != -2) {
+					jedis.expire(key, keepTime);
+				}
+				return result;
 			}
-			return result;
 		} catch (Exception e) {
 			logger.error("RedisUtil", e);
 			throw e;
@@ -448,12 +567,20 @@ public final class RedisUtil {
 			if (key == null || "".equals(key)) {
 				return 0L;
 			}
-			jedis = getJedis();
-			Long count = jedis.incr(key);
-			if (keepTime != -2) {
-				jedis.expire(key, keepTime);
+			if(isCluster) {
+				Long count = jedisCluster.incr(key);
+				if (keepTime != -2) {
+					jedisCluster.expire(key, keepTime);
+				}
+				return count;
+			}else {
+				jedis = getJedis();
+				Long count = jedis.incr(key);
+				if (keepTime != -2) {
+					jedis.expire(key, keepTime);
+				}
+				return count;
 			}
-			return count;
 		} catch (Exception e) {
 			logger.error("RedisUtil", e);
 			throw e;
@@ -475,12 +602,20 @@ public final class RedisUtil {
 			if (key == null || "".equals(key)) {
 				return 0L;
 			}
-			jedis = getJedis();
-			Long count = jedis.decr(key);
-			if (keepTime != -2) {
-				jedis.expire(key, keepTime);
+			if(isCluster) {
+				Long count = jedisCluster.decr(key);
+				if (keepTime != -2) {
+					jedisCluster.expire(key, keepTime);
+				}
+				return count;
+			}else {
+				jedis = getJedis();
+				Long count = jedis.decr(key);
+				if (keepTime != -2) {
+					jedis.expire(key, keepTime);
+				}
+				return count;
 			}
-			return count;
 		} catch (Exception e) {
 			logger.error("RedisUtil", e);
 			throw e;
@@ -509,9 +644,15 @@ public final class RedisUtil {
 			if (key == null || "".equals(key)) {
 				return;
 			}
-			jedis = getJedis();
-			if (keepTime != -2) {
-				jedis.expire(key, keepTime);
+			if(isCluster) {
+				if (keepTime != -2) {
+					jedisCluster.expire(key, keepTime);
+				}
+			}else {
+				jedis = getJedis();
+				if (keepTime != -2) {
+					jedis.expire(key, keepTime);
+				}
 			}
 		} catch (Exception e) {
 			logger.error("RedisUtil", e);
@@ -527,17 +668,25 @@ public final class RedisUtil {
 			if (key == null || "".equals(key)) {
 				return true;
 			}
-			jedis = getJedis();
-//			String result = jedis.set(key, "1", SET_IF_NOT_EXIST, SET_WITH_EXPIRE_TIME, keepTime * 1000);
-//			System.out.println(result);
-//			if (LOCK_SUCCESS.equals(result)) {
-//				return true;
-//			}
-			Long result = jedis.setnx(key, "1");
-			if(result == 1) {
-				return true;
+			if(isCluster) {
+				Long result = jedisCluster.setnx(key, "1");
+				if (result == 1) {
+					return true;
+				}
+				return false;
+			}else {
+				jedis = getJedis();
+				//			String result = jedis.set(key, "1", SET_IF_NOT_EXIST, SET_WITH_EXPIRE_TIME, keepTime * 1000);
+				//			System.out.println(result);
+				//			if (LOCK_SUCCESS.equals(result)) {
+				//				return true;
+				//			}
+				Long result = jedis.setnx(key, "1");
+				if (result == 1) {
+					return true;
+				}
+				return false;
 			}
-			return false;
 		} catch (Exception e) {
 			logger.error("RedisUtil", e);
 			throw e;
@@ -552,9 +701,14 @@ public final class RedisUtil {
 			if (key == null || "".equals(key)) {
 				return true;
 			}
-			jedis = getJedis();
-			jedis.del(key);
-			return true;
+			if(isCluster) {
+				jedisCluster.del(key);
+				return true;
+			}else {
+				jedis = getJedis();
+				jedis.del(key);
+				return true;
+			}
 		} catch (Exception e) {
 			logger.error("RedisUtil", e);
 			throw e;
@@ -578,9 +732,14 @@ public final class RedisUtil {
 			if (value == null) {
 				value = "";
 			}
-			jedis = getJedis();
-			jedis.set(key, value);
-			jedis.persist(key);
+			if(isCluster) {
+				jedisCluster.set(key, value);
+				jedisCluster.persist(key);
+			}else {
+				jedis = getJedis();
+				jedis.set(key, value);
+				jedis.persist(key);
+			}
 		} catch (Exception e) {
 			logger.error("RedisUtil", e);
 			throw e;
