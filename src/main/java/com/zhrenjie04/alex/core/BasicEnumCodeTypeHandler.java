@@ -36,7 +36,7 @@ public class BasicEnumCodeTypeHandler<E extends Enum<E> & BasicEnum> extends Bas
 //		int code = rs.getInt(columnName);
 //		return rs.wasNull() ? null : EnumUtils.codeOf(this.type, code);
 		Object code = rs.getObject(columnName);
-		return rs.wasNull() ? null : EnumUtil.codeOf(this.type, code);
+		return rs.wasNull() ? null : EnumUtil.dbCodeOf(this.type, code);
 	}
 
 	@Override
@@ -44,7 +44,7 @@ public class BasicEnumCodeTypeHandler<E extends Enum<E> & BasicEnum> extends Bas
 //		int code = rs.getInt(columnIndex);
 //		return rs.wasNull() ? null : EnumUtils.codeOf(this.type, code);
 		Object code = rs.getObject(columnIndex);
-		return rs.wasNull() ? null : EnumUtil.codeOf(this.type, code);
+		return rs.wasNull() ? null : EnumUtil.dbCodeOf(this.type, code);
 	}
 
 	@Override
@@ -52,6 +52,6 @@ public class BasicEnumCodeTypeHandler<E extends Enum<E> & BasicEnum> extends Bas
 //		int code = cs.getInt(columnIndex);
 //		return cs.wasNull() ? null : EnumUtils.codeOf(this.type, code);
 		Object code = cs.getObject(columnIndex);
-		return cs.wasNull() ? null : EnumUtil.codeOf(this.type, code);
+		return cs.wasNull() ? null : EnumUtil.dbCodeOf(this.type, code);
 	}
 }

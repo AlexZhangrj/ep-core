@@ -12,7 +12,7 @@ public class BasicEumnConverter<T extends Enum<?> & BasicEnum> extends AbstractC
 //		System.out.println(parameterizedType.getTypeName());
 		Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
 		Class<T> clazz=(Class<T>)actualTypeArguments[0];
-		return EnumUtil.codeOf(clazz, source);
+		return EnumUtil.frontendCodeOf(clazz, source);
 	}
 }
 //附加代码：判断某个类是否为另一个类的父类
