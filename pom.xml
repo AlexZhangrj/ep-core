@@ -8,7 +8,7 @@
 		<groupId>com.zhrenjie04.alex</groupId>
 		<artifactId>ep-backend</artifactId>
 		<version>2020.9-SNAPSHOT</version>
-		<relativePath /> <!-- lookup parent from repository -->
+		<relativePath>../ep-backend</relativePath>
 	</parent>
 
 	<groupId>com.zhrenjie04.alex.web</groupId>
@@ -24,17 +24,6 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 	</properties>
 
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>org.springframework.cloud</groupId>
-				<artifactId>spring-cloud-dependencies</artifactId>
-				<version>${spring-cloud.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
 	<dependencies>
 		<dependency>
 			<groupId>org.projectlombok</groupId>
