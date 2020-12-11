@@ -1,9 +1,9 @@
 package com.zhrenjie04.alex.example;
 
 import com.fasterxml.jackson.annotation.JsonValue;
-import com.zhrenjie04.alex.core.BaseEnum;
+import com.zhrenjie04.alex.core.BasicEnum;
 
-public enum AuditStatusEnum implements BaseEnum{
+public enum AuditStatusEnum implements BasicEnum {
 
 	Auditing("auditing","审核中"),
 	Approved("approved","审核通过"),

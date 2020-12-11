@@ -4,7 +4,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.format.support.FormattingConversionService;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 
-import com.zhrenjie04.alex.core.BaseEumnConverter;
+import com.zhrenjie04.alex.core.BasicEumnConverter;
 import com.zhrenjie04.alex.util.JsonUtil;
 
 @Configuration
@@ -12,7 +12,7 @@ public class EnumParamsConfiguration extends WebMvcConfigurationSupport{
 	@Override
 	public FormattingConversionService mvcConversionService() {
 		FormattingConversionService f = super.mvcConversionService();
-        f.addConverter(new BaseEumnConverter<AuditStatusEnum>());
+        f.addConverter(new BasicEumnConverter<AuditStatusEnum>());
         return f;
     }
 
@@ -25,5 +25,5 @@ public class EnumParamsConfiguration extends WebMvcConfigurationSupport{
 	}
 }
 
-class AuditStatusEnumConverter extends BaseEumnConverter<AuditStatusEnum>{
+class AuditStatusEnumConverter extends BasicEumnConverter<AuditStatusEnum> {
 }

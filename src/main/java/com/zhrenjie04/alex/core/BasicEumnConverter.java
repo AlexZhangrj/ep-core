@@ -5,7 +5,7 @@ import java.lang.reflect.Type;
 
 import com.zhrenjie04.alex.util.EnumUtil;
 
-public class BaseEumnConverter<T extends Enum<?> & BaseEnum> extends AbstractConverter<T>{
+public class BasicEumnConverter<T extends Enum<?> & BasicEnum> extends AbstractConverter<T>{
 	@Override
 	public T convert(String source) {
 		ParameterizedType parameterizedType=(ParameterizedType)this.getClass().getGenericSuperclass();

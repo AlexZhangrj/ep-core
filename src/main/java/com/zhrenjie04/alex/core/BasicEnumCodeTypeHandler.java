@@ -14,11 +14,11 @@ import com.zhrenjie04.alex.util.EnumUtil;
  * @author zhangrenjie
  * @param <E>
  */
-public class BaseEnumCodeTypeHandler<E extends Enum<E> & BaseEnum> extends BaseTypeHandler<E> {
+public class BasicEnumCodeTypeHandler<E extends Enum<E> & BasicEnum> extends BaseTypeHandler<E> {
 
 	private final Class<E> type;
 
-	public BaseEnumCodeTypeHandler(Class<E> type) {
+	public BasicEnumCodeTypeHandler(Class<E> type) {
 		if (type == null) {
 			throw new IllegalArgumentException("Type argument cannot be null");
 		}

@@ -22,6 +22,8 @@ public class Identity implements Serializable{
 	private String groupId;
 	private String positionId;
 	/** 只用于前端显示 */
+	private String groupType;
+	/** 只用于前端显示 */
 	private String groupName;
 	/** 只用于前端显示 */
 	private String groupShortName;
