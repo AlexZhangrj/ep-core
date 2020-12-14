@@ -5,15 +5,15 @@ import com.zhrenjie04.alex.core.BasicEnum;
 
 public enum ExampleEnum implements BasicEnum {
 
-	Auditing("auditing","auditing","审核中"),
-	Approved("approved","approved","审核通过"),
-	Rejected("rejected","rejected","审核不通过");
+	Auditing("auditing",0,"审核中"),
+	Approved("approved",1,"审核通过"),
+	Rejected("rejected",2,"审核不通过");
 	@JsonValue
 	private String frontendCode;
-	private String dbCode;
+	private int dbCode;
 	private String description;
 
-	private ExampleEnum(String frontendCode, String dbCode, String description) {
+	private ExampleEnum(String frontendCode, int dbCode, String description) {
 		this.dbCode=dbCode;
 		this.description=description;
 	}
