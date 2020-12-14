@@ -67,7 +67,7 @@ public class ZkLocker {
 		CountDownLatch latch = new CountDownLatch(1);
 		while(true) {
 			try {
-				//同步创建zookeeper节点
+				//则同步创建zookeeper节点：节点已存在，则抛出异常
 				/* If a node with the same actual path already exists in the ZooKeeper, a
 			     * KeeperException with error code KeeperException.NodeExists will be
 			     * thrown. Note that since a different actual path is used for each
@@ -94,6 +94,7 @@ public class ZkLocker {
 	            };
 	            Stat stat=new Stat();
 	            try {
+	            	//设置Watcher，因为节点已存在；如果此时节点已消失，则抛出异常
 	            	//A KeeperException with error code KeeperException.NoNode will be thrown if no node with the given path exists.
 	                zookeeper.getData("/locker"+lockerKey, w, stat);
 	                latch.await(waitTime, TimeUnit.MICROSECONDS);
@@ -118,10 +119,9 @@ public class ZkLocker {
 	public void unlock() {
 		try {
 			zookeeper.delete("/locker"+lockerKey, -1);
-		} catch (InterruptedException e) {
+		} catch (Exception e) {
         	log.error("unlock delete error",e);
-		} catch (KeeperException e) {
-        	log.error("unlock delete error",e);
+        	throw new RuntimeException(e);
 		}
 	}
 	public boolean hasNetworkErrors() {
