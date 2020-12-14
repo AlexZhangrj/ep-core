@@ -9,5 +9,5 @@ import lombok.ToString;
 @ToString
 public class ExampleEntity {
 	private String id;
-	private AuditStatusEnum status;
+	private ExampleEnum status;
 }

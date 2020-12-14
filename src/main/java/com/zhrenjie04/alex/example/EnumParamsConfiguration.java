@@ -12,7 +12,7 @@ public class EnumParamsConfiguration extends WebMvcConfigurationSupport{
 	@Override
 	public FormattingConversionService mvcConversionService() {
 		FormattingConversionService f = super.mvcConversionService();
-        f.addConverter(new BasicEumnConverter<AuditStatusEnum>());
+        f.addConverter(new AuditStatusEnumConverter());
         return f;
     }
 
@@ -20,10 +20,10 @@ public class EnumParamsConfiguration extends WebMvcConfigurationSupport{
 		System.out.println(new AuditStatusEnumConverter().convert("auditing").getDescription());
 		ExampleEntity entity=new ExampleEntity();
 		entity.setId("adfafasdfasdfasdf");
-		entity.setStatus(AuditStatusEnum.Auditing);
+		entity.setStatus(ExampleEnum.Auditing);
 		System.out.println(JsonUtil.stringify(entity));
 	}
 }
 
-class AuditStatusEnumConverter extends BasicEumnConverter<AuditStatusEnum> {
+class AuditStatusEnumConverter extends BasicEumnConverter<ExampleEnum> {
 }
