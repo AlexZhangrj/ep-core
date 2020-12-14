@@ -1,7 +1,6 @@
 
 package com.zhrenjie04.alex.util;
 
-import java.io.IOException;
 import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -10,17 +9,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.json.JsonReadFeature;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
-import com.zhrenjie04.alex.core.User;
 
 /**
  * @author 张人杰
@@ -79,14 +74,10 @@ public class JsonUtil {
 		}
 		try {
 			return thisObjectMapper.writeValueAsString(obj);
-		} catch (JsonGenerationException e) {
-			logger.error("encode(Object)", e);
-		} catch (JsonMappingException e) {
-			logger.error("encode(Object)", e);
-		} catch (IOException e) {
-			logger.error("encode(Object)", e);
+		} catch (Exception e) {
+			logger.error("doStringify(obj)", e);
+			throw new RuntimeException(e);
 		}
-		return null;
 	}
 	/**
 	 * 不输出指定属性
@@ -144,14 +135,10 @@ public class JsonUtil {
 		}
 		try {
 			return OBJECT_MAPPER.writeValueAsString(obj);
-		} catch (JsonGenerationException e) {
-			logger.error("encode(Object)", e);
-		} catch (JsonMappingException e) {
-			logger.error("encode(Object)", e);
-		} catch (IOException e) {
-			logger.error("encode(Object)", e);
+		} catch (Exception e) {
+			logger.error("stringify(Object)", e);
+			throw new RuntimeException(e);
 		}
-		return null;
 	}
 
 	/**
@@ -163,14 +150,10 @@ public class JsonUtil {
 		}
 		try {
 			return OBJECT_MAPPER.readValue(json, valueType);
-		} catch (JsonParseException e) {
-			logger.error("decode(String, Class<T>)", e);
-		} catch (JsonMappingException e) {
-			logger.error("decode(String, Class<T>)", e);
-		} catch (IOException e) {
-			logger.error("decode(String, Class<T>)", e);
+		} catch (Exception e) {
+			logger.error("parse(Object)", e);
+			throw new RuntimeException(e);
 		}
-		return null;
 	}
 
 	/**
@@ -182,14 +165,10 @@ public class JsonUtil {
 		}
 		try {
 			return (T) OBJECT_MAPPER.readValue(json, typeReference);
-		} catch (JsonParseException e) {
-			logger.error("decode(String, JsonTypeReference<T>)", e);
-		} catch (JsonMappingException e) {
-			logger.error("decode(String, JsonTypeReference<T>)", e);
-		} catch (IOException e) {
-			logger.error("decode(String, JsonTypeReference<T>)", e);
+		} catch (Exception e) {
+			logger.error("parse(String,TypeReference)", e);
+			throw new RuntimeException(e);
 		}
-		return null;
 	}
 
 	public static void main(String[] args) {
@@ -205,9 +184,6 @@ public class JsonUtil {
 		System.out.println(new BigInteger(map.get("userRank").toString()).longValue());
 		System.out.println(map.get("count"));
 		System.out.println(map.get("count"));
-		User user = new User();
-		map.put("user", user);
-		System.out.println(JsonUtil.newSerializer().without(User.class, "isDeleted,otherParams").withOnly(User.class, "userId").doStringify(user));
 	}
 
 	static final String DYNC_FILTER_PREFIX = "DYNC_FILTER";
@@ -366,69 +342,68 @@ public class JsonUtil {
 	@SuppressWarnings("rawtypes")
 	private Class getFilterClass(int count) {
 		switch (count) {
-		case 1:
-			return DynamicFilter1.class;
-		case 2:
-			return DynamicFilter2.class;
-		case 3:
-			return DynamicFilter3.class;
-		case 4:
-			return DynamicFilter4.class;
-		case 5:
-			return DynamicFilter5.class;
-		case 6:
-			return DynamicFilter6.class;
-		case 7:
-			return DynamicFilter7.class;
-		case 8:
-			return DynamicFilter8.class;
-		case 9:
-			return DynamicFilter9.class;
-		case 10:
-			return DynamicFilter10.class;
-		case 11:
-			return DynamicFilter11.class;
-		case 12:
-			return DynamicFilter12.class;
-		case 13:
-			return DynamicFilter13.class;
-		case 14:
-			return DynamicFilter14.class;
-		case 15:
-			return DynamicFilter15.class;
-		case 16:
-			return DynamicFilter16.class;
-		case 17:
-			return DynamicFilter17.class;
-		case 18:
-			return DynamicFilter18.class;
-		case 19:
-			return DynamicFilter19.class;
-		case 20:
-			return DynamicFilter20.class;
-		case 21:
-			return DynamicFilter21.class;
-		case 22:
-			return DynamicFilter22.class;
-		case 23:
-			return DynamicFilter23.class;
-		case 24:
-			return DynamicFilter24.class;
-		case 25:
-			return DynamicFilter25.class;
-		case 26:
-			return DynamicFilter26.class;
-		case 27:
-			return DynamicFilter27.class;
-		case 28:
-			return DynamicFilter28.class;
-		case 29:
-			return DynamicFilter29.class;
-		case 30:
-			return DynamicFilter30.class;
-		default:
-			return null;
+			case 1:
+				return DynamicFilter1.class;
+			case 2:
+				return DynamicFilter2.class;
+			case 3:
+				return DynamicFilter3.class;
+			case 4:
+				return DynamicFilter4.class;
+			case 5:
+				return DynamicFilter5.class;
+			case 6:
+				return DynamicFilter6.class;
+			case 7:
+				return DynamicFilter7.class;
+			case 8:
+				return DynamicFilter8.class;
+			case 9:
+				return DynamicFilter9.class;
+			case 10:
+				return DynamicFilter10.class;
+			case 11:
+				return DynamicFilter11.class;
+			case 12:
+				return DynamicFilter12.class;
+			case 13:
+				return DynamicFilter13.class;
+			case 14:
+				return DynamicFilter14.class;
+			case 15:
+				return DynamicFilter15.class;
+			case 16:
+				return DynamicFilter16.class;
+			case 17:
+				return DynamicFilter17.class;
+			case 18:
+				return DynamicFilter18.class;
+			case 19:
+				return DynamicFilter19.class;
+			case 20:
+				return DynamicFilter20.class;
+			case 21:
+				return DynamicFilter21.class;
+			case 22:
+				return DynamicFilter22.class;
+			case 23:
+				return DynamicFilter23.class;
+			case 24:
+				return DynamicFilter24.class;
+			case 25:
+				return DynamicFilter25.class;
+			case 26:
+				return DynamicFilter26.class;
+			case 27:
+				return DynamicFilter27.class;
+			case 28:
+				return DynamicFilter28.class;
+			case 29:
+				return DynamicFilter29.class;
+			case 30:
+				return DynamicFilter30.class;
+			default:
+				return null;
 		}
 	}
-
 }
