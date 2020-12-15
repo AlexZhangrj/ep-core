@@ -29,7 +29,7 @@ import javax.crypto.NoSuchPaddingException;
 public class RSASignUtil {
 	public static final String KEY_ALGORITHM = "RSA";
 	/** 签名算法 */
-	private static final String SIGNATURE_ALGORITHM = "Sha1WithRSA";
+	private static final String SIGNATURE_ALGORITHM = "SHA256withRSA";
 
 	public static final String PUBLIC_KEY = "publicKey";
 	public static final String PRIVATE_KEY = "privateKey";
