@@ -4,23 +4,15 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.math.BigInteger;
 import java.security.*;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
-import java.security.spec.RSAPrivateCrtKeySpec;
-import java.security.spec.RSAPublicKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 
 /**
  * RSA 签名验签工具类
@@ -45,20 +37,20 @@ public class RSASignUtil {
 	}
 
 	/**
-	 * 通过base64的公钥数据设置公钥，加密数据必须设置公钥，可以不设置私钥
+	 * 通过base64的公钥数据设置公钥（验签数据必须设置公钥，可以不设置私钥）
 	 * 
 	 * @param publicKeyBase64
 	 */
-	public PublicKey restorePublicKey(String publicKeyBase64) {
+	public RSASignUtil restorePublicKey(String publicKeyBase64) {
 		return restorePublicKey(Base64.getDecoder().decode(publicKeyBase64));
 	}
 
 	/**
-	 * 通过base64的私钥数据设置私钥，解密数据必须设置私钥，可以不设置公钥
+	 * 通过base64的私钥数据设置私钥（签名数据必须设置私钥，可以不设置公钥）
 	 * 
 	 * @param privateKeyBase64
 	 */
-	public PrivateKey restorePrivateKey(String privateKeyBase64) {
+	public RSASignUtil restorePrivateKey(String privateKeyBase64) {
 		return restorePrivateKey(Base64.getDecoder().decode(privateKeyBase64));
 	}
 
@@ -195,18 +187,17 @@ public class RSASignUtil {
 	 * @param keyBytes
 	 * @return
 	 */
-	private PublicKey restorePublicKey(byte[] keyBytes) {
+	private RSASignUtil restorePublicKey(byte[] keyBytes) {
 		java.security.Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
 		X509EncodedKeySpec x509EncodedKeySpec = new X509EncodedKeySpec(keyBytes);
 		try {
 			KeyFactory factory = KeyFactory.getInstance(KEY_ALGORITHM);
 			PublicKey publicKey = factory.generatePublic(x509EncodedKeySpec);
 			this.publicKey = publicKey;
-			return publicKey;
+			return this;
 		} catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
-			e.printStackTrace();
+			throw new RuntimeException(e);
 		}
-		return null;
 	}
 
 	/**
@@ -215,18 +206,17 @@ public class RSASignUtil {
 	 * @param keyBytes
 	 * @return
 	 */
-	private PrivateKey restorePrivateKey(byte[] keyBytes) {
+	private RSASignUtil restorePrivateKey(byte[] keyBytes) {
 		java.security.Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
 		PKCS8EncodedKeySpec pkcs8EncodedKeySpec = new PKCS8EncodedKeySpec(keyBytes);
 		try {
 			KeyFactory factory = KeyFactory.getInstance(KEY_ALGORITHM);
 			PrivateKey privateKey = factory.generatePrivate(pkcs8EncodedKeySpec);
 			this.privateKey = privateKey;
-			return privateKey;
+			return this;
 		} catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
-			e.printStackTrace();
+			throw new RuntimeException(e);
 		}
-		return null;
 	}
 
 	/**
@@ -235,9 +225,15 @@ public class RSASignUtil {
 	 */
 	public static void main(String[] args) throws UnsupportedEncodingException {
 		RSASignUtil signUtil = RSASignUtil.getInstance();
-		signUtil.generateKeyBytes();
+//		signUtil.generateKeyBytes();//此行代码仅用于生成公私钥密钥对
+		//调入已有私钥
+		signUtil.restorePrivateKey("MIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQChh0SYmVQwKv4o4nwyagz9INAhDzmPDyl0vtLs/sF87/p61RItjnjdL5ESfkAyjyC5YY+41rtEbMYCiwnUUssPta5CvI1eti6bPUfz+iovIPaDWJhNhR+wAhqcVozLnCsVD7wE9CCREIyIViwOZU+j1IlIvK4cJ8mG2i+c93Vz7IKAAtu8dXxmadsH0ROwCzvzTqPV4gs2IWWy4lPBcppjzSvMDfaUVhCd7lT4azUNZV/GeeiYEGpz4aYnV5MoMN3p+rAJWk1Jls18o/7lMcPrR63zwXM0OcgLIqi1t5nAT059lL5JHS2evxiu5nt5X6Nk0Lss8mFRYvmpodkNVv//AgMBAAECggEBAIeggKRw+hOHxeimYwohqc5Q4vEfS4EnhfOU1p5QOj6hcXv5tE20Nx/hdLpGb7kEHMILfRYClzMY8hnojNROwFnsfuliUIGaDwAiMGxXPVxdHR+kIB3XDYhH+/gRZB8CfdotX/34ze+AKb/AOzXLM1eoea0tYDQb5EbqpNfzoBc4weLGdj3u4Hxi/cVeGBZulo6Si1o9hAFZcZhtsGJak39s4vdKXvql6v8oltpqN0wUJEEKC+evkw7Gp1R2tCft1NqFHt4DBXZ8hue8qaPG/ZFUctDOgNODncHB6IN9noIdgklel/CkRxjKzjDftefkEqhl1EiPrn2cpk15enXm6cECgYEA7JBXWbM3jXm6plNc++dyOp6D//h2NN328m/MJnOFG0SJ0UbcsLrE3l2bi20cwmx22Dj9UOEBEE9GI6agCh9I8qHeCxnjqgpkDPkE7krXnSx5SXAf/qDKnx91wTBlHvC2VRAkHXhdYZCxjG80z8rbRJJAbW7K7ow2f8T5QOBXaYkCgYEArsyz28i4Z5F3iYWPZ1oa9rzKXuD4sdul8UpF3gf2vIpHraUB1CVbNGxoysIkLe7npIogXQ1oI957XNyKnGmuOnqNCM/3/UALhLRcDGn3ccryxaCPo6WFEzKmjFmn/v1kvOFGauQVKA0mnlaEn+d82/bBXyZAWecoQJsP6QiTI0cCgYEAtCNh8NNQ/TFx2U/noYbn7A1jNNsNoEpZztklGy6icFYroCoWyZkfarjbRjurR73ybcpP03PTLIlBPsqWWb7i/KgX/loTjBtnfp1tjMt/DpecMDjqlCn6wVrif18L0Zi5L2MgLTTH3xCgsvDHxWeSus+nse1JKIeqxHbI2wc6aQkCgYBMuBOIt0QYUMRCW5hhKC8FdD7t/ZepmFnw2URo+t3USmzDTdTLo8mv7JThyOvQLTcGBInHzYaTl6ZVT4aWt9t8VyVnZL/XKzDjAbYUzL2J+CUtkBb7ID6T+nsWxpLxW43HSKh7abfPaFY20IpNFHC8qkSc2lEMJGSKVoRZJyZNKQKBgQCCuXKpC/XktVX7G3gJr7/hzL7eSQpy2qcRE9Tcahm4oei/PSIowKtAPFKOD2osYSO3P7uEqup+HtNG8PD3WmJ20ZsUuo/uQJRf0/PM9P9EQWTdOTffqTTmqtQStKFVPYSst6XJ+a/R8WvxjbFR07y45ayW8u3zH3IeAO66mLcZhA==");
+		//用私钥签名
 		byte[] signature=signUtil.sign("adfadfadsfasdfadfadfadsfasdfadfadfadsfasdfadfadfadfadsfasdfadfadfadsfasdfadfadfadsfasdfadfadfadfadsfasdfadfadfadsfasdfadfadfadsfasdfadfadfadfadsfasdfadfadfadsfasdfadfadfadsfasdfadfadfadfadsfasdfadfadfadsfasdfadfadfadsfasdfadfadfadsfasdfadfadfadsfasdfadfadfadsfasdfadfadfadsfasdfadfadfadsfasdfadfadfadsfasdfadfadfadsfasdfadfadfadsfasdfadfadfadsfasdfadfadfadsfasdfadfadfadsfasdfadfadfadsfasdfadfadfadsfasdf".getBytes("UTF-8"));
-		System.out.println(Base64Util.encode(signature));
-		System.out.println(signUtil.verify("adfadfadsfasdfadfadfadsfasdfadfadfadsfasdfadfadfadfadsfasdfadfadfadsfasdfadfadfadsfasdfadfadfadfadsfasdfadfadfadsfasdfadfadfadsfasdfadfadfadfadsfasdfadfadfadsfasdfadfadfadsfasdfadfadfadfadsfasdfadfadfadsfasdfadfadfadsfasdfadfadfadsfasdfadfadfadsfasdfadfadfadsfasdfadfadfadsfasdfadfadfadsfasdfadfadfadsfasdfadfadfadsfasdfadfadfadsfasdfadfadfadsfasdfadfadfadsfasdfadfadfadsfasdfadfadfadsfasdfadfadfadsfasdf".getBytes("UTF-8"),signature));
+		System.out.println("对原文的数字签名："+Base64.getEncoder().encodeToString(signature));
+		//调入已有公钥
+		signUtil.restorePublicKey("MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAoYdEmJlUMCr+KOJ8MmoM/SDQIQ85jw8pdL7S7P7BfO/6etUSLY543S+REn5AMo8guWGPuNa7RGzGAosJ1FLLD7WuQryNXrYumz1H8/oqLyD2g1iYTYUfsAIanFaMy5wrFQ+8BPQgkRCMiFYsDmVPo9SJSLyuHCfJhtovnPd1c+yCgALbvHV8ZmnbB9ETsAs7806j1eILNiFlsuJTwXKaY80rzA32lFYQne5U+Gs1DWVfxnnomBBqc+GmJ1eTKDDd6fqwCVpNSZbNfKP+5THD60et88FzNDnICyKotbeZwE9OfZS+SR0tnr8YruZ7eV+jZNC7LPJhUWL5qaHZDVb//wIDAQAB");
+		//用公钥验签
+		System.out.println("（传入原文和数字签名）用公钥验签结果："+signUtil.verify("adfadfadsfasdfadfadfadsfasdfadfadfadsfasdfadfadfadfadsfasdfadfadfadsfasdfadfadfadsfasdfadfadfadfadsfasdfadfadfadsfasdfadfadfadsfasdfadfadfadfadsfasdfadfadfadsfasdfadfadfadsfasdfadfadfadfadsfasdfadfadfadsfasdfadfadfadsfasdfadfadfadsfasdfadfadfadsfasdfadfadfadsfasdfadfadfadsfasdfadfadfadsfasdfadfadfadsfasdfadfadfadsfasdfadfadfadsfasdfadfadfadsfasdfadfadfadsfasdfadfadfadsfasdfadfadfadsfasdfadfadfadsfasdf".getBytes("UTF-8"),signature));
 	}
 }
