@@ -14,7 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class AlexOperationLogAspect {
 	
-	@AfterReturning(value="execution(public * com.zhrenjie04.alex..*.controller.fore..*.*(..))",returning="result")
+	@AfterReturning(value="execution(public * com.zhrenjie04.alex..*.controller.back..*.*(..))",returning="result")
 	public void  doAfterReturning(JoinPoint joinPoint,Object result){
 		OperationLog operationLog = new OperationLog();
 		operationLog.params = joinPoint.getArgs();
