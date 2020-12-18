@@ -6,6 +6,7 @@ import lombok.ToString;
 @Data
 @ToString
 public class OperationLog {
-	Object[] params;
-	Object result;
+	String paramsJson;
+	String resultJson;
+	String exceptionJson;
 }
