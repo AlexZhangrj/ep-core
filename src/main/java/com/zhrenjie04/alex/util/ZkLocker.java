@@ -1,4 +1,4 @@
-package com.zhrenjie04.alex.core;
+package com.zhrenjie04.alex.util;
 
 import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
