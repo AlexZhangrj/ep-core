@@ -105,7 +105,7 @@ public class RSAEncryptDecryptUtil {
 				int j=0;
 				for(int i=241;i<bytes.length;i++) {//keyBytes作为循环加密密钥
 					byte b=bytes[i];
-					byte a=keyBytes[j%keyBytes.length];
+					byte a=keyBytes245[j%keyBytes245.length];
 					byte c=(byte)(a^b);
 					baos.write(c);
 					++j;
@@ -154,7 +154,7 @@ public class RSAEncryptDecryptUtil {
 				int j=0;
 				for(int i=241;i<bytes.length;i++) {//keyBytes作为循环加密密钥
 					byte b=bytes[i];
-					byte a=keyBytes[j%keyBytes.length];
+					byte a=keyBytes245[j%keyBytes245.length];
 					byte c=(byte)(a^b);
 					baos.write(c);
 					++j;
@@ -185,21 +185,23 @@ public class RSAEncryptDecryptUtil {
 			}
 			byte[] encodedKey=RSADecrypt(privateKey, encodedKeyKey);//245key的密文
 			byte[] fullEncodedKey=new byte[256];
+			byte[] key=new byte[245];
 			for(int i=0;i<245;i++) {
 				fullEncodedKey[i]=encodedKey[i];
+				key[i]=encodedKey[i];
 			}
 			for(int i=0;i<256-245;i++) {//拼接key的密文
 				fullEncodedKey[i+245]=encodedText[i+256];
 			}
-			byte[] key=RSADecrypt(privateKey, fullEncodedKey);//解密key
+			byte[] prefix=RSADecrypt(privateKey, fullEncodedKey);//解密key
 			ByteArrayOutputStream baos=new ByteArrayOutputStream();
-			for(int i=4;i<key.length;i++) {
-				baos.write(key[i]);
+			for(int i=4;i<prefix.length;i++) {
+				baos.write(prefix[i]);
 			}
 			int j=0;
 			for(int i=256+256-245;i<encodedText.length;i++) {//用key的密文解密剩余部分
 				byte b=encodedText[i];
-				byte a=fullEncodedKey[j%fullEncodedKey.length];
+				byte a=key[j%key.length];
 				byte c=(byte)(a^b);
 				baos.write(c);
 				++j;
@@ -226,21 +228,23 @@ public class RSAEncryptDecryptUtil {
 			}
 			byte[] encodedKey=RSADecrypt(privateKey, encodedKeyKey);//245key的密文
 			byte[] fullEncodedKey=new byte[256];
+			byte[] key=new byte[245];
 			for(int i=0;i<245;i++) {
 				fullEncodedKey[i]=encodedKey[i];
+				key[i]=encodedKey[i];
 			}
 			for(int i=0;i<256-245;i++) {//拼接key的密文
 				fullEncodedKey[i+245]=bytes[i+256];
 			}
-			byte[] key=RSADecrypt(privateKey, fullEncodedKey);//解密key
+			byte[] prefix=RSADecrypt(privateKey, fullEncodedKey);//解密key
 			ByteArrayOutputStream baos=new ByteArrayOutputStream();
-			for(int i=4;i<key.length;i++) {
-				baos.write(key[i]);
+			for(int i=4;i<prefix.length;i++) {
+				baos.write(prefix[i]);
 			}
 			int j=0;
 			for(int i=256+256-245;i<bytes.length;i++) {//用key的密文解密剩余部分
 				byte b=bytes[i];
-				byte a=fullEncodedKey[j%fullEncodedKey.length];
+				byte a=key[j%key.length];
 				byte c=(byte)(a^b);
 				baos.write(c);
 				++j;
@@ -310,16 +314,16 @@ public class RSAEncryptDecryptUtil {
 //		System.out.print(decoded);
 
 		// swift生成的key，java使用key解密加密，使用私钥解密成功
-		String privKey="MIIEogIBAAKCAQEArtdHcShs3Y6rZhvFafqJI9q6e0cWQkz9GhvBdQZBPXgomIdle61JvaSxtpJYlp2g8SU9unCL3SCcKLfMcG/20qBa+NS7FFbTsHv5yzvOD9hnO3FRs8SoXrbRpmnuwU06nNzvZ8AQSrdOi8eltylfYf1fTBlWpVz5EhzB4RJ+q+YJyq/87q5kZqO+qAirjbwAM5wn1QxLCy6aG1WMvRlp7nDbkFTVrRzdgv8vYfX4eY4oBPDfW8/hhXTm4KpY/6ulaCO8WGAZYbZ4+LucDssITWdIRZ4LcE1wl/Zr6SuV02DCYbjoUPjVKBreCR6RufX+DcxOPMtd5C5x/2xt/eCjNQIDAQABAoIBAG3+hbWM5yBjtzTf18yaj1h9LMCNslU3tiuMtqJ2suiHBZMf6xpppHCogh0H6K+ory3GbhUy5OrSryt2pik+ZxuPQmw0+RUMotTuyfGvyC1zyU4+NlZQLFSZ0z9MeaYmfe9dl0fALv+yXrnVek3Gu3kcO63WawpReWiJqvd7+TEO11jQaDJHinlU2flPemsk5LurMUVmQkn9cTIuor9lifulFva4p4eofqZXyNQ1cmGXCGsqatnPUDAntMHZZbUDGnFF7wCCr0ur+ukYUhKLy76NPS7GeiJhnrhFY5oIcGVZ0ditUOarjepCGf0ytDNKuzr0/ycc4kJ14PPoUwQUxsECgYEA2mr6b1veTldQHdzasnJSSdzvhB9Btug9AAJrKHIJ7/Lf6Ey7CBv6dcPxrMNAm/MTMy13hMNuR6mDYkvxvYpWOUWNdAtV3BmsmfiPWuJU02OizjzRNX1mhJ1hQXsJ5YnHfQn5dJDRDBzqDcT6Z99P7Nou/WXtGYgjPU9GO30QAZkCgYEAzOzLEUBO7sz7EPQNFD/QlbzKCjGA90GuKgBHb2UTHm3E6pjtn7ebC6xJSK1MTN88hJfGtNYiulxZAUlkR0Xw5qNC8Uvy+z1QU/kP4mFwOCbyELp7JL/A1Bl0GNZYKhLSKdIyKUEXFEx/Ya/dRaVbToY7IyPPkV5XG/CnTY9O5/0CgYAMaT/JzCKZuQRobgBPW4epgtBpZY1KY2/z7C9CoRhHdjma7aFDGLPmtTeqZX3qXqmcotzDwocls1Av6bjW2GGF55neGjbKxvqz1RfwRiQjzumVZodMzs9ggcDhA6jQTj/zrvlp0kDOu2XhWmwQMvRLtSouY/hRFxdJiJOpFbYvIQKBgEknIpqG7WZ70AhORrj6ytgZK7qVz2b0kFq3/Mg8OaX8I3ZnnzQL1BJHr2V9T6aFblIa6Dk30+/Y9YDrFRwIUKXUlBoVNakQSzOezlfO1sOEy5bDKyCEPy6342TWZ2SlkVaSjYuCi92YLUTPBdtN2xld+5BgwUEwf0IfF2othUp1AoGAR01kN8zbHQH9jix3r84OcTTX4ikiWNIzcn1xZII8HksY8QL/rW7KxmqKIEgTrKdzj/3pkRZ/htWSbdlTCi7ZtoyTSTrHyecTje5OMndIrs6qFmy/aLV1rmvB2w0ixiLdONgwAdflnMdS4W9i4OlUYSJNu7h1gFNfRQPFZeTjNG4=";
-		rsaUtil.restorePrivateKey(privKey);
-		encodedString="X6paKPHZbDiXfnyA32bh3/TMJQmXpB4jicYkllGMClTnTHyZJtAk8Hg7kXTTvhbwcwgrf75O64WfLxpsOhxw4vBReH6Vt4+hapJX0eOxPd18ofauwWK5KBg0Jip2Lnz7usjVdCpo+EfTesT1K4He5W7JA53YyEYVqCJ5VLr0/QDVgG4UmBUiZLrQJmYNA4LLiuq8eVTiMhnZ3fc7ZHdk9QmzzqmlwRa8+JHzE+XgcuLUn41yXvdy71PP2xskyQerZTQMnj78VA4csShFGRCWhrCqt4ZbmlwlwuVF6bMJR7BvgonYAMt+HF3N8hdJOCVHWd8xSUBHMtRag5VOkueGWQ==";
-		System.out.println("decodedString:::"+rsaUtil.decrypt(encodedString,"UTF-8"));
-		String pubKey="MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArtdHcShs3Y6rZhvFafqJI9q6e0cWQkz9GhvBdQZBPXgomIdle61JvaSxtpJYlp2g8SU9unCL3SCcKLfMcG/20qBa+NS7FFbTsHv5yzvOD9hnO3FRs8SoXrbRpmnuwU06nNzvZ8AQSrdOi8eltylfYf1fTBlWpVz5EhzB4RJ+q+YJyq/87q5kZqO+qAirjbwAM5wn1QxLCy6aG1WMvRlp7nDbkFTVrRzdgv8vYfX4eY4oBPDfW8/hhXTm4KpY/6ulaCO8WGAZYbZ4+LucDssITWdIRZ4LcE1wl/Zr6SuV02DCYbjoUPjVKBreCR6RufX+DcxOPMtd5C5x/2xt/eCjNQIDAQAB";
-		rsaUtil.restorePublicKey(pubKey);
-		s="12345678";
-		encodedString=rsaUtil.encrypt(s,"UTF-8");
-		System.out.println(s);
-		System.out.println(rsaUtil.decrypt(encodedString,"UTF-8"));
+//		String privKey="MIIEogIBAAKCAQEArtdHcShs3Y6rZhvFafqJI9q6e0cWQkz9GhvBdQZBPXgomIdle61JvaSxtpJYlp2g8SU9unCL3SCcKLfMcG/20qBa+NS7FFbTsHv5yzvOD9hnO3FRs8SoXrbRpmnuwU06nNzvZ8AQSrdOi8eltylfYf1fTBlWpVz5EhzB4RJ+q+YJyq/87q5kZqO+qAirjbwAM5wn1QxLCy6aG1WMvRlp7nDbkFTVrRzdgv8vYfX4eY4oBPDfW8/hhXTm4KpY/6ulaCO8WGAZYbZ4+LucDssITWdIRZ4LcE1wl/Zr6SuV02DCYbjoUPjVKBreCR6RufX+DcxOPMtd5C5x/2xt/eCjNQIDAQABAoIBAG3+hbWM5yBjtzTf18yaj1h9LMCNslU3tiuMtqJ2suiHBZMf6xpppHCogh0H6K+ory3GbhUy5OrSryt2pik+ZxuPQmw0+RUMotTuyfGvyC1zyU4+NlZQLFSZ0z9MeaYmfe9dl0fALv+yXrnVek3Gu3kcO63WawpReWiJqvd7+TEO11jQaDJHinlU2flPemsk5LurMUVmQkn9cTIuor9lifulFva4p4eofqZXyNQ1cmGXCGsqatnPUDAntMHZZbUDGnFF7wCCr0ur+ukYUhKLy76NPS7GeiJhnrhFY5oIcGVZ0ditUOarjepCGf0ytDNKuzr0/ycc4kJ14PPoUwQUxsECgYEA2mr6b1veTldQHdzasnJSSdzvhB9Btug9AAJrKHIJ7/Lf6Ey7CBv6dcPxrMNAm/MTMy13hMNuR6mDYkvxvYpWOUWNdAtV3BmsmfiPWuJU02OizjzRNX1mhJ1hQXsJ5YnHfQn5dJDRDBzqDcT6Z99P7Nou/WXtGYgjPU9GO30QAZkCgYEAzOzLEUBO7sz7EPQNFD/QlbzKCjGA90GuKgBHb2UTHm3E6pjtn7ebC6xJSK1MTN88hJfGtNYiulxZAUlkR0Xw5qNC8Uvy+z1QU/kP4mFwOCbyELp7JL/A1Bl0GNZYKhLSKdIyKUEXFEx/Ya/dRaVbToY7IyPPkV5XG/CnTY9O5/0CgYAMaT/JzCKZuQRobgBPW4epgtBpZY1KY2/z7C9CoRhHdjma7aFDGLPmtTeqZX3qXqmcotzDwocls1Av6bjW2GGF55neGjbKxvqz1RfwRiQjzumVZodMzs9ggcDhA6jQTj/zrvlp0kDOu2XhWmwQMvRLtSouY/hRFxdJiJOpFbYvIQKBgEknIpqG7WZ70AhORrj6ytgZK7qVz2b0kFq3/Mg8OaX8I3ZnnzQL1BJHr2V9T6aFblIa6Dk30+/Y9YDrFRwIUKXUlBoVNakQSzOezlfO1sOEy5bDKyCEPy6342TWZ2SlkVaSjYuCi92YLUTPBdtN2xld+5BgwUEwf0IfF2othUp1AoGAR01kN8zbHQH9jix3r84OcTTX4ikiWNIzcn1xZII8HksY8QL/rW7KxmqKIEgTrKdzj/3pkRZ/htWSbdlTCi7ZtoyTSTrHyecTje5OMndIrs6qFmy/aLV1rmvB2w0ixiLdONgwAdflnMdS4W9i4OlUYSJNu7h1gFNfRQPFZeTjNG4=";
+//		rsaUtil.restorePrivateKey(privKey);
+//		encodedString="X6paKPHZbDiXfnyA32bh3/TMJQmXpB4jicYkllGMClTnTHyZJtAk8Hg7kXTTvhbwcwgrf75O64WfLxpsOhxw4vBReH6Vt4+hapJX0eOxPd18ofauwWK5KBg0Jip2Lnz7usjVdCpo+EfTesT1K4He5W7JA53YyEYVqCJ5VLr0/QDVgG4UmBUiZLrQJmYNA4LLiuq8eVTiMhnZ3fc7ZHdk9QmzzqmlwRa8+JHzE+XgcuLUn41yXvdy71PP2xskyQerZTQMnj78VA4csShFGRCWhrCqt4ZbmlwlwuVF6bMJR7BvgonYAMt+HF3N8hdJOCVHWd8xSUBHMtRag5VOkueGWQ==";
+//		System.out.println("decodedString:::"+rsaUtil.decrypt(encodedString,"UTF-8"));
+//		String pubKey="MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArtdHcShs3Y6rZhvFafqJI9q6e0cWQkz9GhvBdQZBPXgomIdle61JvaSxtpJYlp2g8SU9unCL3SCcKLfMcG/20qBa+NS7FFbTsHv5yzvOD9hnO3FRs8SoXrbRpmnuwU06nNzvZ8AQSrdOi8eltylfYf1fTBlWpVz5EhzB4RJ+q+YJyq/87q5kZqO+qAirjbwAM5wn1QxLCy6aG1WMvRlp7nDbkFTVrRzdgv8vYfX4eY4oBPDfW8/hhXTm4KpY/6ulaCO8WGAZYbZ4+LucDssITWdIRZ4LcE1wl/Zr6SuV02DCYbjoUPjVKBreCR6RufX+DcxOPMtd5C5x/2xt/eCjNQIDAQAB";
+//		rsaUtil.restorePublicKey(pubKey);
+//		s="12345678";
+//		encodedString=rsaUtil.encrypt(s,"UTF-8");
+//		System.out.println(s);
+//		System.out.println(rsaUtil.decrypt(encodedString,"UTF-8"));
 	}
 
 	/**
