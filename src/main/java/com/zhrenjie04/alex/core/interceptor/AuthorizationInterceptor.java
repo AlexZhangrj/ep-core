@@ -1,14 +1,12 @@
 package com.zhrenjie04.alex.core.interceptor;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.UUID;
-
-import javax.annotation.PostConstruct;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.zhrenjie04.alex.core.EpAuthProp;
+import com.zhrenjie04.alex.core.Permission;
+import com.zhrenjie04.alex.core.User;
+import com.zhrenjie04.alex.core.exception.CrisisError;
+import com.zhrenjie04.alex.core.exception.UnauthorizedException;
+import com.zhrenjie04.alex.util.IdGenerator;
+import com.zhrenjie04.alex.util.SessionUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,16 +14,12 @@ import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.zhrenjie04.alex.core.EpAuthProp;
-import com.zhrenjie04.alex.core.Permission;
-import com.zhrenjie04.alex.core.User;
-import com.zhrenjie04.alex.core.exception.CrisisError;
-import com.zhrenjie04.alex.core.exception.UnauthorizedException;
-import com.zhrenjie04.alex.util.IdGenerator;
-import com.zhrenjie04.alex.util.JsonUtil;
-import com.zhrenjie04.alex.util.JwtUtil;
-import com.zhrenjie04.alex.util.RedisUtil;
-import com.zhrenjie04.alex.util.SessionUtil;
+import javax.annotation.PostConstruct;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.UUID;
 
 /**
  * @author 张人杰
@@ -96,17 +90,17 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
 			throws Exception {
 		// 从cookie获取sid
 		String sid = null;
-		Cookie[] cookies = request.getCookies();
-		if (cookies != null) {
-			for (Cookie cookie : cookies) {
-				if ("sid".equals(cookie.getName())) {
-					sid = cookie.getValue();
-					break;
+		sid=request.getHeader("sid");
+		if(sid == null) {
+			Cookie[] cookies = request.getCookies();
+			if (cookies != null) {
+				for (Cookie cookie : cookies) {
+					if ("sid".equals(cookie.getName())) {
+						sid = cookie.getValue();
+						break;
+					}
 				}
 			}
-		}
-		if(sid == null) {
-			sid=request.getHeader("sid");
 			if(sid == null) {
 				sid = "t-" + IdGenerator.nextIdBase48String() + "-" + UUID.randomUUID();
 			}
