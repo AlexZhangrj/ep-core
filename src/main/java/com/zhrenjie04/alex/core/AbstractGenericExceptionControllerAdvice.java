@@ -1,5 +1,11 @@
 package com.zhrenjie04.alex.core;
 
+import com.netflix.hystrix.exception.HystrixRuntimeException;
+import com.zhrenjie04.alex.core.exception.CrisisError;
+import com.zhrenjie04.alex.core.exception.InternalServerException;
+import com.zhrenjie04.alex.core.exception.PrerequisiteNotSatisfiedException;
+import com.zhrenjie04.alex.core.exception.UnauthorizedException;
+import com.zhrenjie04.alex.util.DbUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -7,12 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-
-import com.netflix.hystrix.exception.HystrixRuntimeException;
-import com.zhrenjie04.alex.core.exception.CrisisError;
-import com.zhrenjie04.alex.core.exception.PrerequisiteNotSatisfiedException;
-import com.zhrenjie04.alex.core.exception.UnauthorizedException;
-import com.zhrenjie04.alex.util.DbUtil;
 
 /**
  * @author 张人杰
@@ -28,7 +28,7 @@ public class AbstractGenericExceptionControllerAdvice {
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
 		return new ResponseEntity<String>(
-				"{\"status\":401,\"message\":\""
+				"{\"status\":401,\"error\":\""
 						+ exception.getMessage().replaceAll("\"","\\\\\"").replaceAll("\t"," ").replaceAll("(\r\n|\r|\n|\n\r)", "<br/>") + "\"}",
 				headers, HttpStatus.UNAUTHORIZED);
 	}
@@ -40,9 +40,21 @@ public class AbstractGenericExceptionControllerAdvice {
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
 		return new ResponseEntity<String>(
-				"{\"status\":412,\"message\":\""
+				"{\"status\":412,\"error\":\""
 						+ exception.getMessage().replaceAll("\"","\\\\\"").replaceAll("\t"," ").replaceAll("(\r\n|\r|\n|\n\r)", "<br/>") + "\"}",
 				headers, HttpStatus.PRECONDITION_FAILED);
+	}
+
+	@ExceptionHandler(value = InternalServerException.class)
+	public ResponseEntity<String> internalServerException(InternalServerException error) {
+		logger.error("InternalServerException", error);
+		DbUtil.remove();
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+		return new ResponseEntity<String>(
+				"{\"status\":500,\"error\":\""
+						+ error.getMessage().replaceAll("\"","\\\\\"").replaceAll("\t"," ").replaceAll("(\r\n|\r|\n|\n\r)", "<br/>") + "\"}",
+				headers, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
 	@ExceptionHandler(value = CrisisError.class)
@@ -52,7 +64,7 @@ public class AbstractGenericExceptionControllerAdvice {
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
 		return new ResponseEntity<String>(
-				"{\"status\":500,\"message\":\""
+				"{\"status\":500,\"error\":\""
 						+ error.getMessage().replaceAll("\"","\\\\\"").replaceAll("\t"," ").replaceAll("(\r\n|\r|\n|\n\r)", "<br/>") + "\"}",
 				headers, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
@@ -65,7 +77,7 @@ public class AbstractGenericExceptionControllerAdvice {
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
 		return new ResponseEntity<String>(
-				"{\"status\":500,\"message\":\"" + exception.getFallbackException().getCause().getCause().getMessage()
+				"{\"status\":500,\"error\":\"" + exception.getFallbackException().getCause().getCause().getMessage()
 						.replaceAll("\"","\\\\\"").replaceAll("\t"," ").replaceAll("(\r\n|\r|\n|\n\r)", "<br/>") + "\"}",
 				headers, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
@@ -76,7 +88,7 @@ public class AbstractGenericExceptionControllerAdvice {
 		DbUtil.remove();
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
-		return new ResponseEntity<String>("{\"status\":500,\"message\":\"Null\"}", headers,
+		return new ResponseEntity<String>("{\"status\":500,\"error\":\"Null\"}", headers,
 				HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
@@ -87,7 +99,7 @@ public class AbstractGenericExceptionControllerAdvice {
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
 		return new ResponseEntity<String>(
-				"{\"status\":500,\"message\":\""
+				"{\"status\":500,\"error\":\""
 						+ exception.getMessage().replaceAll("\"","\\\\\"").replaceAll("\t"," ").replaceAll("(\r\n|\r|\n|\n\r)", "<br/>") + "\"}",
 				headers, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
@@ -99,7 +111,7 @@ public class AbstractGenericExceptionControllerAdvice {
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
 		return new ResponseEntity<String>(
-				"{\"status\":500,\"message\":\""
+				"{\"status\":500,\"error\":\""
 						+ error.getMessage().replaceAll("\"","\\\\\"").replaceAll("\t"," ").replaceAll("(\r\n|\r|\n|\n\r)", "<br/>") + "\"}",
 				headers, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
