@@ -24,7 +24,7 @@ public class ZkLocker {
 	/**
 	 * 获取Zookeeper分布式锁
 	 * @param connectString zookeeper链接字符串
-	 * @param sessionTimeout 会话超时时间
+	 * @param sessionTimeoutInMillSeconds 会话超时时间
 	 * @param lockerKey 锁名称（不能使用“：”，“/”等特殊符号，建议只使用纯字母字符串）
 	 * @param waitTime
 	 * @return
