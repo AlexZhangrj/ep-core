@@ -1,20 +1,14 @@
 package com.zhrenjie04.alex.util;
 
+import lombok.extern.slf4j.Slf4j;
+import org.apache.zookeeper.*;
+import org.apache.zookeeper.Watcher.Event.EventType;
+import org.apache.zookeeper.Watcher.Event.KeeperState;
+import org.apache.zookeeper.data.Stat;
+
 import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-
-import org.apache.zookeeper.CreateMode;
-import org.apache.zookeeper.KeeperException;
-import org.apache.zookeeper.WatchedEvent;
-import org.apache.zookeeper.Watcher;
-import org.apache.zookeeper.Watcher.Event.EventType;
-import org.apache.zookeeper.Watcher.Event.KeeperState;
-import org.apache.zookeeper.ZooDefs;
-import org.apache.zookeeper.ZooKeeper;
-import org.apache.zookeeper.data.Stat;
-
-import lombok.extern.slf4j.Slf4j;
 /**
  * ZooKeeper分布式锁组件
  * @author 张人杰 2020.06.11
@@ -36,13 +30,13 @@ public class ZkLocker {
 	 * @return
 	 * @throws IOException
 	 */
-	public static ZkLocker getInstance(String connectString,int sessionTimeout,String lockerKey,Long waitTime){
+	public static ZkLocker getInstance(String connectString,int sessionTimeoutInMillSeconds,String lockerKey,Long waitTime){
 		ZkLocker locker=new ZkLocker();
 		locker.lockerKey=lockerKey;
 		locker.waitTime=waitTime;
 		locker.hasNetworkErrors=false;
 		try {
-			locker.zookeeper=new ZooKeeper(connectString, sessionTimeout, new Watcher() {
+			locker.zookeeper=new ZooKeeper(connectString, sessionTimeoutInMillSeconds, new Watcher() {
 				@Override
 				public void process(WatchedEvent event) {
 					if(KeeperState.SyncConnected==event.getState()) {
