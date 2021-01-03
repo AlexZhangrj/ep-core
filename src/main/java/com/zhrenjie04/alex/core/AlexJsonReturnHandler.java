@@ -1,10 +1,5 @@
 package com.zhrenjie04.alex.core;
 
-import java.lang.annotation.Annotation;
-import java.util.Arrays;
-
-import javax.servlet.http.HttpServletResponse;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.MethodParameter;
@@ -13,6 +8,10 @@ import org.springframework.http.MediaType;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
 import org.springframework.web.method.support.ModelAndViewContainer;
+
+import javax.servlet.http.HttpServletResponse;
+import java.lang.annotation.Annotation;
+import java.util.Arrays;
 
 /**
  * @author 张人杰
@@ -57,6 +56,7 @@ public class AlexJsonReturnHandler implements HandlerMethodReturnValueHandler {
 			JsonResult result = (JsonResult) returnValue;
 			if (result.getStatus() != HttpStatus.OK.value()) {
 				logger.debug("result status is not ok");
+				logger.error(result.getMessage());
 				response.sendError(result.getStatus(), result.getMessage());
 			} else {
 				logger.debug("result status is ok");
