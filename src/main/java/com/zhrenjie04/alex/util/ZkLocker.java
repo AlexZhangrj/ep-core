@@ -61,14 +61,14 @@ public class ZkLocker {
 		CountDownLatch latch = new CountDownLatch(1);
 		while(true) {
 			try {
-				//则同步创建zookeeper节点：节点已存在，则抛出异常
+				//同步创建zookeeper节点：节点已存在，则抛出异常
 				/* If a node with the same actual path already exists in the ZooKeeper, a
 			     * KeeperException with error code KeeperException.NodeExists will be
 			     * thrown. Note that since a different actual path is used for each
 			     * invocation of creating sequential node with the same path argument, the
 			     * call will never throw "file exists" KeeperException.
 			     */
-				zookeeper.create("/locker"+lockerKey, "lock".getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL_SEQUENTIAL);
+				zookeeper.create("/locker-"+lockerKey, "lock".getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL);
 				//加锁成功
 				return;
 	        } catch (Exception e) {
@@ -90,7 +90,7 @@ public class ZkLocker {
 	            try {
 	            	//设置Watcher，因为节点已存在；如果此时节点已消失，则抛出异常
 	            	//A KeeperException with error code KeeperException.NoNode will be thrown if no node with the given path exists.
-	                zookeeper.getData("/locker"+lockerKey, w, stat);
+	                zookeeper.getData("/locker-"+lockerKey, w, stat);
 	                latch.await(waitTime, TimeUnit.MICROSECONDS);
 	            }catch(KeeperException ex) {
 	            	log.error("lock getData error",ex);
@@ -112,10 +112,16 @@ public class ZkLocker {
 	 */
 	public void unlock() {
 		try {
-			zookeeper.delete("/locker"+lockerKey, -1);
+			zookeeper.delete("/locker-"+lockerKey, -1);
 		} catch (Exception e) {
         	log.error("unlock delete error",e);
         	throw new RuntimeException(e);
+		}
+		try {
+			zookeeper.close();
+		} catch (InterruptedException e) {
+			log.error("unlock close error",e);
+			throw new RuntimeException(e);
 		}
 	}
 	public boolean hasNetworkErrors() {
