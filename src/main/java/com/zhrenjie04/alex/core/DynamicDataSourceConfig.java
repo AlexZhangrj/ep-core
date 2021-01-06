@@ -1,17 +1,15 @@
 package com.zhrenjie04.alex.core;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
-import javax.sql.DataSource;
-
+import com.zhrenjie04.alex.util.DbUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.zhrenjie04.alex.util.DbUtil;
+import javax.sql.DataSource;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author 张人杰
@@ -38,7 +36,7 @@ public class DynamicDataSourceConfig {
 	        	datasourceMap.put(key, dataSource);
 	        }
 		}
-		DbUtil.dbCountInGroupMap=epMutiDataSourceProp.getDsCount();
+		DbUtil.dbCountInGroupMap=epMutiDataSourceProp.getDatasourceCount();
         dds.setTargetDataSources(datasourceMap);
         dds.afterPropertiesSet();
         return dds;
