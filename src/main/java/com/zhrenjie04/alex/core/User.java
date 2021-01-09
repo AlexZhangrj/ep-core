@@ -53,6 +53,10 @@ public class User implements Serializable{
 	@Schema(name="电子邮箱")
 	@Email(message = "电子邮箱格式不正确")
 	private String email;
+	@Schema(name="电子邮箱已确认")
+	private Boolean hasEmailConfirmed;
+	@Schema(name="电子邮箱验证码")
+	private String emailVerifyCode;
 	@Schema(name="手机")
 	@Pattern(regexp = "^((1\\d{10})|())$", message = "手机号码格式不正确")
 	private String cellphone;
