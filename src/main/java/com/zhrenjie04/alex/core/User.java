@@ -36,7 +36,7 @@ public class User implements Serializable{
 	@Schema(name="用户id")
 	private String userId;
 	@Schema(name="用户名")
-	@Pattern(regexp = "^[0-9a-zA-Z]{3,30}$", message = "用户名只能为3至30位英文字母或数字")
+	@Pattern(regexp = "^[0-9a-zA-Z]{3,30}$", message = "用户名必须由3至30位英文字母或数字组成")
 	private String username;
 	@Schema(name="原密码")
 	private String oldPassword;
