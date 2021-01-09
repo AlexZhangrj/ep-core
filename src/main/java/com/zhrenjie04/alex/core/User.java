@@ -36,7 +36,7 @@ public class User implements Serializable{
 	@Schema(name="用户id")
 	private String userId;
 	@Schema(name="用户名")
-	@Pattern(regexp = "^[0-9a-zA-Z]{1,30}$", message = "用户名只能为1至30位英文字母或数字")
+	@Pattern(regexp = "^[0-9a-zA-Z]{3,30}$", message = "用户名只能为3至30位英文字母或数字")
 	private String username;
 	@Schema(name="原密码")
 	private String oldPassword;
@@ -48,13 +48,13 @@ public class User implements Serializable{
 	@Schema(name="真实姓名")
 	private String realname;
 	@Schema(name="昵称")
-	@NotEmpty(message = "昵称不能为空")
+//	@NotEmpty(message = "昵称不能为空")
 	private String nickname;
 	@Schema(name="电子邮箱")
 	@Email(message = "电子邮箱格式不正确")
 	private String email;
 	@Schema(name="手机")
-	@Pattern(regexp = "^(1(3|4|5|7|8)\\d{9})|()$", message = "手机号码格式不正确")
+	@Pattern(regexp = "^((1\\d{10})|())$", message = "手机号码格式不正确")
 	private String cellphone;
 	@Schema(name="头像Url")
 	private String portraitUrl;
