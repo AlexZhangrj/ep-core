@@ -3,12 +3,6 @@ package com.zhrenjie04.alex.core;
 import com.zhrenjie04.alex.util.JsonUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.annotation.AfterReturning;
-import org.aspectj.lang.annotation.AfterThrowing;
-import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
-import org.springframework.core.annotation.Order;
-import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -18,7 +12,7 @@ import java.util.List;
 @Slf4j
 public abstract class AlexOperationLogAspect {
 
-	public void  doBefor(JoinPoint joinPoint){
+	public void  doBefore(JoinPoint joinPoint){
 		OperationLog operationLog = new OperationLog();
 		List<Object> args=new LinkedList<>();
 		for(Object arg:joinPoint.getArgs()){
