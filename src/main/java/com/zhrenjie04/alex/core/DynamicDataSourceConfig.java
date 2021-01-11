@@ -27,15 +27,6 @@ public class DynamicDataSourceConfig {
 		Map<Object, Object> datasourceMap = new ConcurrentHashMap<>();
 		HashMap<String,EpDataSourceProps> dataSourceProps = epMutiDataSourceProp.getDatasource();
 		for(String key : dataSourceProps.keySet()){
-//			DataSource dataSource = DataSourceBuilder.create()
-//				.url(dataSourceProps.get(key).getUrl())
-//				.username(dataSourceProps.get(key).getUsername())
-//				.password(dataSourceProps.get(key).getPassword())
-//				.driverClassName(dataSourceProps.get(key).getDriverClassName())
-//				.build();
-//			if (dataSource != null) {
-//	        	datasourceMap.put(key, dataSource);
-//	        }
 			HikariConfig config = new HikariConfig();
 			config.setDriverClassName(dataSourceProps.get(key).getDriverClassName());
 			config.setJdbcUrl(dataSourceProps.get(key).getUrl());
