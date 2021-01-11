@@ -51,9 +51,9 @@ public class DynamicDataSourceConfig {
 			config.setConnectionInitSql(dataSourceProps.get(key).getConnectionInitSql());
 			config.setInitializationFailTimeout(dataSourceProps.get(key).getInitializationFailTimeout());
 			config.setAutoCommit(dataSourceProps.get(key).getAutoCommit());
-			config.addDataSourceProperty("cachePrepStmts", "true");
-			config.addDataSourceProperty("prepStmtCacheSize", "250");
-			config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
+			config.addDataSourceProperty("cachePrepStmts", dataSourceProps.get(key).getCachePrepStmts());
+			config.addDataSourceProperty("prepStmtCacheSize", dataSourceProps.get(key).getPrepStmtCacheSize());
+			config.addDataSourceProperty("prepStmtCacheSqlLimit", dataSourceProps.get(key).getPrepStmtCacheSqlLimit());
 			DataSource dataSource = new HikariDataSource(config);
 			if (dataSource != null) {
 	        	datasourceMap.put(key, dataSource);
