@@ -43,4 +43,34 @@ public class DbDefaultValueUtil {
 			throw new RuntimeException("type is not supported:" + dbColumnType + ":" + defaultValue);
 		}
 	}
+	/**
+	 * 转换数据库命名规则为java命名规则的方法
+	 */
+	public static String converToPostgreDbDefaultValue(String defaultValue, String dbColumnType) {
+		if (defaultValue == null || "".equals(defaultValue)) {
+			return null;
+		}
+		if ("CURRENT_TIMESTAMP".equals(defaultValue)) {
+			return "CURRENT_TIMESTAMP";
+		}
+		if (dbColumnType.startsWith("int")) {
+			return defaultValue;
+		} else if (dbColumnType.startsWith("float")) {
+			return defaultValue;
+		} else if (dbColumnType.startsWith("text")) {
+			return "'" + defaultValue + "'";
+		} else if (dbColumnType.startsWith("character varying")) {
+			return "'" + defaultValue + "'";
+		} else if (dbColumnType.startsWith("datetime")) {
+			return null;
+		} else if (dbColumnType.startsWith("boolean")) {
+			return defaultValue;
+		} else if (dbColumnType.startsWith("date")) {
+			return null;
+		} else if (dbColumnType.startsWith("decimal")) {
+			return defaultValue;
+		} else {
+			throw new RuntimeException("type is not supported:" + dbColumnType + ":" + defaultValue);
+		}
+	}
 }

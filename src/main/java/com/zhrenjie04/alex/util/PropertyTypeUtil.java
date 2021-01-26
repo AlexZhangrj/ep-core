@@ -44,4 +44,41 @@ public class PropertyTypeUtil {
 			throw new RuntimeException("type is not supported:" + dbColumnType + ":" + columnName);
 		}
 	}
+	/**
+	 * 转换数据库命名规则为java命名规则的方法
+	 */
+	public static String convertPostgreTypeToJavaType(String dbColumnType, String columnName) {
+		if (dbColumnType == null || "".equals(dbColumnType)) {
+			return null;
+		}
+		if (columnName.toLowerCase().endsWith("id")) {
+			return "String";
+		}
+		dbColumnType = dbColumnType.toLowerCase();
+		if (dbColumnType.startsWith("float4")) {
+			return "Float";
+		}else if (dbColumnType.startsWith("float")) {
+			return "Double";
+		} else if (dbColumnType.startsWith("text")) {
+			return "String";
+		} else if (dbColumnType.startsWith("character")) {
+			return "String";
+		} else if (dbColumnType.startsWith("character varying")) {
+			return "String";
+		} else if (dbColumnType.startsWith("datetime")) {
+			return "Date";
+		} else if (dbColumnType.startsWith("boolean")) {
+			return "Boolean";
+		} else if (dbColumnType.startsWith("date")) {
+			return "Date";
+		} else if (dbColumnType.startsWith("decimal")) {
+			return "BigDecimal";
+		} else if (dbColumnType.startsWith("int4")) {
+			return "Integer";
+		} else if (dbColumnType.startsWith("int")) {
+			return "Long";
+		} else {
+			throw new RuntimeException("type is not supported:" + dbColumnType + ":" + columnName);
+		}
+	}
 }
