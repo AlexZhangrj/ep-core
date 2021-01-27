@@ -71,9 +71,9 @@ public class User implements Serializable{
 	@Schema(name="性别")
 	private String gender;
 	@Schema(name="是否已锁定")
-	private Boolean isLocked = false;
+	private Boolean isLocked;
 	@Schema(name="是否已删除")
-	private Boolean isDeleted = false;
+	private Boolean isDeleted;
 	@Schema(name="最后登录IP")
 	private String lastLoginIp;
 	@Schema(name="最后登录时间")
