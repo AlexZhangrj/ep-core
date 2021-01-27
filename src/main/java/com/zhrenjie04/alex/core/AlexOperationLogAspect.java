@@ -3,12 +3,17 @@ package com.zhrenjie04.alex.core;
 import com.zhrenjie04.alex.util.JsonUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
+import org.springframework.validation.BeanPropertyBindingResult;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * 后台操作审计日志类，用于记录所有后台的操作日志
+ * 张人杰
+ */
 @Slf4j
 public abstract class AlexOperationLogAspect {
 
@@ -20,6 +25,9 @@ public abstract class AlexOperationLogAspect {
 				continue;
 			}
 			if(arg instanceof HttpServletResponse){
+				continue;
+			}
+			if(arg instanceof BeanPropertyBindingResult){
 				continue;
 			}
 			args.add(arg);
@@ -37,6 +45,9 @@ public abstract class AlexOperationLogAspect {
 			if(arg instanceof HttpServletResponse){
 				continue;
 			}
+			if(arg instanceof BeanPropertyBindingResult){
+				continue;
+			}
 			args.add(arg);
 		}
 		operationLog.setParamsJson(JsonUtil.newSerializer().without(User.class,"password,oldPassword").doStringify(args));
@@ -51,6 +62,9 @@ public abstract class AlexOperationLogAspect {
 				continue;
 			}
 			if(arg instanceof HttpServletResponse){
+				continue;
+			}
+			if(arg instanceof BeanPropertyBindingResult){
 				continue;
 			}
 			args.add(arg);
