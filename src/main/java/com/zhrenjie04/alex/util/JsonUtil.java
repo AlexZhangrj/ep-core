@@ -1,13 +1,6 @@
 
 package com.zhrenjie04.alex.util;
 
-import java.math.BigInteger;
-import java.util.HashMap;
-import java.util.LinkedList;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.json.JsonReadFeature;
@@ -16,6 +9,12 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.math.BigInteger;
+import java.util.HashMap;
+import java.util.LinkedList;
 
 /**
  * @author 张人杰
@@ -24,16 +23,16 @@ public class JsonUtil {
 
 	private static final Logger logger = LoggerFactory.getLogger(JsonUtil.class);
 
-	private final static ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+	private final static ObjectMapper STATIC_OBJECT_MAPPER = new ObjectMapper();
 
 	static {
-		OBJECT_MAPPER.configure(JsonParser.Feature.ALLOW_COMMENTS, true);
-		OBJECT_MAPPER.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
-		OBJECT_MAPPER.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true);
-		OBJECT_MAPPER.configure(JsonReadFeature.ALLOW_UNESCAPED_CONTROL_CHARS.mappedFeature(), true);
-		OBJECT_MAPPER.configure(JsonReadFeature.ALLOW_UNQUOTED_FIELD_NAMES.mappedFeature(), true);
-		OBJECT_MAPPER.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-		OBJECT_MAPPER.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
+		STATIC_OBJECT_MAPPER.configure(JsonParser.Feature.ALLOW_COMMENTS, true);
+		STATIC_OBJECT_MAPPER.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
+		STATIC_OBJECT_MAPPER.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true);
+		STATIC_OBJECT_MAPPER.configure(JsonReadFeature.ALLOW_UNESCAPED_CONTROL_CHARS.mappedFeature(), true);
+		STATIC_OBJECT_MAPPER.configure(JsonReadFeature.ALLOW_UNQUOTED_FIELD_NAMES.mappedFeature(), true);
+		STATIC_OBJECT_MAPPER.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+		STATIC_OBJECT_MAPPER.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
 	}
 
 	static final String DYNC_FILTER_PK_AND_OTHERS = "DYNC_FILTER_PK_AND_OTHERS";
@@ -134,7 +133,7 @@ public class JsonUtil {
 			return (String) obj;
 		}
 		try {
-			return OBJECT_MAPPER.writeValueAsString(obj);
+			return STATIC_OBJECT_MAPPER.writeValueAsString(obj);
 		} catch (Exception e) {
 			logger.error("stringify(Object)", e);
 			throw new RuntimeException(e);
@@ -149,7 +148,7 @@ public class JsonUtil {
 			return null;
 		}
 		try {
-			return OBJECT_MAPPER.readValue(json, valueType);
+			return STATIC_OBJECT_MAPPER.readValue(json, valueType);
 		} catch (Exception e) {
 			logger.error("parse(Object)", e);
 			throw new RuntimeException(e);
@@ -164,7 +163,7 @@ public class JsonUtil {
 			return null;
 		}
 		try {
-			return (T) OBJECT_MAPPER.readValue(json, typeReference);
+			return (T) STATIC_OBJECT_MAPPER.readValue(json, typeReference);
 		} catch (Exception e) {
 			logger.error("parse(String,TypeReference)", e);
 			throw new RuntimeException(e);
