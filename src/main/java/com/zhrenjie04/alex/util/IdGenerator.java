@@ -65,7 +65,7 @@ public class IdGenerator {
 	public static void init(int workerId) {
 		IdGenerator.workerId = workerId;
 		if (workerId > MAX_WORK_ID || workerId < 0) {
-			throw new CrisisError(String.format("worker Id can't be greater than %d or less than 0", MAX_WORK_ID));
+			throw new CrisisError(String.format("worker Id can't be greator than %d or less than 0", MAX_WORK_ID));
 		}
 		logger.info("===========================Attention=================================");
 		logger.info("workerId:" + workerId);

@@ -4,9 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
+import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.Email;
@@ -29,6 +27,9 @@ import java.util.List;
 @Data
 @EqualsAndHashCode(of = {"userId"}, callSuper = false)
 @ToString
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class User implements Serializable{
 	
 	private static final long serialVersionUID = -3683386137654425948L;
@@ -103,8 +104,8 @@ public class User implements Serializable{
 	private HashMap<String, Identity> idToIdentityMap = new HashMap<String, Identity>();
 
 	private Date createdTime;
-	private String createrId;
-	private String createrName;
+	private String creatorId;
+	private String creatorName;
 	private Date lastModifiedTime;
 	private String lastModifierId;
 	private String lastModifierName;

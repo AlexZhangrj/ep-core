@@ -124,8 +124,8 @@ public abstract class AbstractGenericService<T extends AbstractGenericEntity, D 
 	@Transactional
 	public JsonResult insertObject(T object, User sessionUser) {
 		object.setPK(IdGenerator.nextIdBase48String());
-		object.setCreaterId(sessionUser.getUserId());
-		object.setCreaterName(sessionUser.getRealname());
+		object.setCreatorId(sessionUser.getUserId());
+		object.setCreatorName(sessionUser.getRealname());
 		getDao().insertObject(object);
 		JsonResult result = JsonResult.success("插入成功");
 		result.put("object", object);

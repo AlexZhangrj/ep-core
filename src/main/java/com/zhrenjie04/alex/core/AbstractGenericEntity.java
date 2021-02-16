@@ -1,12 +1,12 @@
 package com.zhrenjie04.alex.core;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 /**
  * 实体类的抽象类，所有实体类需要集成此类 梳理架构，版本2.2
@@ -46,11 +46,11 @@ public abstract class AbstractGenericEntity implements Serializable {
 	/**
 	 * 创建者id
 	 */
-	private String createrId;
+	private String creatorId;
 	/**
 	 * 创建者真实姓名
 	 */
-	private String createrName;
+	private String creatorName;
 	/**
 	 * 最后修改时间
 	 */
@@ -81,20 +81,20 @@ public abstract class AbstractGenericEntity implements Serializable {
 		this.createdTime = createdTime;
 	}
 
-	public String getCreaterId() {
-		return createrId;
+	public String getCreatorId() {
+		return creatorId;
 	}
 
-	public void setCreaterId(String createrId) {
-		this.createrId = createrId;
+	public void setCreatorId(String creatorId) {
+		this.creatorId = creatorId;
 	}
 
-	public String getCreaterName() {
-		return createrName;
+	public String getCreatorName() {
+		return creatorName;
 	}
 
-	public void setCreaterName(String createrName) {
-		this.createrName = createrName;
+	public void setCreatorName(String creatorName) {
+		this.creatorName = creatorName;
 	}
 
 	public Date getLastModifiedTime() {
