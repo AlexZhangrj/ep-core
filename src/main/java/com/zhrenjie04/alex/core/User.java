@@ -80,8 +80,10 @@ public class User implements Serializable{
 	@Schema(name="最后登录时间")
 	@JsonSerialize(using=AlexTimestampSerializer.class)
 	private Date lastLoginTime;
-	@Schema(name="jobs")
+	@Schema(name="所有身份")
 	private List<Identity> identities = new LinkedList<Identity>();
+	@Schema(name="所有机构身份")
+	private List<Identity> orgIdentities = new LinkedList<Identity>();
 	@Schema(name="当前身份id")
 	private String currentIdentityId;
 	@Schema(name="权限Codes")
@@ -152,5 +154,4 @@ public class User implements Serializable{
 			}
 		}
 	}
-	
 }

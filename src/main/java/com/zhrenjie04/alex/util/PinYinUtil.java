@@ -1,13 +1,13 @@
 package com.zhrenjie04.alex.util;
 
-import java.util.Random;
-
 import net.sourceforge.pinyin4j.PinyinHelper;
 import net.sourceforge.pinyin4j.format.HanyuPinyinCaseType;
 import net.sourceforge.pinyin4j.format.HanyuPinyinOutputFormat;
 import net.sourceforge.pinyin4j.format.HanyuPinyinToneType;
 import net.sourceforge.pinyin4j.format.HanyuPinyinVCharType;
 import net.sourceforge.pinyin4j.format.exception.BadHanyuPinyinOutputFormatCombination;
+
+import java.util.Random;
 
 /***
  * 
@@ -223,6 +223,9 @@ public class PinYinUtil {
 	 * @return String
 	 */
 	public static String getPinYin(String src) {
+		if(src==null){
+			return "";
+		}
 		char[] t1 = null;
 		t1 = src.toCharArray();
 		String[] t2 = new String[t1.length];
