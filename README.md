@@ -4,7 +4,7 @@ Map数据类型的返回值为Json数据，需要对SpringMVC框架做一个hack
 
 使用方式，参照：ExampleController
 
-在我的架构代码中，遵循以下规则：
+在本的架构代码中，遵循以下规则：
 
 1、包括辅助属性，所有的属性都写入Entity；
 
