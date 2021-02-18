@@ -13,9 +13,6 @@ import java.util.Date;
 @Data
 @EqualsAndHashCode(of = {"identityId"}, callSuper = false)
 @ToString
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class Identity implements Serializable{
 	
 	private static final long serialVersionUID = 6547730311451225436L;
