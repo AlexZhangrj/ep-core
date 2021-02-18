@@ -38,12 +38,12 @@ public class AlexJsonReturnHandler implements HandlerMethodReturnValueHandler {
 		Arrays.asList(annos).forEach(a -> {
 			if (a instanceof ResponseJsonWithFilter) {
 				ResponseJsonWithFilter json = (ResponseJsonWithFilter) a;
-				jsonSerializer.filter(json.type(), json.include(), json.filter());
+				jsonSerializer.filter(json.type(), json.include(), json.exclude());
 			}
 			if (a instanceof ResponseJsonWithFilters) {
 				ResponseJsonWithFilters jsonFilters = (ResponseJsonWithFilters) a;
 				for (ResponseJsonWithFilter json : jsonFilters.value()) {
-					jsonSerializer.filter(json.type(), json.include(), json.filter());
+					jsonSerializer.filter(json.type(), json.include(), json.exclude());
 				}
 			}
 		});

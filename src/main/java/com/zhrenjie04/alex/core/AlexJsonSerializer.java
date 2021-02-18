@@ -1,11 +1,5 @@
 package com.zhrenjie04.alex.core;
 
-import java.math.BigDecimal;
-import java.util.Date;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -15,6 +9,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * @author Alex.Zhang
@@ -350,9 +349,9 @@ public class AlexJsonSerializer {
 	/**
 	 * @param clazz   target type
 	 * @param include include fields
-	 * @param filter  filter fields
+	 * @param exclude  exclude fields
 	 */
-	public void filter(Class<?> clazz, String include, String filter) {
+	public void filter(Class<?> clazz, String include, String exclude) {
 		++filterCount;
 		if (clazz == null) {
 			TClazzLocal.remove();
@@ -369,10 +368,10 @@ public class AlexJsonSerializer {
 			if (tClazz == null) {
 				return;
 			}
-			filter = "otherParams,otherResults";
+			exclude = "otherParams,otherResults";
 			filterProvider.addFilter(DYNC_FILTER_PREFIX + filterCount,
-					SimpleBeanPropertyFilter.serializeAllExcept(filter.replaceAll("\\s", "").split(",")));
-			mapper.addMixIn(tClazz, getFilterClass(filterCount));
+					SimpleBeanPropertyFilter.serializeAllExcept(exclude.replaceAll("\\s", "").split(",")));
+			mapper.addMixIn(tClazz, getExcludeClass(filterCount));
 			return;
 		}
 		TClazzLocal.remove();
@@ -387,10 +386,10 @@ public class AlexJsonSerializer {
 			filterProvider.addFilter(DYNC_INCLUDE_PREFIX + filterCount,
 					SimpleBeanPropertyFilter.filterOutAllExcept(include.replaceAll("\\s", "").split(",")));
 			mapper.addMixIn(clazz, getIncludeClass(filterCount));
-		} else if (filter != null && filter.length() > 0) {
+		} else if (exclude != null && exclude.length() > 0) {
 			filterProvider.addFilter(DYNC_FILTER_PREFIX + filterCount,
-					SimpleBeanPropertyFilter.serializeAllExcept(filter.replaceAll("\\s", "").split(",")));
-			mapper.addMixIn(clazz, getFilterClass(filterCount));
+					SimpleBeanPropertyFilter.serializeAllExcept(exclude.replaceAll("\\s", "").split(",")));
+			mapper.addMixIn(clazz, getExcludeClass(filterCount));
 		}
 	}
 
@@ -463,7 +462,7 @@ public class AlexJsonSerializer {
 	}
 
 	@SuppressWarnings("rawtypes")
-	private Class getFilterClass(int count) {
+	private Class getExcludeClass(int count) {
 		switch (count) {
 		case 1:
 			return DynamicFilter1.class;
