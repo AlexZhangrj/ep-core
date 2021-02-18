@@ -1,0 +1,3 @@
+由于JsonResult实质是一个Map，默认SpringMVC的Controller不能处理
+Map数据类型的返回值为Json数据，需要对SpringMVC框架做一个hack，有
+需要的email我：zhangrenjie1981@126.com
