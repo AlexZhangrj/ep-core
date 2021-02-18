@@ -12,5 +12,5 @@ import java.lang.annotation.Target;
 public @interface ResponseJsonWithFilter {
     Class<?> type();
     String include() default "";
-    String filter() default "";
+    String exclude() default "";
 }

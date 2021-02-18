@@ -13,5 +13,5 @@ public @interface ResultFilter {
 
 	String include() default "";
 
-	String filter() default "";
+	String exclude() default "";
 }
