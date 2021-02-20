@@ -41,7 +41,7 @@ public class RSASignUtil {
 	 * 
 	 * @param publicKeyBase64
 	 */
-	public RSASignUtil restorePublicKey(String publicKeyBase64) {
+	public PublicKey restorePublicKey(String publicKeyBase64) {
 		return restorePublicKey(Base64.getDecoder().decode(publicKeyBase64));
 	}
 
@@ -50,7 +50,7 @@ public class RSASignUtil {
 	 * 
 	 * @param privateKeyBase64
 	 */
-	public RSASignUtil restorePrivateKey(String privateKeyBase64) {
+	public PrivateKey restorePrivateKey(String privateKeyBase64) {
 		return restorePrivateKey(Base64.getDecoder().decode(privateKeyBase64));
 	}
 
@@ -187,14 +187,14 @@ public class RSASignUtil {
 	 * @param keyBytes
 	 * @return
 	 */
-	private RSASignUtil restorePublicKey(byte[] keyBytes) {
+	private PublicKey restorePublicKey(byte[] keyBytes) {
 		java.security.Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
 		X509EncodedKeySpec x509EncodedKeySpec = new X509EncodedKeySpec(keyBytes);
 		try {
 			KeyFactory factory = KeyFactory.getInstance(KEY_ALGORITHM);
 			PublicKey publicKey = factory.generatePublic(x509EncodedKeySpec);
 			this.publicKey = publicKey;
-			return this;
+			return publicKey;
 		} catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
 			throw new RuntimeException(e);
 		}
@@ -206,14 +206,14 @@ public class RSASignUtil {
 	 * @param keyBytes
 	 * @return
 	 */
-	private RSASignUtil restorePrivateKey(byte[] keyBytes) {
+	private PrivateKey restorePrivateKey(byte[] keyBytes) {
 		java.security.Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
 		PKCS8EncodedKeySpec pkcs8EncodedKeySpec = new PKCS8EncodedKeySpec(keyBytes);
 		try {
 			KeyFactory factory = KeyFactory.getInstance(KEY_ALGORITHM);
 			PrivateKey privateKey = factory.generatePrivate(pkcs8EncodedKeySpec);
 			this.privateKey = privateKey;
-			return this;
+			return privateKey;
 		} catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
 			throw new RuntimeException(e);
 		}
