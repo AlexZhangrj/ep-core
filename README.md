@@ -27,4 +27,4 @@
 
 6. 使用xxxVo的唯一目的：只用来适配输入验证框架。
 
-Vo使用例子，参考：ExampleController、UserVoForExampleRegister。
+Vo使用例子，参考：[ExampleController](https://github.com/AlexZhangrj/ep-core/blob/master/src/main/java/com/zhrenjie04/alex/example/ExampleController.java) 、[UserVoForExampleRegister](https://github.com/AlexZhangrj/ep-core/blob/master/src/main/java/com/zhrenjie04/alex/example/domain/UserVoForExampleRegister.java) 。
