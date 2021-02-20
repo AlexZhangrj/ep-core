@@ -13,7 +13,7 @@
 
 ## 使用方式，参照：[ExampleController](https://github.com/AlexZhangrj/ep-core/blob/master/src/main/java/com/zhrenjie04/alex/example/ExampleController.java)
 
-## 在本的架构代码中，遵循以下规则：
+## 在本架构代码中，遵循以下规则：
 
 1. 包括辅助属性，所有的属性都写入Entity；
 
