@@ -11,7 +11,7 @@
 
 2. 对SpringMVC框架做一个hack，然后，只使用：@ResponseJsonWithFilter或@ResponseJson标注，有需要的email我：zhangrenjie1981@126.com
 
-## 使用方式，参照：ExampleController
+## 使用方式，参照：[ExampleController](https://github.com/AlexZhangrj/ep-core/blob/master/src/main/java/com/zhrenjie04/alex/example/ExampleController.java)
 
 ## 在本的架构代码中，遵循以下规则：
 
