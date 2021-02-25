@@ -27,7 +27,7 @@ import java.util.List;
 @Data
 @EqualsAndHashCode(of = {"userId"}, callSuper = false)
 @ToString
-public class User implements Serializable{
+public class User extends BasicEntity implements Serializable{
 	
 	private static final long serialVersionUID = -3683386137654425948L;
 

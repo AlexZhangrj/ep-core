@@ -2,6 +2,7 @@
 package com.zhrenjie04.alex.util;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.json.JsonReadFeature;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -44,7 +45,7 @@ public class JsonUtil {
 	private int filterCount = 0;
 	private SimpleFilterProvider filterProvider;
 
-	private JsonUtil() {
+	private JsonUtil(boolean onlyNonNullProperties) {
 		if (thisObjectMapper == null) {
 			thisObjectMapper = new ObjectMapper();
 			thisObjectMapper.configure(JsonParser.Feature.ALLOW_COMMENTS, true);
@@ -58,10 +59,17 @@ public class JsonUtil {
 		if (filterProvider == null) {
 			filterProvider = new SimpleFilterProvider();
 		}
+		if(onlyNonNullProperties){
+			thisObjectMapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
+		}
 	}
 
 	public static JsonUtil newSerializer() {
-		return new JsonUtil();
+		return new JsonUtil(false);
+	}
+
+	public static JsonUtil newSerializer(boolean onlyNonNullProperties) {
+		return new JsonUtil(onlyNonNullProperties);
 	}
 
 	public String doStringify(Object obj) {

@@ -32,7 +32,7 @@ public abstract class AlexOperationLogAspect {
 			}
 			args.add(arg);
 		}
-		operationLog.setParamsJson(JsonUtil.newSerializer().without(User.class,"password,oldPassword").doStringify(args));
+		operationLog.setParamsJson(JsonUtil.newSerializer(false).without(User.class,"password,oldPassword").doStringify(args));
 		log.info("Operation Start:{}",operationLog);
 	}
 	public void  doAfterReturning(JoinPoint joinPoint,Object result){
@@ -50,7 +50,7 @@ public abstract class AlexOperationLogAspect {
 			}
 			args.add(arg);
 		}
-		operationLog.setParamsJson(JsonUtil.newSerializer().without(User.class,"password,oldPassword").doStringify(args));
+		operationLog.setParamsJson(JsonUtil.newSerializer(false).without(User.class,"password,oldPassword").doStringify(args));
 		operationLog.setResultJson(JsonUtil.stringify(result));
 		log.info("Operation Finished:{}",operationLog);
     }
@@ -69,7 +69,7 @@ public abstract class AlexOperationLogAspect {
 			}
 			args.add(arg);
 		}
-		operationLog.setParamsJson(JsonUtil.newSerializer().without(User.class,"password,oldPassword").doStringify(args));
+		operationLog.setParamsJson(JsonUtil.newSerializer(false).without(User.class,"password,oldPassword").doStringify(args));
 		operationLog.setExceptionJson(JsonUtil.stringify(e));
 		log.info("Operation Exception:{}",operationLog);
 	}

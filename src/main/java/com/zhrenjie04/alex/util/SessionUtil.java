@@ -1,11 +1,10 @@
 package com.zhrenjie04.alex.util;
 
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.zhrenjie04.alex.core.User;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.Set;
 
 /**
  * 此类用于以后Session提取工作 所有session中存储的内容，以后会提取到redis中
@@ -43,7 +42,7 @@ public class SessionUtil {
 
 	public static void setSessionUser(HttpServletRequest request, User user) {
 		String sid = (String) request.getAttribute("sid");
-		String userJson = JsonUtil.stringify(user);
+		String userJson = JsonUtil.newSerializer(true).doStringify(user);
 		RedisUtil.hset(sid, "sessionUser", userJson,sessionKeepTimeSeconds);
 		String userSids = "user-sids-" + user.getUserId();
 		RedisUtil.touch(userSids, sessionKeepTimeSeconds);
@@ -58,7 +57,7 @@ public class SessionUtil {
 	 */
 	public static void setSession(HttpServletRequest request, String key, Object value) {
 		String sid = (String) request.getAttribute("sid");
-		String json = JsonUtil.stringify(value);
+		String json = JsonUtil.newSerializer(true).doStringify(value);
 		RedisUtil.hset(sid, "key:"+key, json,sessionKeepTimeSeconds);
 		String userJson = RedisUtil.hget(sid, "sessionUser", sessionKeepTimeSeconds);
 		if (userJson != null) {
