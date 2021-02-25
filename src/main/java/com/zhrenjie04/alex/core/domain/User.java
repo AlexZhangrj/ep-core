@@ -58,6 +58,10 @@ public class User extends BasicEntity implements Serializable{
 	private Boolean hasEmailConfirmed;
 	@Schema(name="电子邮箱验证码")
 	private String emailVerifyCode;
+	@Schema(name="邮件重置密码验证码")
+	private String emailResetPasswordCode;
+	@Schema(name="邮件重置密码到期日")
+	private Date emailResetPasswordDueDate;
 	@Schema(name="手机")
 	@Pattern(regexp = "^((1\\d{10})|())$", message = "手机号码格式不正确")
 	private String cellphone;
