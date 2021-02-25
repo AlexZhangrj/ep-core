@@ -1,6 +1,6 @@
 package com.zhrenjie04.alex.example.domain;
 
-import com.zhrenjie04.alex.core.User;
+import com.zhrenjie04.alex.core.domain.User;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;

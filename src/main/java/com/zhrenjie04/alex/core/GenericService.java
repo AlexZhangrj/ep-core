@@ -1,5 +1,7 @@
 package com.zhrenjie04.alex.core;
 
+import com.zhrenjie04.alex.core.domain.User;
+
 import java.util.HashMap;
 import java.util.List;
 

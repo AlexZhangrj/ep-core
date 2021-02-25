@@ -3,6 +3,7 @@ package com.zhrenjie04.alex.core;
 import java.util.HashMap;
 import java.util.List;
 
+import com.zhrenjie04.alex.core.domain.User;
 import org.slf4j.Logger;
 import org.springframework.transaction.annotation.Transactional;
 

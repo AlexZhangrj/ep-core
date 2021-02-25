@@ -1,10 +1,14 @@
-package com.zhrenjie04.alex.core;
+package com.zhrenjie04.alex.core.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.zhrenjie04.alex.core.AlexTimestampSerializer;
+import com.zhrenjie04.alex.core.BasicEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.*;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.Email;
@@ -46,7 +50,6 @@ public class User extends BasicEntity implements Serializable{
 	@Schema(name="真实姓名")
 	private String realname;
 	@Schema(name="昵称")
-//	@NotEmpty(message = "昵称不能为空")
 	private String nickname;
 	@Schema(name="电子邮箱")
 	@Email(message = "电子邮箱格式不正确")
@@ -75,7 +78,7 @@ public class User extends BasicEntity implements Serializable{
 	@Schema(name="最后登录IP")
 	private String lastLoginIp;
 	@Schema(name="最后登录时间")
-	@JsonSerialize(using=AlexTimestampSerializer.class)
+	@JsonSerialize(using= AlexTimestampSerializer.class)
 	private Date lastLoginTime;
 	@Schema(name="所有身份")
 	private List<Identity> identities = new LinkedList<Identity>();

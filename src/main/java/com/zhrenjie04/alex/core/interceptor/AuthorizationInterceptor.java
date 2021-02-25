@@ -2,7 +2,7 @@ package com.zhrenjie04.alex.core.interceptor;
 
 import com.zhrenjie04.alex.core.EpAuthProp;
 import com.zhrenjie04.alex.core.Permission;
-import com.zhrenjie04.alex.core.User;
+import com.zhrenjie04.alex.core.domain.User;
 import com.zhrenjie04.alex.core.exception.CrisisError;
 import com.zhrenjie04.alex.core.exception.UnauthorizedException;
 import com.zhrenjie04.alex.util.IdGenerator;

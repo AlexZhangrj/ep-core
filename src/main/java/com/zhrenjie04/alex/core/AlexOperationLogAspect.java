@@ -1,5 +1,6 @@
 package com.zhrenjie04.alex.core;
 
+import com.zhrenjie04.alex.core.domain.User;
 import com.zhrenjie04.alex.util.JsonUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;

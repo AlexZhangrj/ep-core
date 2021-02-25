@@ -1,5 +1,6 @@
-package com.zhrenjie04.alex.core;
+package com.zhrenjie04.alex.core.domain;
 
+import com.zhrenjie04.alex.core.enums.GroupTypeEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
@@ -31,9 +32,8 @@ public class Identity implements Serializable{
 	private Date lastModifiedTime;
 	private String lastModifierId;
 	private String lastModifierName;
+	private GroupTypeEnum groupType;
 
-	/** 只用于前端显示 */
-	private String groupType;
 	/** 只用于前端显示 */
 	private String groupName;
 	/** 只用于前端显示 */

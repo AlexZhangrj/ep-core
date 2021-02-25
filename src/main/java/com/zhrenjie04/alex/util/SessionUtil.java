@@ -1,7 +1,7 @@
 package com.zhrenjie04.alex.util;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.zhrenjie04.alex.core.User;
+import com.zhrenjie04.alex.core.domain.User;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Set;

@@ -1,6 +1,7 @@
 package com.zhrenjie04.alex.example;
 
 import com.zhrenjie04.alex.core.*;
+import com.zhrenjie04.alex.core.domain.User;
 import com.zhrenjie04.alex.example.domain.UserVoForExampleRegister;
 import com.zhrenjie04.alex.util.SessionUtil;
 import lombok.extern.slf4j.Slf4j;

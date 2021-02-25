@@ -3,6 +3,7 @@ package com.zhrenjie04.alex.core;
 import java.util.HashMap;
 import java.util.List;
 
+import com.zhrenjie04.alex.core.domain.User;
 import org.springframework.data.mongodb.core.query.Criteria;
 
 /**
@@ -26,7 +27,7 @@ public interface GenericServiceMongoDb<T extends AbstractGenericEntity> {
 	 * @param sessionUser
 	 * @return
 	 */
-	JsonResult queryAll(User sessionUser,String orderBy,String orderType,Criteria ...criterias);
+	JsonResult queryAll(User sessionUser, String orderBy, String orderType, Criteria ...criterias);
 
 	/**
 	 * 返回分页查询数据
