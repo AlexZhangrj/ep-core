@@ -10,4 +10,5 @@ public class BasicEntity {
     Integer pageSize;
     Integer total;
     Integer totalPages;
+    String gid;
 }
