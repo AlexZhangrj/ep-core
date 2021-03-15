@@ -1,10 +1,7 @@
 package com.zhrenjie04.alex.core;
 
 import com.netflix.hystrix.exception.HystrixRuntimeException;
-import com.zhrenjie04.alex.core.exception.CrisisError;
-import com.zhrenjie04.alex.core.exception.InternalServerException;
-import com.zhrenjie04.alex.core.exception.PrerequisiteNotSatisfiedException;
-import com.zhrenjie04.alex.core.exception.UnauthorizedException;
+import com.zhrenjie04.alex.core.exception.*;
 import com.zhrenjie04.alex.util.DbUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +28,17 @@ public class AbstractGenericExceptionControllerAdvice {
 				"{\"status\":401,\"error\":\""
 						+ exception.getMessage().replaceAll("\"","\\\\\"").replaceAll("\t"," ").replaceAll("(\r\n|\r|\n|\n\r)", "<br/>") + "\"}",
 				headers, HttpStatus.UNAUTHORIZED);
+	}
+
+	@ExceptionHandler(value = RequestInputErrorException.class)
+	public ResponseEntity<String> requestInputErrorException(Exception exception) {
+		logger.error("RequestInputErrorException", exception);
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+		return new ResponseEntity<String>(
+				"{\"status\":406,\"error\":\""
+						+ exception.getMessage().replaceAll("\"","\\\\\"").replaceAll("\t"," ").replaceAll("(\r\n|\r|\n|\n\r)", "<br/>") + "\"}",
+				headers, HttpStatus.PRECONDITION_FAILED);
 	}
 
 	@ExceptionHandler(value = PrerequisiteNotSatisfiedException.class)
