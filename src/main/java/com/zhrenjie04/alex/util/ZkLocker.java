@@ -20,17 +20,28 @@ public class ZkLocker {
 	private String lockerKey;
 	private Long waitTime=1000L;
 	private Boolean hasNetworkErrors=false;
+
+	private static String connectString;
+	private static int sessionTimeoutInMillSeconds;
 	private ZkLocker() {}
+
 	/**
-	 * 获取Zookeeper分布式锁
+	 * 工具初始化方法
 	 * @param connectString zookeeper链接字符串
 	 * @param sessionTimeoutInMillSeconds 会话超时时间
+	 */
+	public static void init(String connectString,int sessionTimeoutInMillSeconds){
+		ZkLocker.connectString=connectString;
+		ZkLocker.sessionTimeoutInMillSeconds=sessionTimeoutInMillSeconds;
+	}
+	/**
+	 * 获取Zookeeper分布式锁
 	 * @param lockerKey 锁名称（不能使用“：”，“/”等特殊符号，建议只使用纯字母字符串）
 	 * @param waitTime
 	 * @return
 	 * @throws IOException
 	 */
-	public static ZkLocker getInstance(String connectString,int sessionTimeoutInMillSeconds,String lockerKey,Long waitTime){
+	public static ZkLocker getInstance(String lockerKey,Long waitTime){
 		ZkLocker locker=new ZkLocker();
 		locker.lockerKey=lockerKey;
 		locker.waitTime=waitTime;
