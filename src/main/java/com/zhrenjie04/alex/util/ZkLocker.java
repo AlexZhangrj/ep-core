@@ -79,7 +79,8 @@ public class ZkLocker {
 			     * invocation of creating sequential node with the same path argument, the
 			     * call will never throw "file exists" KeeperException.
 			     */
-				zookeeper.create("/locker-"+lockerKey, "lock".getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL);
+				//2021-04-13为了防止羊群效应，改为临时顺序节点
+				zookeeper.create("/locker-"+lockerKey, "lock".getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL_SEQUENTIAL);
 				//加锁成功
 				return;
 	        } catch (Exception e) {
