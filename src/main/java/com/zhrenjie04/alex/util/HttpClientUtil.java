@@ -1,23 +1,13 @@
 package com.zhrenjie04.alex.util;
 
-import java.io.IOException;
-import java.io.InterruptedIOException;
-import java.net.UnknownHostException;
-import java.util.HashMap;
-import java.util.Map.Entry;
-
-import javax.net.ssl.SSLException;
-
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.zhrenjie04.alex.core.exception.CrisisError;
 import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpRequestRetryHandler;
 import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpDelete;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.methods.*;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.config.SocketConfig;
 import org.apache.http.conn.ConnectTimeoutException;
@@ -30,8 +20,12 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.zhrenjie04.alex.core.exception.CrisisError;
+import javax.net.ssl.SSLException;
+import java.io.IOException;
+import java.io.InterruptedIOException;
+import java.net.UnknownHostException;
+import java.util.HashMap;
+import java.util.Map.Entry;
 
 /**
  * @author 张人杰
@@ -65,10 +59,9 @@ public class HttpClientUtil {
 	 * 
 	 * @param url
 	 * @param paramObject   比如:传入hashMap
-	 * @param returnCharSet 对方服务器返回字符集，比如:传入GB2312
 	 * @return
 	 */
-	public static String doPostJson(String url, Object paramObject) {
+	public static String doPostJson(String url, Object paramObject) throws Exception {
 		return doPostJson(url, paramObject, CHARSET_UTF8);
 	}
 
@@ -77,10 +70,9 @@ public class HttpClientUtil {
 	 * 
 	 * @param url
 	 * @param paramObject   比如:传入hashMap
-	 * @param returnCharSet 对方服务器返回字符集，比如:传入GB2312
 	 * @return
 	 */
-	public static String doPostJson(String url, HashMap<String, String> headers, Object paramObject) {
+	public static String doPostJson(String url, HashMap<String, String> headers, Object paramObject) throws Exception {
 		return doPostJson(url, headers, paramObject, CHARSET_UTF8);
 	}
 
@@ -93,7 +85,7 @@ public class HttpClientUtil {
 	 * @return
 	 */
 	public static String doPostJson(String url, HashMap<String, String> headers, Object paramObject,
-			String returnCharSet) {
+			String returnCharSet) throws Exception{
 		CloseableHttpClient closeableHttpClient = getCloseableHttpClient();
 		HttpPost method = new HttpPost(url);
 		// 设置请求参数
@@ -151,7 +143,7 @@ public class HttpClientUtil {
 	 * @param returnCharSet 对方服务器返回字符集，比如:传入GB2312
 	 * @return
 	 */
-	public static String doPostJson(String url, Object paramObject, String returnCharSet) {
+	public static String doPostJson(String url, Object paramObject, String returnCharSet) throws Exception {
 		CloseableHttpClient closeableHttpClient = getCloseableHttpClient();
 		HttpPost method = new HttpPost(url);
 		// 设置请求参数
@@ -203,10 +195,9 @@ public class HttpClientUtil {
 	 * @param url
 	 * @param paramObject   比如:传入hashMap
 	 * @param clazz         反序列化的类，比如:传入User.class
-	 * @param returnCharSet 对方服务器返回字符集，比如:传入GB2312
 	 * @return
 	 */
-	public static <T> T doPostJson(String url, Object paramObject, Class<T> clazz) {
+	public static <T> T doPostJson(String url, Object paramObject, Class<T> clazz) throws Exception{
 		return JsonUtil.parse(doPostJson(url, paramObject), clazz);
 	}
 
@@ -217,10 +208,9 @@ public class HttpClientUtil {
 	 * @param url
 	 * @param paramObject   比如:传入hashMap
 	 * @param clazz         反序列化的类，比如:传入User.class
-	 * @param returnCharSet 对方服务器返回字符集，比如:传入GB2312
 	 * @return
 	 */
-	public static <T> T doPostJson(String url, HashMap<String, String> headers, Object paramObject, Class<T> clazz) {
+	public static <T> T doPostJson(String url, HashMap<String, String> headers, Object paramObject, Class<T> clazz) throws Exception {
 		return JsonUtil.parse(doPostJson(url, headers, paramObject), clazz);
 	}
 
@@ -234,7 +224,7 @@ public class HttpClientUtil {
 	 * @param returnCharSet 对方服务器返回字符集，比如:传入GB2312
 	 * @return
 	 */
-	public static <T> T doPostJson(String url, Object paramObject, Class<T> clazz, String returnCharSet) {
+	public static <T> T doPostJson(String url, Object paramObject, Class<T> clazz, String returnCharSet) throws Exception {
 		return JsonUtil.parse(doPostJson(url, paramObject, returnCharSet), clazz);
 	}
 
@@ -249,7 +239,7 @@ public class HttpClientUtil {
 	 * @return
 	 */
 	public static <T> T doPostJson(String url, HashMap<String, String> headers, Object paramObject, Class<T> clazz,
-			String returnCharSet) {
+			String returnCharSet) throws Exception {
 		return JsonUtil.parse(doPostJson(url, headers, paramObject, returnCharSet), clazz);
 	}
 
@@ -261,10 +251,9 @@ public class HttpClientUtil {
 	 * @param paramObject   比如:传入hashMap
 	 * @param typeReference 反序列化的模板化参数类，比如:传入new
 	 *                      TypeReference<LinkedList<Integer>>(){}
-	 * @param returnCharSet 对方服务器返回字符集，比如:传入GB2312
 	 * @return
 	 */
-	public static <T> T doPostJson(String url, Object paramObject, TypeReference<T> typeReference) {
+	public static <T> T doPostJson(String url, Object paramObject, TypeReference<T> typeReference) throws Exception {
 		return JsonUtil.parse(doPostJson(url, paramObject), typeReference);
 	}
 
@@ -276,11 +265,10 @@ public class HttpClientUtil {
 	 * @param paramObject   比如:传入hashMap
 	 * @param typeReference 反序列化的模板化参数类，比如:传入new
 	 *                      TypeReference<LinkedList<Integer>>(){}
-	 * @param returnCharSet 对方服务器返回字符集，比如:传入GB2312
 	 * @return
 	 */
 	public static <T> T doPostJson(String url, HashMap<String, String> headers, Object paramObject,
-			TypeReference<T> typeReference) {
+			TypeReference<T> typeReference) throws Exception {
 		return JsonUtil.parse(doPostJson(url, headers, paramObject), typeReference);
 	}
 
@@ -296,7 +284,7 @@ public class HttpClientUtil {
 	 * @return
 	 */
 	public static <T> T doPostJson(String url, Object paramObject, TypeReference<T> typeReference,
-			String returnCharSet) {
+			String returnCharSet) throws Exception {
 		return JsonUtil.parse(doPostJson(url, paramObject, returnCharSet), typeReference);
 	}
 
@@ -305,10 +293,9 @@ public class HttpClientUtil {
 	 * 
 	 * @param url
 	 * @param paramObject
-	 * @param returnCharSet 对方服务器返回字符集，比如:传入GB2312
 	 * @return
 	 */
-	public static String doPutJson(String url, Object paramObject) {
+	public static String doPutJson(String url, Object paramObject) throws Exception {
 		return doPutJson(url, paramObject, CHARSET_UTF8);
 	}
 
@@ -320,7 +307,7 @@ public class HttpClientUtil {
 	 * @param returnCharSet 对方服务器返回字符集，比如:传入GB2312
 	 * @return
 	 */
-	public static String doPutJson(String url, Object paramObject, String returnCharSet) {
+	public static String doPutJson(String url, Object paramObject, String returnCharSet) throws Exception {
 		logger.debug("request:doPutJson:{}(put data is following)",url);
 		CloseableHttpClient closeableHttpClient = getCloseableHttpClient();
 		HttpPut method = new HttpPut(url);
@@ -372,10 +359,9 @@ public class HttpClientUtil {
 	 * @param url
 	 * @param paramObject   比如:传入hashMap
 	 * @param clazz         反序列化的类，比如:传入User.class
-	 * @param returnCharSet 对方服务器返回字符集，比如:传入GB2312
 	 * @return
 	 */
-	public static <T> T doPutJson(String url, Object paramObject, Class<T> clazz) {
+	public static <T> T doPutJson(String url, Object paramObject, Class<T> clazz) throws Exception {
 		return JsonUtil.parse(doPutJson(url, paramObject), clazz);
 	}
 
@@ -389,7 +375,7 @@ public class HttpClientUtil {
 	 * @param returnCharSet 对方服务器返回字符集，比如:传入GB2312
 	 * @return
 	 */
-	public static <T> T doPutJson(String url, Object paramObject, Class<T> clazz, String returnCharSet) {
+	public static <T> T doPutJson(String url, Object paramObject, Class<T> clazz, String returnCharSet) throws Exception {
 		return JsonUtil.parse(doPutJson(url, paramObject, returnCharSet), clazz);
 	}
 
@@ -401,10 +387,9 @@ public class HttpClientUtil {
 	 * @param paramObject   比如:传入hashMap
 	 * @param typeReference 反序列化的模板化参数类，比如:传入new
 	 *                      TypeReference<LinkedList<Integer>>(){}
-	 * @param returnCharSet 对方服务器返回字符集，比如:传入GB2312
 	 * @return
 	 */
-	public static <T> T doPutJson(String url, Object paramObject, TypeReference<T> typeReference) {
+	public static <T> T doPutJson(String url, Object paramObject, TypeReference<T> typeReference) throws Exception {
 		return JsonUtil.parse(doPutJson(url, paramObject), typeReference);
 	}
 
@@ -420,7 +405,7 @@ public class HttpClientUtil {
 	 * @return
 	 */
 	public static <T> T doPutJson(String url, Object paramObject, TypeReference<T> typeReference,
-			String returnCharSet) {
+			String returnCharSet) throws Exception {
 		return JsonUtil.parse(doPutJson(url, paramObject, returnCharSet), typeReference);
 	}
 
@@ -428,10 +413,9 @@ public class HttpClientUtil {
 	 * GET请求
 	 * 
 	 * @param url
-	 * @param returnCharSet 对方服务器返回字符集，比如:传入GB2312
 	 * @return
 	 */
-	public static String doGet(String url) {
+	public static String doGet(String url) throws Exception {
 		return doGet(url, CHARSET_UTF8);
 	}
 
@@ -442,7 +426,7 @@ public class HttpClientUtil {
 	 * @param returnCharSet 对方服务器返回字符集，比如:传入GB2312
 	 * @return
 	 */
-	public static String doGet(String url, String returnCharSet) {
+	public static String doGet(String url, String returnCharSet) throws Exception {
 		logger.debug("request:doGet:" + url);
 		CloseableHttpClient closeableHttpClient = getCloseableHttpClient();
 		HttpGet method = new HttpGet(url);
@@ -480,11 +464,10 @@ public class HttpClientUtil {
 	 * GET请求,返回对象用法：Jsonresponse response =doGet(url,Jsonresponse.class);
 	 * 
 	 * @param url
-	 * @param clazz反序列化类型
 	 * @param returnCharSet 对方服务器返回字符集，比如:传入GB2312
 	 * @return
 	 */
-	public static <T> T doGet(String url, Class<T> clazz, String returnCharSet) {
+	public static <T> T doGet(String url, Class<T> clazz, String returnCharSet) throws Exception {
 		return JsonUtil.parse(doGet(url, returnCharSet), clazz);
 	}
 
@@ -492,11 +475,10 @@ public class HttpClientUtil {
 	 * GET请求,返回对象用法：Jsonresponse response =doGet(url,Jsonresponse.class);
 	 * 
 	 * @param url
-	 * @param clazz反序列化类型
-	 * @param returnCharSet 对方服务器返回字符集，比如:传入GB2312
+	 * @param clazz 反序列化类型
 	 * @return
 	 */
-	public static <T> T doGet(String url, Class<T> clazz) {
+	public static <T> T doGet(String url, Class<T> clazz) throws Exception {
 		return JsonUtil.parse(doGet(url), clazz);
 	}
 
@@ -505,11 +487,12 @@ public class HttpClientUtil {
 	 * TypeReference<LinkedList<Integer>>(){});
 	 * 
 	 * @param url
-	 * @param clazz反序列化类型
+	 * @param typeReference 反序列化的模板化参数类，比如:传入new
+	 *                      TypeReference<LinkedList<Integer>>(){}
 	 * @param returnCharSet 对方服务器返回字符集，比如:传入GB2312
 	 * @return
 	 */
-	public static <T> T doGet(String url, TypeReference<T> typeReference, String returnCharSet) {
+	public static <T> T doGet(String url, TypeReference<T> typeReference, String returnCharSet) throws Exception {
 		return JsonUtil.parse(doGet(url, returnCharSet), typeReference);
 	}
 
@@ -518,11 +501,11 @@ public class HttpClientUtil {
 	 * TypeReference<LinkedList<Integer>>(){});
 	 * 
 	 * @param url
-	 * @param clazz反序列化类型
-	 * @param returnCharSet 对方服务器返回字符集，比如:传入GB2312
+	 * @param typeReference 反序列化的模板化参数类，比如:传入new
+	 *                      TypeReference<LinkedList<Integer>>(){}
 	 * @return
 	 */
-	public static <T> T doGet(String url, TypeReference<T> typeReference) {
+	public static <T> T doGet(String url, TypeReference<T> typeReference) throws Exception {
 		return JsonUtil.parse(doGet(url), typeReference);
 	}
 
@@ -530,10 +513,9 @@ public class HttpClientUtil {
 	 * DELETE请求
 	 * 
 	 * @param url
-	 * @param returnCharSet 对方服务器返回字符集，比如:传入GB2312
 	 * @return
 	 */
-	public static String doDelete(String url) {
+	public static String doDelete(String url) throws Exception {
 		return doDelete(url, CHARSET_UTF8);
 	}
 
@@ -544,7 +526,7 @@ public class HttpClientUtil {
 	 * @param returnCharSet 对方服务器返回字符集，比如:传入GB2312
 	 * @return
 	 */
-	public static String doDelete(String url, String returnCharSet) {
+	public static String doDelete(String url, String returnCharSet) throws Exception {
 		logger.debug("request:doDelete:" + url);
 		CloseableHttpClient closeableHttpClient = getCloseableHttpClient();
 		HttpDelete method = new HttpDelete(url);
@@ -582,11 +564,10 @@ public class HttpClientUtil {
 	 * DELETE请求,返回对象用法：Jsonresponse response =doGet(url,Jsonresponse.class);
 	 * 
 	 * @param url
-	 * @param clazz反序列化类型
-	 * @param returnCharSet 对方服务器返回字符集，比如:传入GB2312
+	 * @param clazz 反序列化类型
 	 * @return
 	 */
-	public static <T> T doDelete(String url, Class<T> clazz) {
+	public static <T> T doDelete(String url, Class<T> clazz) throws Exception {
 		return JsonUtil.parse(doDelete(url), clazz);
 	}
 
@@ -594,11 +575,11 @@ public class HttpClientUtil {
 	 * DELETE请求,返回对象用法：Jsonresponse response =doGet(url,Jsonresponse.class);
 	 * 
 	 * @param url
-	 * @param clazz反序列化类型
+	 * @param clazz 反序列化类型
 	 * @param returnCharSet 对方服务器返回字符集，比如:传入GB2312
 	 * @return
 	 */
-	public static <T> T doDelete(String url, Class<T> clazz, String returnCharSet) {
+	public static <T> T doDelete(String url, Class<T> clazz, String returnCharSet) throws Exception {
 		return JsonUtil.parse(doDelete(url, returnCharSet), clazz);
 	}
 
@@ -607,11 +588,10 @@ public class HttpClientUtil {
 	 * TypeReference<LinkedList<Integer>>(){});
 	 * 
 	 * @param url
-	 * @param clazz反序列化类型
-	 * @param returnCharSet 对方服务器返回字符集，比如:传入GB2312
+	 * @param typeReference 反序列化类型
 	 * @return
 	 */
-	public static <T> T doDelete(String url, TypeReference<T> typeReference) {
+	public static <T> T doDelete(String url, TypeReference<T> typeReference) throws Exception {
 		return JsonUtil.parse(doDelete(url), typeReference);
 	}
 
@@ -620,11 +600,11 @@ public class HttpClientUtil {
 	 * TypeReference<LinkedList<Integer>>(){});
 	 * 
 	 * @param url
-	 * @param clazz反序列化类型
+	 * @param typeReference 反序列化类型
 	 * @param returnCharSet 对方服务器返回字符集，比如:传入GB2312
 	 * @return
 	 */
-	public static <T> T doDelete(String url, TypeReference<T> typeReference, String returnCharSet) {
+	public static <T> T doDelete(String url, TypeReference<T> typeReference, String returnCharSet) throws Exception {
 		return JsonUtil.parse(doDelete(url, returnCharSet), typeReference);
 	}
 
