@@ -67,7 +67,7 @@ public class User extends BasicEntity implements Serializable{
 	@Schema(name="注册时间")
 	private Date registerTime;
 
-	@Schema(name="操作验证码")
+	@Schema(name="操作验证码（包括：登录以及其他需要验证码的操作）")
 	private String verifyingCode;
 
 	@Schema(name="所有身份")
