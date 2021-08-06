@@ -2,10 +2,11 @@ package com.zhrenjie04.alex.core.domain;
 
 import com.zhrenjie04.alex.core.enums.GroupTypeEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.*;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import java.io.Serializable;
-import java.util.Date;
 
 /**
  * @author 张人杰
@@ -20,19 +21,10 @@ public class Identity implements Serializable{
 
 	private String identityId;
 	private String userId;
+	private GroupTypeEnum groupType;
 	private String groupId;
 	private String identityName;
-	/** 该身份已锁定 */
-	private Boolean isLocked;
-	/** 该身份已删除 */
-	private Boolean isDeleted;
-	private Date createdTime;
-	private String creatorId;
-	private String creatorName;
-	private Date lastModifiedTime;
-	private String lastModifierId;
-	private String lastModifierName;
-	private GroupTypeEnum groupType;
+	private Integer status;
 
 	/** 只用于前端显示 */
 	private String groupName;

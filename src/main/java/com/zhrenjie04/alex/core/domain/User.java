@@ -1,21 +1,16 @@
 package com.zhrenjie04.alex.core.domain;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.zhrenjie04.alex.core.AlexTimestampSerializer;
 import com.zhrenjie04.alex.core.BasicEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -47,8 +42,6 @@ public class User extends BasicEntity implements Serializable{
 	private String password;
 	@Schema(name="密码加密盐值")
 	private String salt;
-	@Schema(name="真实姓名")
-	private String realname;
 	@Schema(name="昵称")
 	private String nickname;
 	@Schema(name="电子邮箱")
@@ -56,69 +49,40 @@ public class User extends BasicEntity implements Serializable{
 	private String email;
 	@Schema(name="电子邮箱已确认")
 	private Boolean hasEmailConfirmed;
-	@Schema(name="电子邮箱验证码")
-	private String emailVerifyCode;
-	@Schema(name="邮件重置密码验证码")
-	private String emailResetPasswordCode;
-	@Schema(name="邮件重置密码到期日")
-	private Date emailResetPasswordDueDate;
 	@Schema(name="手机")
 	@Pattern(regexp = "^((1\\d{10})|())$", message = "手机号码格式不正确")
 	private String cellphone;
 	@Schema(name="头像Url")
 	private String portraitUrl;
-	@Schema(name="微信号")
-	private String weixin;
-	@Schema(name="生日")
-	@JsonFormat(pattern = "yyyy-MM-dd", locale = "zh", timezone = "GMT+8")
-	@DateTimeFormat(pattern = "yyyy-MM-dd")
-	private Date birthday;
 	@Schema(name="性别")
 	private String gender;
-	@Schema(name="是否已锁定")
-	private Boolean isLocked;
-	@Schema(name="是否已删除")
-	private Boolean isDeleted;
-	@Schema(name="最后登录IP")
-	private String lastLoginIp;
-	@Schema(name="最后登录时间")
-	@JsonSerialize(using= AlexTimestampSerializer.class)
-	private Date lastLoginTime;
+	@Schema(name="账户状态")
+	private Integer status;
+	@Schema(name="是否使用系统头像")
+	private Boolean useSystemPortrait;
+	@Schema(name="使用中的系统头像名")
+	private Boolean systemPortraitName;
+	@Schema(name="自定义头像url")
+	private Boolean customPortraitUrl;
+	@Schema(name="注册时间")
+	private Date registerTime;
+
 	@Schema(name="所有身份")
 	private List<Identity> identities = new LinkedList<Identity>();
-	@Schema(name="所有机构身份")
-	private List<Identity> orgIdentities = new LinkedList<Identity>();
 	@Schema(name="当前身份id")
 	private String currentIdentityId;
-	@Schema(name="权限Codes")
+	@Schema(name="当前权限Codes")
 	private List<String> currentPrivilegeCodes = new LinkedList<String>();
 	@Schema(name="角色ids，用于不能删除自己的角色的判断")
 	private List<String> currentRoleIds = new LinkedList<String>();
-	@Schema(name="账号所属集团id")
-	private String groupId;
-	@Schema(name="验证码传输字段")
-	private String captcha;
-	@Schema(name="是否修改密码")
-	private Boolean notChangePassword;
-	@Schema(name="扩展字段，用于向前端传递好友备注信息")
+
+	@Schema(name="扩展字段，不存入数据库，用于向前端传递好友备注信息")
 	private String friendMemo;
-	@Schema(name="扩展字段，用于显示BigDecimal的处理过程")
-	private BigDecimal bigDecimalTag=new BigDecimal("2.9");
-	@Schema(name="客户端类型")
+	@Schema(name="客户端类型，不存入数据库，用于扩展")
 	private String clientType;
 
 	private HashMap<String, Identity> idToIdentityMap = new HashMap<String, Identity>();
 
-	private Date createdTime;
-	private String creatorId;
-	private String creatorName;
-	private Date lastModifiedTime;
-	private String lastModifierId;
-	private String lastModifierName;
-
-	@Schema(name="jwt-token失效时间")
-	private Date jwtExpiredTime;
-	
 	@JsonIgnore
 	public boolean hasPrivilege(String privilegeCode) {
 		if (currentPrivilegeCodes == null) {
@@ -128,6 +92,7 @@ public class User extends BasicEntity implements Serializable{
 		}
 	}
 
+	@JsonIgnore
 	public Identity getCurrentIdentity() {
 		if (currentIdentityId == null || "".equals(currentIdentityId)) {
 			return new Identity();
@@ -140,6 +105,7 @@ public class User extends BasicEntity implements Serializable{
 		return currentIdentityId;
 	}
 
+	@JsonIgnore
 	public boolean setCurrentIdentityId(String currentIdentityId) {
 		if(idToIdentityMap.get(currentIdentityId)!=null) {
 			this.currentIdentityId = currentIdentityId;
@@ -149,6 +115,7 @@ public class User extends BasicEntity implements Serializable{
 		}
 	}
 
+	@JsonIgnore
 	public void setIdentities(List<Identity> identities) {
 		this.identities = identities;
 		idToIdentityMap.clear();
