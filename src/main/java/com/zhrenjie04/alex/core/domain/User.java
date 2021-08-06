@@ -67,6 +67,9 @@ public class User extends BasicEntity implements Serializable{
 	@Schema(name="注册时间")
 	private Date registerTime;
 
+	@Schema(name="操作验证码")
+	private String verifyingCode;
+
 	@Schema(name="所有身份")
 	private List<Identity> identities = new LinkedList<Identity>();
 	@Schema(name="当前身份id")
