@@ -16,59 +16,42 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class ZkLocker {
 	
-	private ZooKeeper zookeeper;
-	private String lockerKey;
-	private Long waitTime=1000L;
-	private Boolean hasNetworkErrors=false;
-
+	private static ZooKeeper zookeeper;
 	private static String connectString;
 	private static int sessionTimeoutInMillSeconds;
 	private ZkLocker() {}
 
 	/**
-	 * 工具初始化方法
+	 * 工具初始化方法，需要将此方法写入Application的启动类
 	 * @param connectString zookeeper链接字符串
 	 * @param sessionTimeoutInMillSeconds 会话超时时间
 	 */
 	public static void init(String connectString,int sessionTimeoutInMillSeconds){
 		ZkLocker.connectString=connectString;
 		ZkLocker.sessionTimeoutInMillSeconds=sessionTimeoutInMillSeconds;
+        try {
+            zookeeper=new ZooKeeper(connectString, sessionTimeoutInMillSeconds, new Watcher() {
+                @Override
+                public void process(WatchedEvent event) {
+                    if(KeeperState.SyncConnected==event.getState()) {
+                        log.info("ZkLocker connected to server");
+                    }else if(KeeperState.Disconnected==event.getState()) {
+                        log.info("ZkLocker disconnected to server");
+                        throw new RuntimeException("ZkLocker disconnected to server");
+                    }
+                }
+            });
+        }catch(IOException e) {
+            log.error("new ZooKeeper Error",e);
+            throw new RuntimeException(e);
+        }
 	}
-	/**
-	 * 获取Zookeeper分布式锁
-	 * @param lockerKey 锁名称（不能使用“：”，“/”等特殊符号，建议只使用纯字母字符串）
-	 * @param waitTime
-	 * @return
-	 * @throws IOException
-	 */
-	public static ZkLocker getInstance(String lockerKey,Long waitTime){
-		ZkLocker locker=new ZkLocker();
-		locker.lockerKey=lockerKey;
-		locker.waitTime=waitTime;
-		locker.hasNetworkErrors=false;
-		try {
-			locker.zookeeper=new ZooKeeper(connectString, sessionTimeoutInMillSeconds, new Watcher() {
-				@Override
-				public void process(WatchedEvent event) {
-					if(KeeperState.SyncConnected==event.getState()) {
-						log.info("ZkLocker connected to server");
-					}else if(KeeperState.Disconnected==event.getState()) {
-						log.info("ZkLocker disconnected to server");
-						locker.hasNetworkErrors=true;
-					}
-				}
-			});
-		}catch(IOException e) {
-			log.error("new ZooKeeper Error",e);
-			throw new RuntimeException(e);
-		}
-		return locker;
-	}
+
 	/**
 	 * 上锁
 	 * 注：已将所有异常转为RuntimeException，如果需要对异常做特殊处理，请使用try{}catch(){}本方法
 	 */
-	public void lock() {
+	public static void lock(String lockerKey, long waitTime, long ttl) {
 		CountDownLatch latch = new CountDownLatch(1);
 		while(true) {
 			try {
@@ -80,21 +63,22 @@ public class ZkLocker {
 			     * call will never throw "file exists" KeeperException.
 			     */
 				//2021-04-13为了防止羊群效应，改为临时顺序节点
-				zookeeper.create("/locker-"+lockerKey, "lock".getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL_SEQUENTIAL);
+                Stat stat=new Stat();
+				zookeeper.create("/locker-"+lockerKey, "lock".getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL_SEQUENTIAL,stat,ttl);
 				//加锁成功
 				return;
 	        } catch (Exception e) {
 	            //加锁失败，waitTime时间内等待通知，超时则抛出异常
-	            Watcher w = new Watcher() {
+	            Watcher watcher = new Watcher() {
 	                @Override
 	                public void process(WatchedEvent watchedEvent) {
-	                    System.out.println("监听到的变化 watchedEvent = " + watchedEvent);
+	                    System.out.println("监听到的变化（循序临时节点只会通知一个） watchedEvent = " + watchedEvent);
 	                    if(EventType.NodeDeleted==watchedEvent.getType()) {
 		                    log.info("[WatchedEvent]节点删除");
 		                    latch.countDown();
 						}else if(KeeperState.Disconnected==watchedEvent.getState()) {
 							log.info("ZkLocker disconnected to server");
-							ZkLocker.this.hasNetworkErrors=true;
+//							ZkLocker.this.hasNetworkErrors=true;
 						}
 	                }
 	            };
@@ -102,13 +86,14 @@ public class ZkLocker {
 	            try {
 	            	//设置Watcher，因为节点已存在；如果此时节点已消失，则抛出异常
 	            	//A KeeperException with error code KeeperException.NoNode will be thrown if no node with the given path exists.
-	                zookeeper.getData("/locker-"+lockerKey, w, stat);
+	                zookeeper.getData("/locker-"+lockerKey, watcher, stat);
 	                latch.await(waitTime, TimeUnit.MICROSECONDS);
 	            }catch(KeeperException ex) {
 	            	log.error("lock getData error",ex);
 	            	if(ex instanceof KeeperException.NoNodeException) {
-	            		//再次tryLock
+	            		//如果节点已消失，再次循环tryLock
 	            	}else {
+	            	    //否则，直接抛出异常
 		            	throw new RuntimeException(ex);
 	            	}
 	            }catch(InterruptedException ex){
@@ -122,21 +107,12 @@ public class ZkLocker {
 	 * 解锁
 	 * 注：已将所有异常转为RuntimeException，如果需要对异常做特殊处理，请使用try{}catch(){}本方法
 	 */
-	public void unlock() {
+	public static void unlock(String lockerKey) {
 		try {
 			zookeeper.delete("/locker-"+lockerKey, -1);
 		} catch (Exception e) {
         	log.error("unlock delete error",e);
         	throw new RuntimeException(e);
 		}
-		try {
-			zookeeper.close();
-		} catch (InterruptedException e) {
-			log.error("unlock close error",e);
-			throw new RuntimeException(e);
-		}
-	}
-	public boolean hasNetworkErrors() {
-		return hasNetworkErrors;
 	}
 }
