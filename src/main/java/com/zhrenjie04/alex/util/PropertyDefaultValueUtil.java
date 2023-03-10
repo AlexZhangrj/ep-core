@@ -10,7 +10,7 @@ public class PropertyDefaultValueUtil {
 	/**
 	 * 转换数据库命名规则为java命名规则的方法
 	 */
-	public static String converToJavaDefaultValue(String defaultValue, String javaType) {
+	public static String convertToJavaDefaultValue(String defaultValue, String javaType) {
 		if (defaultValue == null || "".equals(defaultValue)) {
 			return null;
 		}
@@ -31,4 +31,5 @@ public class PropertyDefaultValueUtil {
 			throw new RuntimeException("default is not supported:" + javaType + ":" + defaultValue);
 		}
 	}
+
 }

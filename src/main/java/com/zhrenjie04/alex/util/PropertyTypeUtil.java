@@ -1,5 +1,7 @@
 package com.zhrenjie04.alex.util;
 
+import java.util.Locale;
+
 /**
  * 从数据库字段名转换为Java属性名的转化工具类
  * 
@@ -42,6 +44,22 @@ public class PropertyTypeUtil {
 			return "Long";
 		} else {
 			throw new RuntimeException("type is not supported:" + dbColumnType + ":" + columnName);
+		}
+	}
+	/**
+	 * 获取数据库字段中已设置的字段长度
+	 */
+	public static Integer convertMySqlVarcharTypeToJavaMaxLength(String dbColumnType) {
+		if (dbColumnType == null || "".equals(dbColumnType)) {
+			return -1;
+		}
+		dbColumnType = dbColumnType.toLowerCase();
+		if (dbColumnType.startsWith("char")) {
+			return Integer.valueOf(dbColumnType.toLowerCase(Locale.ROOT).replace("char(","").replace(")",""));
+		} else if (dbColumnType.startsWith("varchar")) {
+			return Integer.valueOf(dbColumnType.toLowerCase(Locale.ROOT).replace("varchar(","").replace(")",""));
+		} else {
+			return -1;
 		}
 	}
 	/**
